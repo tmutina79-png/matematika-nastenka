@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <defs>
+    <linearGradient id="wall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fef3c7"/>
+      <stop offset="100%" style="stop-color:#fde68a"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="200" fill="#fef9c3"/>
+  
+  <!-- Wall -->
+  <rect x="50" y="30" width="300" height="120" fill="url(#wall)" stroke="#d97706" stroke-width="2"/>
+  
+  <!-- Paint stripes -->
+  <rect x="50" y="30" width="100" height="120" fill="#86efac" opacity="0.7"/>
+  <rect x="150" y="30" width="100" height="120" fill="#fca5a5" opacity="0.7"/>
+  <rect x="250" y="30" width="100" height="120" fill="#93c5fd" opacity="0.7"/>
+  
+  <!-- Painter 1 (Novák) -->
+  <circle cx="100" cy="170" r="15" fill="#22c55e"/>
+  <text x="100" y="175" text-anchor="middle" font-size="10" fill="white" font-weight="bold">N</text>
+  <rect x="90" y="140" width="6" height="25" fill="#854d0e"/>
+  <rect x="85" y="130" width="16" height="12" fill="#22c55e"/>
+  <text x="100" y="125" text-anchor="middle" font-size="9" fill="#166534" font-weight="bold">8h</text>
+  
+  <!-- Painter 2 (Svoboda) -->
+  <circle cx="200" cy="170" r="15" fill="#ef4444"/>
+  <text x="200" y="175" text-anchor="middle" font-size="10" fill="white" font-weight="bold">S</text>
+  <rect x="190" y="140" width="6" height="25" fill="#854d0e"/>
+  <rect x="185" y="130" width="16" height="12" fill="#ef4444"/>
+  <text x="200" y="125" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="bold">8h</text>
+  
+  <!-- Together result -->
+  <rect x="280" y="155" width="70" height="35" fill="#3b82f6" rx="5"/>
+  <text x="315" y="170" text-anchor="middle" font-size="10" fill="white" font-weight="bold">Společně:</text>
+  <text x="315" y="183" text-anchor="middle" font-size="12" fill="white" font-weight="bold">4 hodiny</text>
+  
+  <!-- Arrow -->
+  <path d="M230 170 L270 170" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrow)"/>
+  <polygon points="268,165 280,170 268,175" fill="#3b82f6"/>
+  
+  <!-- Title -->
+  <text x="200" y="20" text-anchor="middle" font-size="13" fill="#92400e" font-weight="bold">Příklad 2: Dva malíři se stejným výkonem = poloviční čas</text>
+</svg>

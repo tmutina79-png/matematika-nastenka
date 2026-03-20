@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <!-- Background -->
+  <rect width="400" height="200" fill="#ecfdf5"/>
+  
+  <!-- Ground -->
+  <rect x="0" y="160" width="400" height="40" fill="#86efac"/>
+  
+  <!-- Fence posts -->
+  <g fill="#92400e">
+    <rect x="30" y="80" width="8" height="80"/>
+    <rect x="80" y="80" width="8" height="80"/>
+    <rect x="130" y="80" width="8" height="80"/>
+    <rect x="180" y="80" width="8" height="80"/>
+    <rect x="230" y="80" width="8" height="80"/>
+    <rect x="280" y="80" width="8" height="80"/>
+    <rect x="330" y="80" width="8" height="80"/>
+  </g>
+  
+  <!-- Fence rails -->
+  <rect x="30" y="95" width="308" height="6" fill="#b45309"/>
+  <rect x="30" y="130" width="308" height="6" fill="#b45309"/>
+  
+  <!-- Progress marker - fence done by son in 3h -->
+  <rect x="30" y="75" width="90" height="90" fill="#fef08a" opacity="0.5"/>
+  <text x="75" y="70" text-anchor="middle" font-size="9" fill="#854d0e" font-weight="bold">Syn: 3h sám</text>
+  
+  <!-- Father figure -->
+  <circle cx="300" cy="55" r="18" fill="#3b82f6"/>
+  <rect x="288" y="73" width="24" height="35" fill="#2563eb"/>
+  <text x="300" y="62" text-anchor="middle" font-size="14" fill="white" font-weight="bold">O</text>
+  <text x="300" y="40" text-anchor="middle" font-size="10" fill="#2563eb" font-weight="bold">10h</text>
+  
+  <!-- Son figure -->
+  <circle cx="180" cy="60" r="15" fill="#f97316"/>
+  <rect x="170" y="75" width="20" height="28" fill="#ea580c"/>
+  <text x="180" y="66" text-anchor="middle" font-size="12" fill="white" font-weight="bold">S</text>
+  <text x="180" y="48" text-anchor="middle" font-size="10" fill="#ea580c" font-weight="bold">15h</text>
+  
+  <!-- Timeline -->
+  <rect x="30" y="175" width="340" height="4" fill="#d1d5db"/>
+  <rect x="30" y="175" width="90" height="4" fill="#f97316"/>
+  <rect x="120" y="175" width="150" height="4" fill="#22c55e"/>
+  
+  <text x="75" y="192" text-anchor="middle" font-size="8" fill="#ea580c">3h sám</text>
+  <text x="195" y="192" text-anchor="middle" font-size="8" fill="#16a34a">4h 48min spolu</text>
+  
+  <!-- Result -->
+  <rect x="330" y="25" width="65" height="45" fill="#16a34a" rx="5"/>
+  <text x="362" y="42" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Celkem:</text>
+  <text x="362" y="60" text-anchor="middle" font-size="12" fill="white" font-weight="bold">7h 48min</text>
+  
+  <!-- Title -->
+  <text x="200" y="18" text-anchor="middle" font-size="13" fill="#166534" font-weight="bold">Příklad 5: Otec a syn staví plot</text>
+</svg>

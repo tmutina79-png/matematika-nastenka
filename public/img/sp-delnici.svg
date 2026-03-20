@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <!-- Background -->
+  <rect width="400" height="200" fill="#fef3c7"/>
+  
+  <!-- Ground -->
+  <rect x="0" y="150" width="400" height="50" fill="#92400e"/>
+  
+  <!-- Trench -->
+  <path d="M30 150 L30 180 L370 180 L370 150 Z" fill="#78350f"/>
+  <path d="M40 150 L40 170 L360 170 L360 150 Z" fill="#451a03"/>
+  
+  <!-- Worker Adam -->
+  <circle cx="80" cy="100" r="18" fill="#ef4444"/>
+  <rect x="68" y="118" width="24" height="30" fill="#dc2626"/>
+  <text x="80" y="106" text-anchor="middle" font-size="12" fill="white" font-weight="bold">A</text>
+  <text x="80" y="85" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="bold">6h</text>
+  
+  <!-- Shovel Adam -->
+  <line x1="100" y1="110" x2="120" y2="145" stroke="#854d0e" stroke-width="4"/>
+  <rect x="115" y="140" width="15" height="8" fill="#64748b"/>
+  
+  <!-- Worker Bedřich -->
+  <circle cx="180" cy="100" r="18" fill="#22c55e"/>
+  <rect x="168" y="118" width="24" height="30" fill="#16a34a"/>
+  <text x="180" y="106" text-anchor="middle" font-size="12" fill="white" font-weight="bold">B</text>
+  <text x="180" y="85" text-anchor="middle" font-size="10" fill="#16a34a" font-weight="bold">4h</text>
+  
+  <!-- Shovel Bedřich -->
+  <line x1="200" y1="110" x2="220" y2="145" stroke="#854d0e" stroke-width="4"/>
+  <rect x="215" y="140" width="15" height="8" fill="#64748b"/>
+  
+  <!-- Worker Cyril -->
+  <circle cx="280" cy="100" r="18" fill="#3b82f6"/>
+  <rect x="268" y="118" width="24" height="30" fill="#2563eb"/>
+  <text x="280" y="106" text-anchor="middle" font-size="12" fill="white" font-weight="bold">C</text>
+  <text x="280" y="85" text-anchor="middle" font-size="10" fill="#2563eb" font-weight="bold">3h</text>
+  
+  <!-- Shovel Cyril -->
+  <line x1="300" y1="110" x2="320" y2="145" stroke="#854d0e" stroke-width="4"/>
+  <rect x="315" y="140" width="15" height="8" fill="#64748b"/>
+  
+  <!-- Result box -->
+  <rect x="330" y="75" width="65" height="55" fill="#7c3aed" rx="5"/>
+  <text x="362" y="95" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Všichni 3:</text>
+  <text x="362" y="115" text-anchor="middle" font-size="14" fill="white" font-weight="bold">1h 20min</text>
+  
+  <!-- Title -->
+  <text x="200" y="25" text-anchor="middle" font-size="14" fill="#92400e" font-weight="bold">Příklad 4: Tři dělníci kopou příkop</text>
+  
+  <!-- Dirt piles -->
+  <ellipse cx="60" cy="148" rx="20" ry="8" fill="#a16207"/>
+  <ellipse cx="160" cy="148" rx="25" ry="10" fill="#a16207"/>
+  <ellipse cx="260" cy="148" rx="22" ry="9" fill="#a16207"/>
+</svg>

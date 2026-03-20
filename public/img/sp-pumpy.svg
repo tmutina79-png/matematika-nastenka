@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <defs>
+    <linearGradient id="water" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa"/>
+      <stop offset="100%" style="stop-color:#2563eb"/>
+    </linearGradient>
+    <linearGradient id="tank" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#94a3b8"/>
+      <stop offset="100%" style="stop-color:#64748b"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="200" fill="#f0fdf4"/>
+  
+  <!-- Tank 1 -->
+  <rect x="30" y="60" width="80" height="100" fill="url(#tank)" rx="5"/>
+  <rect x="35" y="65" width="70" height="90" fill="#e0f2fe"/>
+  <rect x="35" y="105" width="70" height="50" fill="url(#water)"/>
+  <text x="70" y="85" text-anchor="middle" font-size="12" fill="#1e40af" font-weight="bold">6h</text>
+  
+  <!-- Pump 1 -->
+  <rect x="50" y="40" width="40" height="20" fill="#22c55e" rx="3"/>
+  <text x="70" y="54" text-anchor="middle" font-size="10" fill="white" font-weight="bold">Pumpa 1</text>
+  <path d="M70 60 L70 65" stroke="#22c55e" stroke-width="4"/>
+  
+  <!-- Plus sign -->
+  <text x="140" y="115" text-anchor="middle" font-size="40" fill="#16a34a" font-weight="bold">+</text>
+  
+  <!-- Tank 2 -->
+  <rect x="170" y="60" width="80" height="100" fill="url(#tank)" rx="5"/>
+  <rect x="175" y="65" width="70" height="90" fill="#e0f2fe"/>
+  <rect x="175" y="85" width="70" height="70" fill="url(#water)"/>
+  <text x="210" y="80" text-anchor="middle" font-size="12" fill="#1e40af" font-weight="bold">3h</text>
+  
+  <!-- Pump 2 -->
+  <rect x="190" y="40" width="40" height="20" fill="#22c55e" rx="3"/>
+  <text x="210" y="54" text-anchor="middle" font-size="10" fill="white" font-weight="bold">Pumpa 2</text>
+  <path d="M210 60 L210 65" stroke="#22c55e" stroke-width="4"/>
+  
+  <!-- Equals -->
+  <text x="280" y="115" text-anchor="middle" font-size="40" fill="#16a34a" font-weight="bold">=</text>
+  
+  <!-- Result Tank -->
+  <rect x="310" y="60" width="80" height="100" fill="url(#tank)" rx="5"/>
+  <rect x="315" y="65" width="70" height="90" fill="url(#water)"/>
+  <text x="350" y="115" text-anchor="middle" font-size="16" fill="white" font-weight="bold">2h</text>
+  
+  <!-- Pumps together -->
+  <rect x="320" y="40" width="60" height="20" fill="#16a34a" rx="3"/>
+  <text x="350" y="54" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Společně</text>
+  
+  <!-- Title -->
+  <text x="200" y="185" text-anchor="middle" font-size="14" fill="#166534" font-weight="bold">Příklad 1: Dvě pumpy naplní nádrž rychleji!</text>
+</svg>

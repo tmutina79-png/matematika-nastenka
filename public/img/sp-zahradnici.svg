@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <!-- Background - grass -->
+  <rect width="400" height="200" fill="#dcfce7"/>
+  <rect x="0" y="140" width="400" height="60" fill="#86efac"/>
+  
+  <!-- Grass blades -->
+  <g fill="#22c55e">
+    <path d="M20 140 Q25 120 30 140"/>
+    <path d="M50 140 Q55 115 60 140"/>
+    <path d="M80 140 Q85 125 90 140"/>
+    <path d="M110 140 Q115 110 120 140"/>
+    <path d="M140 140 Q145 120 150 140"/>
+    <path d="M170 140 Q175 118 180 140"/>
+    <path d="M200 140 Q205 125 210 140"/>
+    <path d="M230 140 Q235 112 240 140"/>
+    <path d="M260 140 Q265 122 270 140"/>
+    <path d="M290 140 Q295 118 300 140"/>
+    <path d="M320 140 Q325 125 330 140"/>
+    <path d="M350 140 Q355 115 360 140"/>
+    <path d="M380 140 Q385 120 390 140"/>
+  </g>
+  
+  <!-- Gardener 1 -->
+  <circle cx="80" cy="100" r="20" fill="#f97316"/>
+  <rect x="70" y="120" width="20" height="30" fill="#f97316"/>
+  <text x="80" y="107" text-anchor="middle" font-size="14" fill="white" font-weight="bold">1</text>
+  
+  <!-- Lawnmower 1 -->
+  <rect x="105" y="125" width="40" height="25" fill="#dc2626" rx="3"/>
+  <circle cx="115" cy="155" r="8" fill="#1f2937"/>
+  <circle cx="135" cy="155" r="8" fill="#1f2937"/>
+  <text x="125" y="142" text-anchor="middle" font-size="10" fill="white" font-weight="bold">2h</text>
+  
+  <!-- Plus -->
+  <text x="180" y="130" text-anchor="middle" font-size="30" fill="#16a34a" font-weight="bold">+</text>
+  
+  <!-- Gardener 2 -->
+  <circle cx="230" cy="100" r="20" fill="#8b5cf6"/>
+  <rect x="220" y="120" width="20" height="30" fill="#8b5cf6"/>
+  <text x="230" y="107" text-anchor="middle" font-size="14" fill="white" font-weight="bold">2</text>
+  
+  <!-- Lawnmower 2 -->
+  <rect x="255" y="125" width="40" height="25" fill="#7c3aed" rx="3"/>
+  <circle cx="265" cy="155" r="8" fill="#1f2937"/>
+  <circle cx="285" cy="155" r="8" fill="#1f2937"/>
+  <text x="275" y="142" text-anchor="middle" font-size="10" fill="white" font-weight="bold">4h</text>
+  
+  <!-- Result -->
+  <rect x="320" y="90" width="70" height="50" fill="#16a34a" rx="8"/>
+  <text x="355" y="112" text-anchor="middle" font-size="10" fill="white" font-weight="bold">Společně:</text>
+  <text x="355" y="130" text-anchor="middle" font-size="14" fill="white" font-weight="bold">1h 20min</text>
+  
+  <!-- Arrow -->
+  <polygon points="308,115 320,115 314,105 314,125" fill="#16a34a"/>
+  
+  <!-- Title -->
+  <text x="200" y="25" text-anchor="middle" font-size="14" fill="#166534" font-weight="bold">Příklad 3: Dva zahradníci sekají trávník</text>
+  
+  <!-- Sun -->
+  <circle cx="360" cy="40" r="20" fill="#fbbf24"/>
+  <g stroke="#fbbf24" stroke-width="2">
+    <line x1="360" y1="10" x2="360" y2="0"/>
+    <line x1="380" y1="20" x2="390" y2="10"/>
+    <line x1="390" y1="40" x2="400" y2="40"/>
+    <line x1="340" y1="20" x2="330" y2="10"/>
+  </g>
+</svg>

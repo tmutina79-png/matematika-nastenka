@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+  <!-- Background -->
+  <rect width="400" height="200" fill="#f0f9ff"/>
+  
+  <!-- Factory floor -->
+  <rect x="0" y="150" width="400" height="50" fill="#94a3b8"/>
+  
+  <!-- Machine 1 -->
+  <rect x="40" y="70" width="80" height="80" fill="#3b82f6" rx="5"/>
+  <rect x="50" y="80" width="60" height="40" fill="#1e40af"/>
+  <circle cx="80" cy="100" r="15" fill="#60a5fa"/>
+  <rect x="55" y="125" width="50" height="20" fill="#1e3a8a"/>
+  <text x="80" y="138" text-anchor="middle" font-size="10" fill="white" font-weight="bold">20h</text>
+  <text x="80" y="60" text-anchor="middle" font-size="12" fill="#1e40af" font-weight="bold">Stroj 1</text>
+  
+  <!-- Plus sign -->
+  <text x="155" y="115" text-anchor="middle" font-size="30" fill="#16a34a" font-weight="bold">+</text>
+  
+  <!-- Machine 2 (unknown) -->
+  <rect x="180" y="70" width="80" height="80" fill="#a855f7" rx="5"/>
+  <rect x="190" y="80" width="60" height="40" fill="#7e22ce"/>
+  <text x="220" y="107" text-anchor="middle" font-size="20" fill="white" font-weight="bold">?</text>
+  <rect x="195" y="125" width="50" height="20" fill="#581c87"/>
+  <text x="220" y="138" text-anchor="middle" font-size="10" fill="white" font-weight="bold">?h</text>
+  <text x="220" y="60" text-anchor="middle" font-size="12" fill="#7e22ce" font-weight="bold">Stroj 2</text>
+  
+  <!-- Equals -->
+  <text x="290" y="115" text-anchor="middle" font-size="30" fill="#16a34a" font-weight="bold">=</text>
+  
+  <!-- Together result -->
+  <rect x="310" y="70" width="80" height="80" fill="#22c55e" rx="5"/>
+  <rect x="320" y="80" width="60" height="40" fill="#16a34a"/>
+  <text x="350" y="107" text-anchor="middle" font-size="14" fill="white" font-weight="bold">12h</text>
+  <rect x="325" y="125" width="50" height="20" fill="#166534"/>
+  <text x="350" y="138" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Společně</text>
+  
+  <!-- Question mark cloud -->
+  <ellipse cx="220" cy="30" rx="40" ry="20" fill="#fef08a"/>
+  <text x="220" y="36" text-anchor="middle" font-size="12" fill="#854d0e" font-weight="bold">Kolik hodin?</text>
+  
+  <!-- Answer box -->
+  <rect x="310" y="10" width="80" height="40" fill="#dc2626" rx="5"/>
+  <text x="350" y="27" text-anchor="middle" font-size="10" fill="white" font-weight="bold">Odpověď:</text>
+  <text x="350" y="43" text-anchor="middle" font-size="14" fill="white" font-weight="bold">30 hodin</text>
+  
+  <!-- Conveyor belt -->
+  <rect x="40" y="155" width="350" height="8" fill="#475569"/>
+  <g fill="#64748b">
+    <rect x="50" y="155" width="20" height="8"/>
+    <rect x="100" y="155" width="20" height="8"/>
+    <rect x="150" y="155" width="20" height="8"/>
+    <rect x="200" y="155" width="20" height="8"/>
+    <rect x="250" y="155" width="20" height="8"/>
+    <rect x="300" y="155" width="20" height="8"/>
+    <rect x="350" y="155" width="20" height="8"/>
+  </g>
+  
+  <!-- Title -->
+  <text x="170" y="185" text-anchor="middle" font-size="13" fill="#475569" font-weight="bold">Příklad 7: Hledáme neznámý čas stroje</text>
+</svg>

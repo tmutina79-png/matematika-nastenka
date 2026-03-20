@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220">
+  <!-- Background - sky -->
+  <rect width="400" height="220" fill="#e0f2fe"/>
+  
+  <!-- Sun -->
+  <circle cx="350" cy="40" r="25" fill="#fbbf24"/>
+  
+  <!-- Ground -->
+  <rect x="0" y="170" width="400" height="50" fill="#86efac"/>
+  
+  <!-- House being built -->
+  <rect x="120" y="90" width="160" height="80" fill="#fef3c7" stroke="#92400e" stroke-width="2"/>
+  
+  <!-- Roof -->
+  <polygon points="100,90 200,30 300,90" fill="#dc2626" stroke="#b91c1c" stroke-width="2"/>
+  
+  <!-- Window -->
+  <rect x="160" y="110" width="30" height="30" fill="#bfdbfe" stroke="#92400e" stroke-width="1"/>
+  <line x1="175" y1="110" x2="175" y2="140" stroke="#92400e" stroke-width="1"/>
+  <line x1="160" y1="125" x2="190" y2="125" stroke="#92400e" stroke-width="1"/>
+  
+  <!-- Door -->
+  <rect x="210" y="120" width="30" height="50" fill="#78350f"/>
+  <circle cx="235" cy="145" r="3" fill="#fbbf24"/>
+  
+  <!-- Construction crane -->
+  <rect x="320" y="50" width="8" height="120" fill="#f97316"/>
+  <rect x="280" y="50" width="80" height="8" fill="#f97316"/>
+  <line x1="290" y1="58" x2="290" y2="100" stroke="#64748b" stroke-width="2"/>
+  
+  <!-- Timeline bar -->
+  <rect x="30" y="185" width="340" height="12" fill="#e5e7eb" rx="3"/>
+  
+  <!-- Phase 1 -->
+  <rect x="30" y="185" width="80" height="12" fill="#ef4444" rx="3"/>
+  <text x="70" y="208" text-anchor="middle" font-size="8" fill="#dc2626" font-weight="bold">10 dní: P1</text>
+  
+  <!-- Phase 2 -->
+  <rect x="110" y="185" width="65" height="12" fill="#f97316"/>
+  <text x="142" y="208" text-anchor="middle" font-size="8" fill="#ea580c" font-weight="bold">8 dní: P1+P2</text>
+  
+  <!-- Phase 3 -->
+  <rect x="175" y="185" width="55" height="12" fill="#22c55e"/>
+  <text x="202" y="208" text-anchor="middle" font-size="8" fill="#16a34a" font-weight="bold">7 dní: všichni</text>
+  
+  <!-- Worker groups -->
+  <g transform="translate(40, 140)">
+    <circle cx="10" cy="10" r="8" fill="#ef4444"/>
+    <text x="10" y="13" text-anchor="middle" font-size="8" fill="white" font-weight="bold">1</text>
+    <text x="10" y="0" text-anchor="middle" font-size="7" fill="#dc2626">60d</text>
+  </g>
+  
+  <g transform="translate(65, 140)">
+    <circle cx="10" cy="10" r="8" fill="#f97316"/>
+    <text x="10" y="13" text-anchor="middle" font-size="8" fill="white" font-weight="bold">2</text>
+    <text x="10" y="0" text-anchor="middle" font-size="7" fill="#ea580c">40d</text>
+  </g>
+  
+  <g transform="translate(90, 140)">
+    <circle cx="10" cy="10" r="8" fill="#22c55e"/>
+    <text x="10" y="13" text-anchor="middle" font-size="8" fill="white" font-weight="bold">3</text>
+    <text x="10" y="0" text-anchor="middle" font-size="7" fill="#16a34a">30d</text>
+  </g>
+  
+  <!-- Result -->
+  <rect x="310" y="100" width="80" height="45" fill="#7c3aed" rx="5"/>
+  <text x="350" y="117" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Celkem:</text>
+  <text x="350" y="137" text-anchor="middle" font-size="14" fill="white" font-weight="bold">≈ 25 dní</text>
+  
+  <!-- Title -->
+  <text x="200" y="18" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="bold">Příklad 8: Stavba domu – 3 fáze práce</text>
+</svg>
