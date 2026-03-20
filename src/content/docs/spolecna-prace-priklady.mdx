@@ -185,38 +185,47 @@ $$3 + 4,8 = 7,8 \text{ hodiny} = 7 \text{ h } 48 \text{ min}$$
 
 ---
 
-### Příklad 6: Práce se střídáním
+### Příklad 6: Část práce hotová
 
 **Zadání:**  
-Jedna trubka napouští bazén za **8 hodin**, jiná ho vypouští za **12 hodin**. Bazén je prázdný a omylem jsou otevřeny obě trubky. Za jak dlouho bude bazén plný?
+Tři kuchaři připraví banket za **6 hodin**. Po **2 hodinách** společné práce jeden kuchař odešel. Za jak dlouho zbývající dva kuchaři banket dokončí, pokud každý kuchař pracuje stejně rychle?
 
 <details>
 <summary>💡 Nápověda</summary>
 
-Pozor! Jedna trubka plní (+), druhá vypouští (−). Výkony se odečítají!
+Nejprve spočítej, kolik udělali všichni tři za 2 hodiny. Pak spočítej výkon dvou kuchařů a dobu na zbytek.
 
 </details>
 
 <details>
 <summary>✅ Řešení</summary>
 
-**Výkon za 1 hodinu:**
-- Napouštěcí trubka: $+\frac{1}{8}$ bazénu
-- Vypouštěcí trubka: $-\frac{1}{12}$ bazénu
+**Výkon všech tří za 1 hodinu:**
+$$\frac{1}{6} \text{ banketu}$$
 
-**Čistý výkon (co přibude za hodinu):**
-$$\frac{1}{8} - \frac{1}{12} = \frac{3}{24} - \frac{2}{24} = \frac{1}{24}$$
+**Výkon jednoho kuchaře:**
+$$\frac{1}{6} \div 3 = \frac{1}{18} \text{ banketu}$$
 
-**Čas naplnění:**
-$$t = \frac{1}{\frac{1}{24}} = 24 \text{ hodin}$$
+**Za první 2 hodiny (všichni tři):**
+$$2 \times \frac{1}{6} = \frac{2}{6} = \frac{1}{3} \text{ banketu}$$
 
-**Odpověď: Bazén se naplní za 24 hodin.**
+**Zbývá udělat:**
+$$1 - \frac{1}{3} = \frac{2}{3} \text{ banketu}$$
 
-> 💡 **Poučení:** Když se práce navzájem ruší (plnění × vypouštění), výkony odečítáme!
+**Výkon dvou kuchařů:**
+$$2 \times \frac{1}{18} = \frac{2}{18} = \frac{1}{9}$$
+
+**Čas na dokončení:**
+$$t = \frac{\frac{2}{3}}{\frac{1}{9}} = \frac{2}{3} \times 9 = 6 \text{ hodin}$$
+
+**Celkový čas:**
+$$2 + 6 = 8 \text{ hodin}$$
+
+**Odpověď: Banket bude hotový za 8 hodin od začátku.**
 
 </details>
 
-<SelfCheck client:load id="spolecna-stredni" label="Umím řešit úlohy s více pracovníky, se zpožděným startem i s protichůdnými procesy." />
+<SelfCheck client:load id="spolecna-stredni" label="Umím řešit úlohy s více pracovníky a se změnou počtu pracovníků." />
 
 ---
 
@@ -307,39 +316,48 @@ $$10 + 8 + 6{,}67 = 24{,}67 \text{ dní} \approx 25 \text{ dní}$$
 
 ---
 
-### Příklad 9: Kombinovaná úloha
+### Příklad 9: Dva stroje a přestávka
 
 **Zadání:**  
-Kohout naplní kádě za **20 minut**. Odtok vypustí plnou káď za **30 minut**. Káď je ze **čtvrtiny** plná a kohout i odtok jsou otevřené. Za jak dlouho bude káď úplně plná?
+Stroj A vyrobí zakázku za **5 hodin**, stroj B za **10 hodin**. Oba stroje začaly pracovat společně, ale po **2 hodinách** se stroj A porouchal a musel být **1 hodinu** opravován. Poté oba stroje pokračovaly až do dokončení. Za jak dlouho byla zakázka hotová?
 
 <details>
 <summary>💡 Nápověda</summary>
 
-Spočítej čistý výkon (přítok minus odtok) a použij ho na zbývajících ¾ kádě.
+Rozděl na 3 fáze: 1) oba pracují, 2) jen B pracuje, 3) oba pracují na zbytku.
 
 </details>
 
 <details>
 <summary>✅ Řešení</summary>
 
-**Výkon za 1 minutu:**
-- Kohout (přítok): $+\frac{1}{20}$ kádě
-- Odtok: $-\frac{1}{30}$ kádě
+**Výkon za 1 hodinu:**
+- Stroj A: $\frac{1}{5}$ zakázky
+- Stroj B: $\frac{1}{10}$ zakázky
 
-**Čistý výkon:**
-$$\frac{1}{20} - \frac{1}{30} = \frac{3}{60} - \frac{2}{60} = \frac{1}{60}$$
+**Fáze 1 (2 hodiny, oba stroje):**
+$$\text{Společný výkon: } \frac{1}{5} + \frac{1}{10} = \frac{2}{10} + \frac{1}{10} = \frac{3}{10}$$
+$$2 \times \frac{3}{10} = \frac{6}{10} = \frac{3}{5} \text{ zakázky}$$
 
-**Zbývá naplnit:**
-$$1 - \frac{1}{4} = \frac{3}{4} \text{ kádě}$$
+**Fáze 2 (1 hodina, jen stroj B):**
+$$1 \times \frac{1}{10} = \frac{1}{10} \text{ zakázky}$$
 
-**Čas na doplnění:**
-$$t = \frac{\frac{3}{4}}{\frac{1}{60}} = \frac{3}{4} \times 60 = 45 \text{ minut}$$
+**Hotovo po 3 hodinách:**
+$$\frac{3}{5} + \frac{1}{10} = \frac{6}{10} + \frac{1}{10} = \frac{7}{10} \text{ zakázky}$$
 
-**Odpověď: Káď bude plná za 45 minut.**
+**Zbývá:** $\frac{3}{10}$ zakázky
+
+**Fáze 3 (oba stroje na zbytku):**
+$$t = \frac{\frac{3}{10}}{\frac{3}{10}} = 1 \text{ hodina}$$
+
+**Celkový čas:**
+$$2 + 1 + 1 = 4 \text{ hodiny}$$
+
+**Odpověď: Zakázka byla hotová za 4 hodiny.**
 
 </details>
 
-<SelfCheck client:load id="spolecna-slozite" label="Zvládám i složité úlohy s více fázemi a kombinací plnění/vypouštění." />
+<SelfCheck client:load id="spolecna-slozite" label="Zvládám i složité úlohy s více fázemi a přerušením práce." />
 
 ---
 
@@ -349,7 +367,7 @@ $$t = \frac{\frac{3}{4}}{\frac{1}{60}} = \frac{3}{4} \times 60 = 45 \text{ minut
 |:-----|:----------|:-------|
 | 1 | Výkon = část práce za jednotku času | $v = \frac{1}{t}$ |
 | 2 | Společný výkon = součet výkonů | $v_s = v_1 + v_2 + ...$ |
-| 3 | Pokud se práce ruší → odečítáme | $v_s = v_1 - v_2$ |
+| 3 | Při změně pracovníků → přepočítej výkon | $v_s = v_1 + v_2 + ...$ |
 | 4 | Čas = práce / výkon | $t = \frac{\text{práce}}{v_s}$ |
 
 ---
