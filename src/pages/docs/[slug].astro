@@ -1,6 +1,7 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
 import { getCollection, render } from 'astro:content';
+import Img from '../../components/Img.astro';
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -15,5 +16,5 @@ const { Content } = await render(entry);
 ---
 
 <MainLayout title={entry.data.title}>
-  <Content />
+  <Content components={{ img: Img }} />
 </MainLayout>

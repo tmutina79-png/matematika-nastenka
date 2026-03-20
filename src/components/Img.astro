@@ -1,0 +1,19 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  class?: string;
+  onclick?: string;
+}
+
+const { src, alt, class: className = '', onclick } = Astro.props;
+
+// Get base URL and ensure proper path
+const baseUrl = import.meta.env.BASE_URL || '/';
+const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+
+// Build full image path
+const imgSrc = src.startsWith('/') ? `${base}${src}` : src;
+---
+
+<img src={imgSrc} alt={alt} class={className} onclick={onclick} />
