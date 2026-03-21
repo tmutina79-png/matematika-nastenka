@@ -210,8 +210,91 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 2: Kružnice – definice ===== -->
+    <!-- ===== SLIDE 2: Kde se s tím setkáš v praxi? ===== -->
     <div class="slide" data-slide="2">
+      <div class="slide-inner">
+        <h2>Kde se s tím setkáš v praxi?</h2>
+        <div class="cols">
+          <!-- WiFi router = kružnice -->
+          <div class="card" style="padding:1rem 1.2rem">
+            <h3 style="font-size:0.95rem;margin-bottom:0.5rem">📡 Dosah WiFi</h3>
+            <svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px;margin:0 auto;display:block">
+              <rect width="200" height="140" rx="8" fill="#f8fafc"/>
+              <rect x="94" y="60" width="12" height="16" fill="#374151" rx="2"/>
+              <line x1="97" y1="60" x2="94" y2="48" stroke="#374151" stroke-width="1.5"/>
+              <line x1="100" y1="60" x2="100" y2="45" stroke="#374151" stroke-width="1.5"/>
+              <line x1="103" y1="60" x2="106" y2="48" stroke="#374151" stroke-width="1.5"/>
+              <circle cx="100" cy="68" r="20" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="4,2"/>
+              <circle cx="100" cy="68" r="38" fill="none" stroke="#eab308" stroke-width="2" stroke-dasharray="4,2"/>
+              <circle cx="100" cy="68" r="55" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.6"/>
+              <text x="100" y="135" text-anchor="middle" font-size="11" fill="#6366f1" font-weight="600" font-family="Inter">= kružnice</text>
+            </svg>
+          </div>
+          <!-- Studna = osa úsečky -->
+          <div class="card" style="padding:1rem 1.2rem">
+            <h3 style="font-size:0.95rem;margin-bottom:0.5rem">🏠 Kde vykopat studnu?</h3>
+            <svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px;margin:0 auto;display:block">
+              <rect width="200" height="140" rx="8" fill="#f0fdf4"/>
+              <rect x="30" y="55" width="26" height="22" fill="#fbbf24"/>
+              <polygon points="30,55 43,42 56,55" fill="#dc2626"/>
+              <rect x="39" y="62" width="8" height="15" fill="#78350f"/>
+              <text x="43" y="92" text-anchor="middle" font-size="11" fill="#1e293b" font-weight="bold" font-family="Inter">A</text>
+              <rect x="140" y="55" width="26" height="22" fill="#fbbf24"/>
+              <polygon points="140,55 153,42 166,55" fill="#dc2626"/>
+              <rect x="149" y="62" width="8" height="15" fill="#78350f"/>
+              <text x="153" y="92" text-anchor="middle" font-size="11" fill="#1e293b" font-weight="bold" font-family="Inter">B</text>
+              <line x1="98" y1="30" x2="98" y2="115" stroke="#6366f1" stroke-width="3" stroke-dasharray="8,4"/>
+              <circle cx="98" cy="68" r="7" fill="#0ea5e9" stroke="#0369a1" stroke-width="1.5"/>
+              <text x="98" y="71" text-anchor="middle" font-size="7" fill="white" font-weight="bold" font-family="Inter">💧</text>
+              <text x="98" y="135" text-anchor="middle" font-size="11" fill="#6366f1" font-weight="600" font-family="Inter">= osa úsečky</text>
+            </svg>
+          </div>
+        </div>
+        <div class="cols">
+          <!-- Koleje = rovnoběžky -->
+          <div class="card" style="padding:1rem 1.2rem">
+            <h3 style="font-size:0.95rem;margin-bottom:0.5rem">🛤️ Ochranné pásmo tratě</h3>
+            <svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px;margin:0 auto;display:block">
+              <rect width="200" height="140" rx="8" fill="#f8fafc"/>
+              <rect x="10" y="62" width="180" height="16" fill="#94a3b8" rx="2"/>
+              <line x1="30" y1="66" x2="30" y2="74" stroke="#64748b" stroke-width="2"/>
+              <line x1="60" y1="66" x2="60" y2="74" stroke="#64748b" stroke-width="2"/>
+              <line x1="90" y1="66" x2="90" y2="74" stroke="#64748b" stroke-width="2"/>
+              <line x1="120" y1="66" x2="120" y2="74" stroke="#64748b" stroke-width="2"/>
+              <line x1="150" y1="66" x2="150" y2="74" stroke="#64748b" stroke-width="2"/>
+              <line x1="10" y1="38" x2="190" y2="38" stroke="#e11d48" stroke-width="2.5" stroke-dasharray="8,4"/>
+              <line x1="10" y1="102" x2="190" y2="102" stroke="#e11d48" stroke-width="2.5" stroke-dasharray="8,4"/>
+              <line x1="50" y1="70" x2="50" y2="38" stroke="#d97706" stroke-width="1" stroke-dasharray="3,2"/>
+              <text x="56" y="55" font-size="9" fill="#d97706" font-weight="600" font-family="Inter">50 m</text>
+              <line x1="50" y1="70" x2="50" y2="102" stroke="#d97706" stroke-width="1" stroke-dasharray="3,2"/>
+              <text x="56" y="92" font-size="9" fill="#d97706" font-weight="600" font-family="Inter">50 m</text>
+              <text x="100" y="135" text-anchor="middle" font-size="11" fill="#6366f1" font-weight="600" font-family="Inter">= dvě rovnoběžky</text>
+            </svg>
+          </div>
+          <!-- Kamera = osa úhlu -->
+          <div class="card" style="padding:1rem 1.2rem">
+            <h3 style="font-size:0.95rem;margin-bottom:0.5rem">📹 Kamera na rohu</h3>
+            <svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px;margin:0 auto;display:block">
+              <rect width="200" height="140" rx="8" fill="#fefce8"/>
+              <line x1="30" y1="30" x2="30" y2="115" stroke="#78350f" stroke-width="4"/>
+              <line x1="30" y1="115" x2="180" y2="115" stroke="#78350f" stroke-width="4"/>
+              <polygon points="30,115 130,30" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-dasharray="8,4"/>
+              <line x1="30" y1="115" x2="130" y2="30" stroke="#6366f1" stroke-width="2.5" stroke-dasharray="8,4"/>
+              <circle cx="70" cy="82" r="6" fill="#0ea5e9" stroke="#0369a1" stroke-width="1.5"/>
+              <text x="70" y="85" text-anchor="middle" font-size="7" fill="white" font-weight="bold" font-family="Inter">📹</text>
+              <line x1="70" y1="82" x2="30" y2="82" stroke="#d97706" stroke-width="1" stroke-dasharray="3,2"/>
+              <line x1="70" y1="82" x2="70" y2="115" stroke="#d97706" stroke-width="1" stroke-dasharray="3,2"/>
+              <text x="48" y="78" font-size="8" fill="#d97706" font-weight="600" font-family="Inter">d</text>
+              <text x="75" y="103" font-size="8" fill="#d97706" font-weight="600" font-family="Inter">d</text>
+              <text x="100" y="135" text-anchor="middle" font-size="11" fill="#6366f1" font-weight="600" font-family="Inter">= osa úhlu</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SLIDE 3: Kružnice – definice ===== -->
+    <div class="slide" data-slide="3">
       <div class="slide-inner">
         <h2>2. Kružnice</h2>
         <div class="diagram">
@@ -232,8 +315,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 3: Kružnice – klíčové pojmy ===== -->
-    <div class="slide" data-slide="3">
+    <!-- ===== SLIDE 4: Kružnice – klíčové pojmy ===== -->
+    <div class="slide" data-slide="4">
       <div class="slide-inner">
         <h2>Kružnice – klíčové pojmy</h2>
         <div class="card" style="overflow-x:auto">
@@ -254,8 +337,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 4: Kružnice vs kruh ===== -->
-    <div class="slide" data-slide="4">
+    <!-- ===== SLIDE 5: Kružnice vs kruh ===== -->
+    <div class="slide" data-slide="5">
       <div class="slide-inner">
         <h2>⚠️ Pozor: Kružnice ≠ Kruh</h2>
         <div class="cols">
@@ -279,8 +362,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 5: KVÍZ – Kružnice ===== -->
-    <div class="slide" data-slide="5">
+    <!-- ===== SLIDE 6: KVÍZ – Kružnice ===== -->
+    <div class="slide" data-slide="6">
       <div class="slide-inner">
         <h2>🧠 Kvíz</h2>
         <p style="text-align:center;font-size:1.15rem"><strong>Co je kružnice?</strong></p>
@@ -302,8 +385,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 6: Osa úsečky – definice ===== -->
-    <div class="slide" data-slide="6">
+    <!-- ===== SLIDE 7: Osa úsečky – definice ===== -->
+    <div class="slide" data-slide="7">
       <div class="slide-inner">
         <h2>3. Osa úsečky</h2>
         <div class="diagram">
@@ -328,8 +411,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 7: Osa úsečky – vlastnosti + konstrukce ===== -->
-    <div class="slide" data-slide="7">
+    <!-- ===== SLIDE 8: Osa úsečky – vlastnosti + konstrukce ===== -->
+    <div class="slide" data-slide="8">
       <div class="slide-inner">
         <h2>Osa úsečky – vlastnosti a konstrukce</h2>
         <div class="card card-accent">
@@ -359,8 +442,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 8: KVÍZ – Osa úsečky ===== -->
-    <div class="slide" data-slide="8">
+    <!-- ===== SLIDE 9: KVÍZ – Osa úsečky ===== -->
+    <div class="slide" data-slide="9">
       <div class="slide-inner">
         <h2>🧠 Kvíz</h2>
         <p style="text-align:center;font-size:1.15rem"><strong>Jaký tvar má osa úsečky AB?</strong></p>
@@ -382,8 +465,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 9: Osa úhlu – definice ===== -->
-    <div class="slide" data-slide="9">
+    <!-- ===== SLIDE 10: Osa úhlu – definice ===== -->
+    <div class="slide" data-slide="10">
       <div class="slide-inner">
         <h2>4. Osa úhlu</h2>
         <div class="diagram">
@@ -427,8 +510,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 10: Osa úhlu – vlastnosti + konstrukce ===== -->
-    <div class="slide" data-slide="10">
+    <!-- ===== SLIDE 11: Osa úhlu – vlastnosti + konstrukce ===== -->
+    <div class="slide" data-slide="11">
       <div class="slide-inner">
         <h2>Osa úhlu – vlastnosti a konstrukce</h2>
         <div class="card card-accent">
@@ -457,8 +540,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 11: KVÍZ – Osa úhlu ===== -->
-    <div class="slide" data-slide="11">
+    <!-- ===== SLIDE 12: KVÍZ – Osa úhlu ===== -->
+    <div class="slide" data-slide="12">
       <div class="slide-inner">
         <h2>🧠 Kvíz</h2>
         <p style="text-align:center;font-size:1.15rem"><strong>Co platí pro každý bod ležící na ose úhlu?</strong></p>
@@ -480,8 +563,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 12: Rovnoběžky – definice ===== -->
-    <div class="slide" data-slide="12">
+    <!-- ===== SLIDE 13: Rovnoběžky – definice ===== -->
+    <div class="slide" data-slide="13">
       <div class="slide-inner">
         <h2>5. Rovnoběžky</h2>
         <div class="diagram">
@@ -503,8 +586,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 13: Rovnoběžky – vlastnosti ===== -->
-    <div class="slide" data-slide="13">
+    <!-- ===== SLIDE 14: Rovnoběžky – vlastnosti ===== -->
+    <div class="slide" data-slide="14">
       <div class="slide-inner">
         <h2>Rovnoběžky – vlastnosti</h2>
         <div class="card card-accent">
@@ -521,8 +604,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 14: KVÍZ – Rovnoběžky ===== -->
-    <div class="slide" data-slide="14">
+    <!-- ===== SLIDE 15: KVÍZ – Rovnoběžky ===== -->
+    <div class="slide" data-slide="15">
       <div class="slide-inner">
         <h2>🧠 Kvíz</h2>
         <p style="text-align:center;font-size:1.15rem"><strong>Kolik bodů tvoří množinu bodů ve vzdálenosti 3 cm od přímky?</strong></p>
@@ -544,8 +627,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 15: Přehled ===== -->
-    <div class="slide" data-slide="15">
+    <!-- ===== SLIDE 16: Přehled ===== -->
+    <div class="slide" data-slide="16">
       <div class="slide-inner">
         <h2>📋 Přehled množin bodů</h2>
         <div class="card" style="overflow-x:auto">
@@ -564,8 +647,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 16: Příklad 1 – Osa úsečky ===== -->
-    <div class="slide" data-slide="16">
+    <!-- ===== SLIDE 17: Příklad 1 – Osa úsečky ===== -->
+    <div class="slide" data-slide="17">
       <div class="slide-inner">
         <h2>📝 Příklad 1</h2>
         <div class="card">
@@ -593,8 +676,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 17: Příklad 2 – Osy úhlů ===== -->
-    <div class="slide" data-slide="17">
+    <!-- ===== SLIDE 18: Příklad 2 – Osy úhlů ===== -->
+    <div class="slide" data-slide="18">
       <div class="slide-inner">
         <h2>📝 Příklad 2</h2>
         <div class="card">
@@ -622,8 +705,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 18: Na co pozor ===== -->
-    <div class="slide" data-slide="18">
+    <!-- ===== SLIDE 19: Na co pozor ===== -->
+    <div class="slide" data-slide="19">
       <div class="slide-inner">
         <h2>⚠️ Na co si dát pozor</h2>
         <div class="card card-warning">
@@ -637,8 +720,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 19: KVÍZ – Průsečík os stran ===== -->
-    <div class="slide" data-slide="19">
+    <!-- ===== SLIDE 20: KVÍZ – Průsečík os stran ===== -->
+    <div class="slide" data-slide="20">
       <div class="slide-inner">
         <h2>🧠 Kvíz</h2>
         <p style="text-align:center;font-size:1.15rem"><strong>Průsečík os stran trojúhelníku je střed…</strong></p>
@@ -660,8 +743,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 20: KVÍZ – Vzdálenost od bodu ===== -->
-    <div class="slide" data-slide="20">
+    <!-- ===== SLIDE 21: KVÍZ – Vzdálenost od bodu ===== -->
+    <div class="slide" data-slide="21">
       <div class="slide-inner">
         <h2>🧠 Kvíz</h2>
         <p style="text-align:center;font-size:1.15rem"><strong>Jaká je množina bodů, které mají od bodu M vzdálenost 5 cm?</strong></p>
@@ -683,8 +766,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 21: KVÍZ – Kružnice opsaná ===== -->
-    <div class="slide" data-slide="21">
+    <!-- ===== SLIDE 22: KVÍZ – Kružnice opsaná ===== -->
+    <div class="slide" data-slide="22">
       <div class="slide-inner">
         <h2>🧠 Kvíz</h2>
         <p style="text-align:center;font-size:1.15rem"><strong>Kde leží střed kružnice opsané trojúhelníku?</strong></p>
@@ -706,8 +789,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 22: KVÍZ – Kružnice vepsaná ===== -->
-    <div class="slide" data-slide="22">
+    <!-- ===== SLIDE 23: KVÍZ – Kružnice vepsaná ===== -->
+    <div class="slide" data-slide="23">
       <div class="slide-inner">
         <h2>🧠 Kvíz</h2>
         <p style="text-align:center;font-size:1.15rem"><strong>Kde leží střed kružnice vepsané trojúhelníku?</strong></p>
@@ -729,8 +812,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 23: KVÍZ – Osy souměrnosti ===== -->
-    <div class="slide" data-slide="23">
+    <!-- ===== SLIDE 24: KVÍZ – Osy souměrnosti ===== -->
+    <div class="slide" data-slide="24">
       <div class="slide-inner">
         <h2>🧠 Kvíz</h2>
         <p style="text-align:center;font-size:1.15rem"><strong>Kolik os souměrnosti má kružnice?</strong></p>
@@ -752,8 +835,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
       </div>
     </div>
 
-    <!-- ===== SLIDE 24: Shrnutí ===== -->
-    <div class="slide" data-slide="24">
+    <!-- ===== SLIDE 25: Shrnutí ===== -->
+    <div class="slide" data-slide="25">
       <div class="slide-inner">
         <h2>✅ Shrnutí</h2>
         <div class="card card-accent">
@@ -776,7 +859,7 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
   <div class="nav-bar">
     <button class="nav-btn" id="prevBtn" onclick="goSlide(-1)">← Zpět</button>
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-    <span class="slide-counter" id="slideCounter">1 / 25</span>
+    <span class="slide-counter" id="slideCounter">1 / 26</span>
     <button class="nav-btn" id="nextBtn" onclick="goSlide(1)">Další →</button>
   </div>
 
