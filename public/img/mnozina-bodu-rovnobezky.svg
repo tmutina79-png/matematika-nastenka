@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="500" height="400" fill="url(#bg)"/>
+  
+  <!-- Přímka p (daná) -->
+  <line x1="30" y1="200" x2="470" y2="200" stroke="#fbbf24" stroke-width="4"/>
+  <text x="475" y="205" fill="#fbbf24" font-size="16" font-weight="bold">p</text>
+  
+  <!-- Rovnoběžka nahoře - vzdálenost d -->
+  <line x1="30" y1="120" x2="470" y2="120" stroke="#818cf8" stroke-width="3" stroke-dasharray="10,5"/>
+  <text x="475" y="125" fill="#818cf8" font-size="14">p₁</text>
+  
+  <!-- Rovnoběžka dole - vzdálenost d -->
+  <line x1="30" y1="280" x2="470" y2="280" stroke="#818cf8" stroke-width="3" stroke-dasharray="10,5"/>
+  <text x="475" y="285" fill="#818cf8" font-size="14">p₂</text>
+  
+  <!-- Vzdálenost d (nahoře) -->
+  <line x1="100" y1="120" x2="100" y2="200" stroke="#34d399" stroke-width="2"/>
+  <circle cx="100" cy="120" r="3" fill="#34d399"/>
+  <circle cx="100" cy="200" r="3" fill="#34d399"/>
+  <text x="85" y="165" fill="#34d399" font-size="14" font-weight="bold">d</text>
+  
+  <!-- Vzdálenost d (dole) -->
+  <line x1="100" y1="200" x2="100" y2="280" stroke="#34d399" stroke-width="2"/>
+  <circle cx="100" cy="280" r="3" fill="#34d399"/>
+  <text x="85" y="245" fill="#34d399" font-size="14" font-weight="bold">d</text>
+  
+  <!-- Body na rovnoběžkách -->
+  <circle cx="200" cy="120" r="5" fill="#f87171"/>
+  <text x="210" y="115" fill="#f87171" font-size="14">X₁</text>
+  
+  <circle cx="300" cy="120" r="5" fill="#f87171"/>
+  <text x="310" y="115" fill="#f87171" font-size="14">X₂</text>
+  
+  <circle cx="250" cy="280" r="5" fill="#f87171"/>
+  <text x="260" y="295" fill="#f87171" font-size="14">X₃</text>
+  
+  <circle cx="380" cy="280" r="5" fill="#f87171"/>
+  <text x="390" y="295" fill="#f87171" font-size="14">X₄</text>
+  
+  <!-- Značky kolmosti -->
+  <rect x="100" y="188" width="10" height="10" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+  <rect x="100" y="200" width="10" height="10" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+  
+  <!-- Titulek -->
+  <text x="250" y="45" text-anchor="middle" fill="#e2e8f0" font-size="20" font-weight="bold">Rovnoběžky s přímkou p</text>
+  
+  <!-- Definice -->
+  <text x="250" y="340" text-anchor="middle" fill="#94a3b8" font-size="13">Množina všech bodů X ve vzdálenosti d od přímky p</text>
+  <text x="250" y="360" text-anchor="middle" fill="#94a3b8" font-size="13">tvoří dvě rovnoběžky s přímkou p</text>
+</svg>

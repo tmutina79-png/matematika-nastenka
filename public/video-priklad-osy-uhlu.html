@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Osy úhlů – konstrukce</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    canvas { max-width: 100%; max-height: 100vh; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="1280" height="720"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    const DURATION = 35000;
+    let startTime = null;
+    let isPlaying = true;
+    let currentProgress = 0;
+    
+    const colors = {
+      bg1: '#0f172a', bg2: '#1e293b',
+      purple: '#818cf8', yellow: '#fbbf24', green: '#34d399',
+      red: '#f87171', text: '#e2e8f0', textDim: '#94a3b8',
+      blue: '#60a5fa', orange: '#fb923c', pink: '#f472b6'
+    };
+    
+    // Průsečík V a směry přímek
+    const vx = 640, vy = 380;
+    const angle1 = -0.35; // úhel přímky p
+    const angle2 = 0.55;  // úhel přímky q
+    const lineLen = 400;
+    
+    // Koncové body přímek
+    const p1 = { x: vx - lineLen * Math.cos(angle1), y: vy - lineLen * Math.sin(angle1) };
+    const p2 = { x: vx + lineLen * Math.cos(angle1), y: vy + lineLen * Math.sin(angle1) };
+    const q1 = { x: vx - lineLen * Math.cos(angle2), y: vy - lineLen * Math.sin(angle2) };
+    const q2 = { x: vx + lineLen * Math.cos(angle2), y: vy + lineLen * Math.sin(angle2) };
+    
+    // Osy úhlů (půlí úhly)
+    const osaAngle1 = (angle1 + angle2) / 2;
+    const osaAngle2 = osaAngle1 + Math.PI / 2;
+    
+    // Bod X na ose úhlu
+    const xDist = 150;
+    const pointX = { x: vx + xDist * Math.cos(osaAngle1), y: vy + xDist * Math.sin(osaAngle1) };
+    
+    // Funkce pro kolmou patu bodu na přímku
+    function perpendicularFoot(px, py, lineAngle, linePx, linePy) {
+      // Směrový vektor přímky
+      const dx = Math.cos(lineAngle);
+      const dy = Math.sin(lineAngle);
+      // Vektor z bodu přímky k bodu P
+      const vx = px - linePx;
+      const vy = py - linePy;
+      // Projekce
+      const t = vx * dx + vy * dy;
+      return { x: linePx + t * dx, y: linePy + t * dy };
+    }
+    
+    // Paty kolmic od X k přímkám p a q
+    const footP = perpendicularFoot(pointX.x, pointX.y, angle1, vx, vy);
+    const footQ = perpendicularFoot(pointX.x, pointX.y, angle2, vx, vy);
+    
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function easeInOut(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
+    
+    function drawBackground() {
+      const gradient = ctx.createLinearGradient(0, 0, W, H);
+      gradient.addColorStop(0, colors.bg1);
+      gradient.addColorStop(1, colors.bg2);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, W, H);
+    }
+    
+    function drawText(text, x, y, size, color, align = 'center', alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.font = `bold ${size}px system-ui`;
+      ctx.textAlign = align;
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+    
+    function drawLine(x1, y1, x2, y2, color, lineWidth = 3, alpha = 1, dash = []) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.setLineDash(dash);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
+    function drawFilledCircle(x, y, r, color, alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    
+    function drawArc(cx, cy, r, startAngle, endAngle, color, lineWidth = 2, alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, startAngle, endAngle);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
+    function drawRightAngle(x, y, angle, size, color, alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(size, 0);
+      ctx.lineTo(size, -size);
+      ctx.lineTo(0, -size);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
+    function render(progress) {
+      drawBackground();
+      
+      // Zadání vlevo nahoře
+      ctx.save();
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(30, 30, 380, 100);
+      ctx.strokeStyle = colors.purple;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(30, 30, 380, 100);
+      ctx.restore();
+      drawText('📝 Zadání:', 50, 55, 18, colors.yellow, 'left');
+      drawText('Sestroj osy úhlů, které svírají', 50, 85, 16, colors.text, 'left');
+      drawText('dvě různoběžky p a q.', 50, 110, 16, colors.text, 'left');
+      
+      // Fáze 1: Titulek (0-7%)
+      if (progress < 0.07) {
+        const p = easeOut(progress / 0.07);
+        drawText('Osy úhlů', W/2, H/2 - 30, 48, colors.text, 'center', p);
+        drawText('Množina bodů stejně vzdálených od dvou různoběžek', W/2, H/2 + 30, 24, colors.textDim, 'center', p);
+      }
+      
+      // Fáze 2: Krok 1 – Přímky p a q (7-20%)
+      else if (progress < 0.20) {
+        const phase = (progress - 0.07) / 0.13;
+        
+        drawText('Krok 1: Dvě různoběžky p a q', W/2, 80, 28, colors.text);
+        
+        // Přímka p
+        if (phase > 0) {
+          const p1prog = Math.min(1, phase / 0.4);
+          const len = lineLen * easeOut(p1prog);
+          drawLine(vx - len * Math.cos(angle1), vy - len * Math.sin(angle1),
+                   vx + len * Math.cos(angle1), vy + len * Math.sin(angle1), colors.yellow, 4);
+        }
+        
+        if (phase > 0.3) {
+          const p2prog = Math.min(1, (phase - 0.3) / 0.2);
+          drawText('p', p2.x + 20, p2.y - 20, 24, colors.yellow, 'left', p2prog);
+        }
+        
+        // Přímka q
+        if (phase > 0.4) {
+          const p3prog = Math.min(1, (phase - 0.4) / 0.4);
+          const len = lineLen * easeOut(p3prog);
+          drawLine(vx - len * Math.cos(angle2), vy - len * Math.sin(angle2),
+                   vx + len * Math.cos(angle2), vy + len * Math.sin(angle2), colors.blue, 4);
+        }
+        
+        if (phase > 0.7) {
+          const p4prog = Math.min(1, (phase - 0.7) / 0.2);
+          drawText('q', q2.x + 20, q2.y + 10, 24, colors.blue, 'left', p4prog);
+        }
+        
+        // Průsečík V
+        if (phase > 0.8) {
+          const p5prog = easeOut((phase - 0.8) / 0.2);
+          drawFilledCircle(vx, vy, 10 * p5prog, colors.red);
+          drawText('V', vx - 25, vy - 20, 24, colors.red, 'center', p5prog);
+        }
+      }
+      
+      // Fáze 3: Krok 2 – Vyznač úhly (20-32%)
+      else if (progress < 0.32) {
+        const phase = (progress - 0.20) / 0.12;
+        
+        drawText('Krok 2: Přímky svírají 4 úhly', W/2, 80, 28, colors.text);
+        
+        // Přímky
+        drawLine(p1.x, p1.y, p2.x, p2.y, colors.yellow, 4);
+        drawLine(q1.x, q1.y, q2.x, q2.y, colors.blue, 4);
+        drawText('p', p2.x + 20, p2.y - 20, 24, colors.yellow);
+        drawText('q', q2.x + 20, q2.y + 10, 24, colors.blue);
+        drawFilledCircle(vx, vy, 10, colors.red);
+        drawText('V', vx - 25, vy - 20, 24, colors.red);
+        
+        // Úhly – obloučky
+        if (phase > 0) {
+          const p1prog = Math.min(1, phase / 0.25);
+          drawArc(vx, vy, 60, angle1, angle2, colors.purple, 3, p1prog * 0.8);
+          if (p1prog > 0.5) drawText('α', vx + 45, vy - 35, 20, colors.purple, 'center', (p1prog - 0.5) * 2);
+        }
+        
+        if (phase > 0.25) {
+          const p2prog = Math.min(1, (phase - 0.25) / 0.25);
+          drawArc(vx, vy, 50, angle2, angle1 + Math.PI, colors.green, 3, p2prog * 0.8);
+          if (p2prog > 0.5) drawText('β', vx - 50, vy - 30, 20, colors.green, 'center', (p2prog - 0.5) * 2);
+        }
+        
+        if (phase > 0.5) {
+          const p3prog = Math.min(1, (phase - 0.5) / 0.25);
+          drawArc(vx, vy, 60, angle1 + Math.PI, angle2 + Math.PI, colors.purple, 3, p3prog * 0.5);
+        }
+        
+        if (phase > 0.75) {
+          const p4prog = Math.min(1, (phase - 0.75) / 0.25);
+          drawArc(vx, vy, 50, angle2 + Math.PI, angle1 + 2*Math.PI, colors.green, 3, p4prog * 0.5);
+        }
+      }
+      
+      // Fáze 4: Krok 3 – Osa o₁ (32-47%)
+      else if (progress < 0.47) {
+        const phase = (progress - 0.32) / 0.15;
+        
+        drawText('Krok 3: Osa o₁ – půlí úhel α', W/2, 80, 28, colors.text);
+        
+        // Přímky (ztlumené)
+        drawLine(p1.x, p1.y, p2.x, p2.y, colors.yellow, 4, 0.5);
+        drawLine(q1.x, q1.y, q2.x, q2.y, colors.blue, 4, 0.5);
+        drawText('p', p2.x + 20, p2.y - 20, 24, colors.yellow, 'center', 0.5);
+        drawText('q', q2.x + 20, q2.y + 10, 24, colors.blue, 'center', 0.5);
+        drawFilledCircle(vx, vy, 10, colors.red);
+        drawText('V', vx - 25, vy - 20, 24, colors.red);
+        
+        // Úhel α
+        drawArc(vx, vy, 60, angle1, angle2, colors.purple, 3, 0.8);
+        drawText('α', vx + 45, vy - 35, 20, colors.purple);
+        
+        // Osa o₁
+        if (phase > 0) {
+          const p1prog = Math.min(1, phase / 0.6);
+          const len = 300 * easeOut(p1prog);
+          drawLine(vx - len * Math.cos(osaAngle1), vy - len * Math.sin(osaAngle1),
+                   vx + len * Math.cos(osaAngle1), vy + len * Math.sin(osaAngle1), colors.green, 4);
+        }
+        
+        if (phase > 0.5) {
+          const p2prog = easeOut((phase - 0.5) / 0.3);
+          const ox = vx + 250 * Math.cos(osaAngle1);
+          const oy = vy + 250 * Math.sin(osaAngle1);
+          drawText('o₁', ox + 15, oy - 20, 26, colors.green, 'left', p2prog);
+        }
+        
+        // Značky půlení
+        if (phase > 0.7) {
+          const p3prog = easeOut((phase - 0.7) / 0.3);
+          drawArc(vx, vy, 40, angle1, osaAngle1, colors.pink, 2, p3prog);
+          drawArc(vx, vy, 45, osaAngle1, angle2, colors.pink, 2, p3prog);
+        }
+      }
+      
+      // Fáze 5: Krok 4 – Osa o₂ (47-60%)
+      else if (progress < 0.60) {
+        const phase = (progress - 0.47) / 0.13;
+        
+        drawText('Krok 4: Osa o₂ – kolmá na o₁', W/2, 80, 28, colors.text);
+        
+        // Přímky (ztlumené)
+        drawLine(p1.x, p1.y, p2.x, p2.y, colors.yellow, 4, 0.4);
+        drawLine(q1.x, q1.y, q2.x, q2.y, colors.blue, 4, 0.4);
+        drawFilledCircle(vx, vy, 10, colors.red);
+        drawText('V', vx - 25, vy - 20, 24, colors.red);
+        
+        // Osa o₁
+        drawLine(vx - 300 * Math.cos(osaAngle1), vy - 300 * Math.sin(osaAngle1),
+                 vx + 300 * Math.cos(osaAngle1), vy + 300 * Math.sin(osaAngle1), colors.green, 4);
+        const ox1 = vx + 250 * Math.cos(osaAngle1);
+        const oy1 = vy + 250 * Math.sin(osaAngle1);
+        drawText('o₁', ox1 + 15, oy1 - 20, 26, colors.green);
+        
+        // Osa o₂
+        if (phase > 0) {
+          const p1prog = Math.min(1, phase / 0.6);
+          const len = 300 * easeOut(p1prog);
+          drawLine(vx - len * Math.cos(osaAngle2), vy - len * Math.sin(osaAngle2),
+                   vx + len * Math.cos(osaAngle2), vy + len * Math.sin(osaAngle2), colors.orange, 4);
+        }
+        
+        if (phase > 0.5) {
+          const p2prog = easeOut((phase - 0.5) / 0.3);
+          const ox2 = vx + 250 * Math.cos(osaAngle2);
+          const oy2 = vy + 250 * Math.sin(osaAngle2);
+          drawText('o₂', ox2 + 15, oy2 - 20, 26, colors.orange, 'left', p2prog);
+        }
+        
+        // Značka kolmosti
+        if (phase > 0.7) {
+          const p3prog = easeOut((phase - 0.7) / 0.3);
+          drawRightAngle(vx, vy, osaAngle1, 15, colors.textDim, p3prog);
+        }
+      }
+      
+      // Fáze 6: Krok 5 – Bod X a kolmice (60-82%)
+      else if (progress < 0.82) {
+        const phase = (progress - 0.60) / 0.22;
+        
+        drawText('Krok 5: Bod X na ose – kolmice k přímkám p a q', W/2, 80, 28, colors.text);
+        
+        // Přímky
+        drawLine(p1.x, p1.y, p2.x, p2.y, colors.yellow, 4, 0.6);
+        drawLine(q1.x, q1.y, q2.x, q2.y, colors.blue, 4, 0.6);
+        drawText('p', p2.x + 20, p2.y - 20, 24, colors.yellow, 'center', 0.6);
+        drawText('q', q2.x + 20, q2.y + 10, 24, colors.blue, 'center', 0.6);
+        drawFilledCircle(vx, vy, 8, colors.red, 0.5);
+        
+        // Obě osy
+        drawLine(vx - 300 * Math.cos(osaAngle1), vy - 300 * Math.sin(osaAngle1),
+                 vx + 300 * Math.cos(osaAngle1), vy + 300 * Math.sin(osaAngle1), colors.green, 4);
+        drawLine(vx - 300 * Math.cos(osaAngle2), vy - 300 * Math.sin(osaAngle2),
+                 vx + 300 * Math.cos(osaAngle2), vy + 300 * Math.sin(osaAngle2), colors.orange, 4);
+        
+        // Bod X
+        if (phase > 0) {
+          const p1prog = Math.min(1, phase / 0.2);
+          drawFilledCircle(pointX.x, pointX.y, 12 * easeOut(p1prog), colors.pink);
+          if (p1prog > 0.5) drawText('X', pointX.x + 18, pointX.y - 18, 24, colors.pink, 'left', (p1prog - 0.5) * 2);
+        }
+        
+        // Kolmice k přímce p
+        if (phase > 0.25) {
+          const p2prog = Math.min(1, (phase - 0.25) / 0.25);
+          const prog = easeOut(p2prog);
+          const dx = footP.x - pointX.x;
+          const dy = footP.y - pointX.y;
+          drawLine(pointX.x, pointX.y, pointX.x + dx * prog, pointX.y + dy * prog, colors.yellow, 3, 0.9, [8, 4]);
+          if (p2prog > 0.8) {
+            drawFilledCircle(footP.x, footP.y, 6, colors.yellow);
+            drawRightAngle(footP.x, footP.y, angle1, 12, colors.yellow, (p2prog - 0.8) * 5);
+          }
+        }
+        
+        // Kolmice k přímce q
+        if (phase > 0.5) {
+          const p3prog = Math.min(1, (phase - 0.5) / 0.25);
+          const prog = easeOut(p3prog);
+          const dx = footQ.x - pointX.x;
+          const dy = footQ.y - pointX.y;
+          drawLine(pointX.x, pointX.y, pointX.x + dx * prog, pointX.y + dy * prog, colors.blue, 3, 0.9, [8, 4]);
+          if (p3prog > 0.8) {
+            drawFilledCircle(footQ.x, footQ.y, 6, colors.blue);
+            drawRightAngle(footQ.x, footQ.y, angle2, 12, colors.blue, (p3prog - 0.8) * 5);
+          }
+        }
+        
+        // Vzdálenosti
+        if (phase > 0.75) {
+          const p4prog = easeOut((phase - 0.75) / 0.25);
+          const dist1 = Math.sqrt((pointX.x - footP.x)**2 + (pointX.y - footP.y)**2);
+          const dist2 = Math.sqrt((pointX.x - footQ.x)**2 + (pointX.y - footQ.y)**2);
+          
+          const midP = { x: (pointX.x + footP.x) / 2, y: (pointX.y + footP.y) / 2 };
+          const midQ = { x: (pointX.x + footQ.x) / 2, y: (pointX.y + footQ.y) / 2 };
+          
+          drawText('d', midP.x - 15, midP.y - 15, 20, colors.yellow, 'center', p4prog);
+          drawText('d', midQ.x + 15, midQ.y + 15, 20, colors.blue, 'center', p4prog);
+          
+          // Zvýraznění rovnosti
+          if (p4prog > 0.5) {
+            ctx.save();
+            ctx.globalAlpha = (p4prog - 0.5) * 2;
+            ctx.fillStyle = 'rgba(52, 211, 153, 0.15)';
+            ctx.beginPath();
+            ctx.arc(pointX.x, pointX.y, 80, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        }
+      }
+      
+      // Fáze 7: Závěr (82-100%)
+      else {
+        const phase = (progress - 0.82) / 0.18;
+        
+        drawText('Výsledek: DVĚ OSY ÚHLŮ', W/2, 80, 28, colors.text);
+        
+        // Přímky (ztlumené)
+        drawLine(p1.x, p1.y, p2.x, p2.y, colors.yellow, 3, 0.3);
+        drawLine(q1.x, q1.y, q2.x, q2.y, colors.blue, 3, 0.3);
+        drawFilledCircle(vx, vy, 10, colors.red);
+        drawText('V', vx - 25, vy - 20, 24, colors.red);
+        
+        // Obě osy
+        drawLine(vx - 300 * Math.cos(osaAngle1), vy - 300 * Math.sin(osaAngle1),
+                 vx + 300 * Math.cos(osaAngle1), vy + 300 * Math.sin(osaAngle1), colors.green, 4);
+        drawLine(vx - 300 * Math.cos(osaAngle2), vy - 300 * Math.sin(osaAngle2),
+                 vx + 300 * Math.cos(osaAngle2), vy + 300 * Math.sin(osaAngle2), colors.orange, 4);
+        
+        const ox1 = vx + 250 * Math.cos(osaAngle1);
+        const oy1 = vy + 250 * Math.sin(osaAngle1);
+        const ox2 = vx + 250 * Math.cos(osaAngle2);
+        const oy2 = vy + 250 * Math.sin(osaAngle2);
+        drawText('o₁', ox1 + 15, oy1 - 20, 26, colors.green);
+        drawText('o₂', ox2 + 15, oy2 - 20, 26, colors.orange);
+        
+        // Bod X s kolmicemi
+        drawFilledCircle(pointX.x, pointX.y, 10, colors.pink);
+        drawText('X', pointX.x + 18, pointX.y - 18, 22, colors.pink);
+        drawLine(pointX.x, pointX.y, footP.x, footP.y, colors.yellow, 2, 0.7, [6, 3]);
+        drawLine(pointX.x, pointX.y, footQ.x, footQ.y, colors.blue, 2, 0.7, [6, 3]);
+        drawFilledCircle(footP.x, footP.y, 5, colors.yellow);
+        drawFilledCircle(footQ.x, footQ.y, 5, colors.blue);
+        
+        // Značka kolmosti os
+        drawRightAngle(vx, vy, osaAngle1, 15, colors.textDim);
+        
+        // Závěrečný text
+        if (phase > 0.2) {
+          const p1prog = easeOut((phase - 0.2) / 0.5);
+          
+          ctx.save();
+          ctx.globalAlpha = p1prog;
+          ctx.fillStyle = 'rgba(30, 41, 59, 0.95)';
+          ctx.fillRect(W/2 - 280, H - 170, 560, 120);
+          ctx.strokeStyle = colors.green;
+          ctx.lineWidth = 2;
+          ctx.strokeRect(W/2 - 280, H - 170, 560, 120);
+          ctx.restore();
+          
+          drawText('✓ Osy úhlů jsou DVĚ na sebe KOLMÉ přímky', W/2, H - 140, 22, colors.green, 'center', p1prog);
+          drawText('Každý bod na ose má STEJNOU vzdálenost', W/2, H - 110, 18, colors.text, 'center', p1prog);
+          drawText('od obou přímek p i q (kolmice mají stejnou délku)', W/2, H - 85, 18, colors.textDim, 'center', p1prog);
+        }
+      }
+      
+      // Progress bar
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(100, H - 25, W - 200, 6);
+      ctx.fillStyle = colors.purple;
+      ctx.fillRect(100, H - 25, (W - 200) * progress, 6);
+    }
+    
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      if (isPlaying) currentProgress = Math.min((timestamp - startTime) / DURATION, 1);
+      render(currentProgress);
+      if (currentProgress < 1 || !isPlaying) requestAnimationFrame(animate);
+      else render(1);
+    }
+    
+    window.addEventListener('message', (e) => {
+      switch (e.data) {
+        case 'toggle':
+          if (currentProgress >= 1) { startTime = null; currentProgress = 0; isPlaying = true; }
+          else { isPlaying = !isPlaying; if (isPlaying) startTime = performance.now() - currentProgress * DURATION; }
+          requestAnimationFrame(animate);
+          break;
+        case 'stop': isPlaying = false; currentProgress = 0; startTime = null; render(0); break;
+        case 'rew': currentProgress = Math.max(0, currentProgress - 0.02); startTime = performance.now() - currentProgress * DURATION; render(currentProgress); break;
+        case 'fwd': currentProgress = Math.min(1, currentProgress + 0.02); startTime = performance.now() - currentProgress * DURATION; render(currentProgress); break;
+      }
+    });
+    
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

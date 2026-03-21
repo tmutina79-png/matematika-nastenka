@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1b4b"/>
+      <stop offset="100%" style="stop-color:#312e81"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="320" height="180" fill="url(#bg)" rx="8"/>
+  
+  <!-- Dekorativní prvky - množiny bodů -->
+  <circle cx="80" cy="90" r="35" fill="none" stroke="#818cf8" stroke-width="2" opacity="0.7"/>
+  <circle cx="80" cy="90" r="3" fill="#fbbf24"/>
+  
+  <line x1="150" y1="50" x2="150" y2="130" stroke="#818cf8" stroke-width="2" opacity="0.7"/>
+  <line x1="120" y1="90" x2="180" y2="90" stroke="#f87171" stroke-width="2"/>
+  <circle cx="120" cy="90" r="3" fill="#f87171"/>
+  <circle cx="180" cy="90" r="3" fill="#f87171"/>
+  
+  <line x1="220" y1="130" x2="260" y2="50" stroke="#34d399" stroke-width="2"/>
+  <line x1="220" y1="130" x2="280" y2="90" stroke="#34d399" stroke-width="2"/>
+  <line x1="220" y1="130" x2="270" y2="40" stroke="#818cf8" stroke-width="2" stroke-dasharray="4,2"/>
+  
+  <!-- Play button -->
+  <circle cx="160" cy="90" r="25" fill="rgba(255,255,255,0.15)"/>
+  <polygon points="153,78 153,102 173,90" fill="white"/>
+  
+  <!-- Title -->
+  <text x="160" y="165" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="bold">Množina bodů – Princip</text>
+</svg>

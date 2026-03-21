@@ -4,11 +4,54 @@
    *
    * Props:
    *   questions – array of { question, options, correct, explanation? }
+   *   questionBank – array of arrays, each inner array contains variant questions for one slot
+   *                  e.g. [[q1a, q1b, q1c], [q2a, q2b], ...] - picks one from each group
+   *   shuffleOptions – if true, shuffles the order of options (and adjusts correct index)
    */
 
   const labels = ['A', 'B', 'C', 'D'];
 
-  let { questions = [] } = $props();
+  let { questions = [], questionBank = [], shuffleOptions = true } = $props();
+
+  // Fisher-Yates shuffle
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Shuffle options and return new question with adjusted correct index
+  function shuffleQuestionOptions(q) {
+    if (!shuffleOptions || !q.options) return q;
+    
+    const indexed = q.options.map((opt, idx) => ({ opt, wasCorrect: idx === q.correct }));
+    const shuffled = shuffle(indexed);
+    const newCorrect = shuffled.findIndex(item => item.wasCorrect);
+    
+    return {
+      ...q,
+      options: shuffled.map(item => item.opt),
+      correct: newCorrect
+    };
+  }
+
+  // Generate quiz questions from bank or use provided questions
+  function generateQuestions() {
+    if (questionBank.length > 0) {
+      // Pick one random question from each group in the bank
+      return questionBank.map(group => {
+        const picked = group[Math.floor(Math.random() * group.length)];
+        return shuffleQuestionOptions(picked);
+      });
+    }
+    // Fallback to regular questions (also shuffle options)
+    return questions.map(q => shuffleQuestionOptions(q));
+  }
+
+  let activeQuestions = $state(generateQuestions());
 
   let current = $state(0);
   let selected = $state(-1);

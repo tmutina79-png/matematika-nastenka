@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Konstrukce osy úsečky</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    canvas { max-width: 100%; max-height: 100vh; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="1280" height="720"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    const DURATION = 25000;
+    let startTime = null;
+    let isPlaying = true;
+    let currentProgress = 0;
+    
+    const colors = {
+      bg1: '#0f172a', bg2: '#1e293b',
+      purple: '#818cf8', yellow: '#fbbf24', green: '#34d399',
+      red: '#f87171', text: '#e2e8f0', textDim: '#94a3b8',
+      blue: '#60a5fa', orange: '#fb923c'
+    };
+    
+    // Konstrukce - body
+    const ax = 400, ay = 400;
+    const bx = 760, by = 400;
+    const r = 240; // poloměr > |AB|/2
+    
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function easeInOut(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
+    
+    function drawBackground() {
+      const gradient = ctx.createLinearGradient(0, 0, W, H);
+      gradient.addColorStop(0, colors.bg1);
+      gradient.addColorStop(1, colors.bg2);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, W, H);
+    }
+    
+    function drawText(text, x, y, size, color, align = 'center', alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.font = `bold ${size}px system-ui`;
+      ctx.textAlign = align;
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+    
+    function drawLine(x1, y1, x2, y2, color, lineWidth = 3, alpha = 1, dash = []) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.setLineDash(dash);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
+    function drawFilledCircle(x, y, r, color, alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    
+    function drawPartialArc(cx, cy, r, startAngle, endAngle, color, lineWidth = 2, alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, startAngle, endAngle);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
+    // Vypočítání průsečíků dvou kružnic
+    function getCircleIntersections(x1, y1, r1, x2, y2, r2) {
+      const d = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+      const a = (r1*r1 - r2*r2 + d*d) / (2*d);
+      const h = Math.sqrt(r1*r1 - a*a);
+      const px = x1 + a*(x2-x1)/d;
+      const py = y1 + a*(y2-y1)/d;
+      return [
+        { x: px + h*(y2-y1)/d, y: py - h*(x2-x1)/d },
+        { x: px - h*(y2-y1)/d, y: py + h*(x2-x1)/d }
+      ];
+    }
+    
+    const intersections = getCircleIntersections(ax, ay, r, bx, by, r);
+    const P = intersections[0];
+    const Q = intersections[1];
+    
+    function render(progress) {
+      drawBackground();
+      
+      // Zadání vlevo nahoře
+      ctx.save();
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(30, 30, 320, 100);
+      ctx.strokeStyle = colors.purple;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(30, 30, 320, 100);
+      ctx.restore();
+      drawText('📝 Zadání:', 50, 55, 18, colors.yellow, 'left');
+      drawText('Sestroj osu úsečky AB,', 50, 85, 16, colors.text, 'left');
+      drawText('kde |AB| = 6 cm', 50, 110, 16, colors.text, 'left');
+      
+      // Fáze 1: Titulek (0-8%)
+      if (progress < 0.08) {
+        const p = easeOut(progress / 0.08);
+        drawText('Konstrukce osy úsečky', W/2, H/2 - 30, 48, colors.text, 'center', p);
+        drawText('Krok za krokem', W/2, H/2 + 30, 28, colors.textDim, 'center', p);
+      }
+      
+      // Fáze 2: Krok 1 – Narýsuj úsečku AB (8-25%)
+      else if (progress < 0.25) {
+        const phase = (progress - 0.08) / 0.17;
+        
+        drawText('Krok 1: Narýsuj úsečku AB = 6 cm', W/2, 80, 28, colors.text);
+        
+        // Body A a B
+        if (phase > 0) {
+          const p1 = Math.min(1, phase / 0.3);
+          drawFilledCircle(ax, ay, 8 * easeOut(p1), colors.yellow);
+          drawText('A', ax - 20, ay + 30, 24, colors.yellow, 'center', p1);
+        }
+        
+        if (phase > 0.2) {
+          const p2 = Math.min(1, (phase - 0.2) / 0.3);
+          drawFilledCircle(bx, by, 8 * easeOut(p2), colors.yellow);
+          drawText('B', bx + 20, by + 30, 24, colors.yellow, 'center', p2);
+        }
+        
+        // Úsečka AB
+        if (phase > 0.4) {
+          const p3 = Math.min(1, (phase - 0.4) / 0.4);
+          const len = (bx - ax) * easeOut(p3);
+          drawLine(ax, ay, ax + len, ay, colors.yellow, 4);
+        }
+        
+        // Kóta
+        if (phase > 0.8) {
+          const p4 = easeOut((phase - 0.8) / 0.2);
+          drawText('6 cm', (ax + bx) / 2, ay + 60, 20, colors.textDim, 'center', p4);
+        }
+      }
+      
+      // Fáze 3: Krok 2 – Kružnice k₁ z bodu A (25-45%)
+      else if (progress < 0.45) {
+        const phase = (progress - 0.25) / 0.2;
+        
+        drawText('Krok 2: Kružnice k₁(A, r) kde r > 3 cm', W/2, 80, 28, colors.text);
+        
+        // Předchozí konstrukce
+        drawLine(ax, ay, bx, by, colors.yellow, 4);
+        drawFilledCircle(ax, ay, 8, colors.yellow);
+        drawFilledCircle(bx, by, 8, colors.yellow);
+        drawText('A', ax - 20, ay + 30, 24, colors.yellow);
+        drawText('B', bx + 20, by + 30, 24, colors.yellow);
+        
+        // Kružnice k₁
+        if (phase > 0) {
+          const p1 = Math.min(1, phase / 0.7);
+          const angle = easeOut(p1) * Math.PI * 2;
+          drawPartialArc(ax, ay, r, 0, angle, colors.purple, 3, 0.8);
+        }
+        
+        // Poloměr
+        if (phase > 0.3) {
+          const p2 = Math.min(1, (phase - 0.3) / 0.3);
+          drawLine(ax, ay, ax + r * 0.7 * p2, ay - r * 0.7 * p2, colors.green, 2, p2 * 0.6, [5, 3]);
+          if (p2 > 0.5) {
+            drawText('r = 4 cm', ax + r * 0.35 + 30, ay - r * 0.35, 16, colors.green, 'left', (p2 - 0.5) * 2);
+          }
+        }
+        
+        if (phase > 0.8) {
+          const p3 = easeOut((phase - 0.8) / 0.2);
+          drawText('k₁', ax - r - 25, ay, 22, colors.purple, 'center', p3);
+        }
+      }
+      
+      // Fáze 4: Krok 3 – Kružnice k₂ z bodu B (45-65%)
+      else if (progress < 0.65) {
+        const phase = (progress - 0.45) / 0.2;
+        
+        drawText('Krok 3: Kružnice k₂(B, r) se stejným poloměrem', W/2, 80, 28, colors.text);
+        
+        // Předchozí konstrukce
+        drawLine(ax, ay, bx, by, colors.yellow, 4);
+        drawFilledCircle(ax, ay, 8, colors.yellow);
+        drawFilledCircle(bx, by, 8, colors.yellow);
+        drawText('A', ax - 20, ay + 30, 24, colors.yellow);
+        drawText('B', bx + 20, by + 30, 24, colors.yellow);
+        drawPartialArc(ax, ay, r, 0, Math.PI * 2, colors.purple, 3, 0.8);
+        drawText('k₁', ax - r - 25, ay, 22, colors.purple);
+        
+        // Kružnice k₂
+        if (phase > 0) {
+          const p1 = Math.min(1, phase / 0.7);
+          const angle = easeOut(p1) * Math.PI * 2;
+          drawPartialArc(bx, by, r, 0, angle, colors.blue, 3, 0.8);
+        }
+        
+        if (phase > 0.8) {
+          const p2 = easeOut((phase - 0.8) / 0.2);
+          drawText('k₂', bx + r + 25, by, 22, colors.blue, 'center', p2);
+        }
+      }
+      
+      // Fáze 5: Krok 4 – Průsečíky P a Q (65-80%)
+      else if (progress < 0.8) {
+        const phase = (progress - 0.65) / 0.15;
+        
+        drawText('Krok 4: Označ průsečíky P a Q', W/2, 80, 28, colors.text);
+        
+        // Předchozí konstrukce
+        drawLine(ax, ay, bx, by, colors.yellow, 4);
+        drawFilledCircle(ax, ay, 8, colors.yellow);
+        drawFilledCircle(bx, by, 8, colors.yellow);
+        drawText('A', ax - 20, ay + 30, 24, colors.yellow);
+        drawText('B', bx + 20, by + 30, 24, colors.yellow);
+        drawPartialArc(ax, ay, r, 0, Math.PI * 2, colors.purple, 3, 0.8);
+        drawPartialArc(bx, by, r, 0, Math.PI * 2, colors.blue, 3, 0.8);
+        drawText('k₁', ax - r - 25, ay, 22, colors.purple);
+        drawText('k₂', bx + r + 25, by, 22, colors.blue);
+        
+        // Průsečíky
+        if (phase > 0) {
+          const p1 = Math.min(1, phase / 0.5);
+          drawFilledCircle(P.x, P.y, 10 * easeOut(p1), colors.red);
+          drawFilledCircle(Q.x, Q.y, 10 * easeOut(p1), colors.red);
+        }
+        
+        if (phase > 0.4) {
+          const p2 = easeOut((phase - 0.4) / 0.3);
+          drawText('P', P.x + 20, P.y - 15, 24, colors.red, 'left', p2);
+          drawText('Q', Q.x + 20, Q.y + 20, 24, colors.red, 'left', p2);
+        }
+      }
+      
+      // Fáze 6: Krok 5 – Přímka PQ = osa (80-100%)
+      else {
+        const phase = (progress - 0.8) / 0.2;
+        
+        drawText('Krok 5: Spoj P a Q → OSA ÚSEČKY', W/2, 80, 28, colors.text);
+        
+        // Předchozí konstrukce (ztlumená)
+        drawLine(ax, ay, bx, by, colors.yellow, 4, 0.5);
+        drawFilledCircle(ax, ay, 8, colors.yellow, 0.7);
+        drawFilledCircle(bx, by, 8, colors.yellow, 0.7);
+        drawText('A', ax - 20, ay + 30, 24, colors.yellow, 'center', 0.7);
+        drawText('B', bx + 20, by + 30, 24, colors.yellow, 'center', 0.7);
+        drawPartialArc(ax, ay, r, 0, Math.PI * 2, colors.purple, 2, 0.3);
+        drawPartialArc(bx, by, r, 0, Math.PI * 2, colors.blue, 2, 0.3);
+        
+        // Průsečíky
+        drawFilledCircle(P.x, P.y, 10, colors.red);
+        drawFilledCircle(Q.x, Q.y, 10, colors.red);
+        drawText('P', P.x + 20, P.y - 15, 24, colors.red);
+        drawText('Q', Q.x + 20, Q.y + 20, 24, colors.red);
+        
+        // Osa úsečky
+        if (phase > 0) {
+          const p1 = Math.min(1, phase / 0.5);
+          // Prodloužená přímka
+          const dx = Q.x - P.x;
+          const dy = Q.y - P.y;
+          const len = Math.sqrt(dx*dx + dy*dy);
+          const ext = 150 * easeOut(p1);
+          drawLine(P.x - dx/len*ext, P.y - dy/len*ext, Q.x + dx/len*ext, Q.y + dy/len*ext, colors.green, 4, 1);
+        }
+        
+        // Střed S
+        if (phase > 0.4) {
+          const p2 = Math.min(1, (phase - 0.4) / 0.3);
+          const sx = (ax + bx) / 2;
+          const sy = (ay + by) / 2;
+          drawFilledCircle(sx, sy, 8 * easeOut(p2), colors.orange);
+          drawText('S', sx + 20, sy, 22, colors.orange, 'left', p2);
+        }
+        
+        // Značka kolmosti
+        if (phase > 0.6) {
+          const p3 = easeOut((phase - 0.6) / 0.2);
+          const sx = (ax + bx) / 2;
+          const sy = (ay + by) / 2;
+          ctx.save();
+          ctx.globalAlpha = p3;
+          ctx.strokeStyle = colors.textDim;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.rect(sx, sy - 15, 15, 15);
+          ctx.stroke();
+          ctx.restore();
+        }
+        
+        // Popisek
+        if (phase > 0.7) {
+          const p4 = easeOut((phase - 0.7) / 0.3);
+          drawText('o', (ax + bx) / 2 - 30, (ay + by) / 2 - 80, 28, colors.green, 'center', p4);
+          drawText('✓ Osa úsečky AB', W/2, H - 80, 32, colors.green, 'center', p4);
+        }
+      }
+      
+      // Progress bar
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(100, H - 25, W - 200, 6);
+      ctx.fillStyle = colors.purple;
+      ctx.fillRect(100, H - 25, (W - 200) * progress, 6);
+    }
+    
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      if (isPlaying) currentProgress = Math.min((timestamp - startTime) / DURATION, 1);
+      render(currentProgress);
+      if (currentProgress < 1 || !isPlaying) requestAnimationFrame(animate);
+      else render(1);
+    }
+    
+    window.addEventListener('message', (e) => {
+      switch (e.data) {
+        case 'toggle':
+          if (currentProgress >= 1) { startTime = null; currentProgress = 0; isPlaying = true; }
+          else { isPlaying = !isPlaying; if (isPlaying) startTime = performance.now() - currentProgress * DURATION; }
+          break;
+        case 'stop': isPlaying = false; currentProgress = 0; startTime = null; render(0); break;
+        case 'rew': currentProgress = Math.max(0, currentProgress - 0.01); startTime = performance.now() - currentProgress * DURATION; render(currentProgress); break;
+        case 'fwd': currentProgress = Math.min(1, currentProgress + 0.01); startTime = performance.now() - currentProgress * DURATION; render(currentProgress); break;
+      }
+    });
+    
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

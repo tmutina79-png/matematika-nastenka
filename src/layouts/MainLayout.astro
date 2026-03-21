@@ -12,15 +12,8 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
 /* ── Lesson navigation ── */
 const lessons = [
-  { slug: 'odmocniny', title: '1 – Odmocniny (sekunda)' },
-  { slug: 'umernost', title: '2 – Úměrnost (tercie)' },
-  { slug: 'funkce', title: '3 – Funkce (kvarta)' },
-  { slug: 'spolecna-prace', title: '4 – Společná práce' },
-  { slug: 'smesi', title: '5 – Směsi' },
-  { slug: 'lekce-1', title: '6 – Úvod do derivací' },
-  { slug: 'relativita', title: '7 – Teorie relativity 🔭' },
-  { slug: 'karel-capek', title: '8 – Karel Čapek 🖊️' },
-  { slug: 'python-text', title: '9 – Python: Kreslení textu 🐢' },
+  { slug: 'spolecna-prace', title: '1 – Společná práce' },
+  { slug: 'spolecna-prace-priklady', title: '2 – Příklady k procvičení' },
 ];
 ---
 
@@ -33,55 +26,100 @@ const lessons = [
     <title>{title} | Gymnázium – Studijní portál</title>
   </head>
 
-  <body class="min-h-screen flex flex-col">
+  <body class="min-h-screen">
     <!-- ====== Top bar ====== -->
-    <header class="bg-primary-700 text-white px-6 py-3 flex items-center justify-between shadow-md">
+    <header class="bg-primary-700 text-white px-6 py-3 flex items-center justify-between shadow-md sticky top-0 z-40">
       <a href={base} class="text-lg font-bold tracking-wide hover:text-primary-200 transition-colors">
         🎓 Studijní portál
       </a>
       <div class="flex items-center gap-4">
-        <a href={`${base}dashboard`} class="text-sm font-semibold text-primary-200 hover:text-white transition-colors">
-          📊 Dashboard
-        </a>
         <span class="text-sm text-primary-300 hidden sm:inline">Gymnázium · Matematika</span>
       </div>
     </header>
 
-    <div class="flex flex-1 overflow-hidden">
-      <!-- ====== Sidebar ====== -->
+    <div class="flex">
+      <!-- ====== Sidebar (sticky) ====== -->
       <aside
         id="sidebar"
         class:list={[
-          'w-64 shrink-0 bg-primary-50 border-r border-primary-200 overflow-y-auto',
+          'w-64 shrink-0 bg-primary-50 border-r border-primary-200 sticky top-[52px] h-[calc(100vh-52px)] overflow-y-auto',
           noSidebar ? 'hidden' : 'hidden md:block'
         ]}
       >
         <nav class="p-4 space-y-1">
-          <a
-            href={`${base}dashboard`}
-            class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-primary-700
-                   bg-primary-100 hover:bg-primary-200 transition-colors mb-3"
-          >
-            📊 Dashboard studenta
-          </a>
+          <!-- ═══════════════════════════════════ -->
+          <!-- TERCIE -->
+          <!-- ═══════════════════════════════════ -->
           <h2 class="text-xs font-semibold uppercase tracking-wider text-primary-400 mb-3">
-            Lekce
+            📐 MATEMATIKA: Tercie
           </h2>
-          {lessons.map((l) => (
-            <a
-              href={`${base}docs/${l.slug}`}
-              class="block rounded-md px-3 py-2 text-sm font-medium text-primary-700
-                     hover:bg-primary-200 transition-colors"
-            >
-              {l.title}
-            </a>
-          ))}
+          
+          <!-- Množina bodů daných vlastností - rozklikávací -->
+          <details class="group" id="details-mnozina-bodu">
+            <summary class="flex items-center justify-between cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-primary-700 hover:bg-primary-200 transition-colors list-none">
+              <span class="flex-1 nav-topic-link" data-href={`${base}docs/mnozina-bodu`}>Množina bodů daných vlastností</span>
+              <svg class="w-4 h-4 transition-transform group-open:rotate-180 toggle-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </summary>
+            
+            <div class="ml-2 mt-1 pl-3 border-l-2 border-primary-200 space-y-0.5">
+              <div class="pt-2 pb-1">
+                <span class="text-xs font-semibold uppercase tracking-wider text-primary-400 px-3">
+                  📚 Lekce
+                </span>
+              </div>
+              
+              <a href={`${base}docs/mnozina-bodu#1-o-co-jde`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                1. O co jde?
+              </a>
+              <a href={`${base}docs/mnozina-bodu#2-kruznice`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                2. Kružnice
+              </a>
+              <a href={`${base}docs/mnozina-bodu#3-osa-usecky`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                3. Osa úsečky
+              </a>
+              <a href={`${base}docs/mnozina-bodu#4-osa-uhlu`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                4. Osa úhlu
+              </a>
+              <a href={`${base}docs/mnozina-bodu#5-rovnobezky`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                5. Rovnoběžky
+              </a>
+              <a href={`${base}docs/mnozina-bodu#rychly-test`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                🧠 Rychlý test
+              </a>
+              <a href={`${base}docs/mnozina-bodu#6-prehled`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                6. Přehled
+              </a>
+              <a href={`${base}docs/mnozina-bodu#7-priklady`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                7. Příklady
+              </a>
+              <a href={`${base}docs/mnozina-bodu#8-pozor`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                8. Na co si dát pozor
+              </a>
+              <a href={`${base}docs/mnozina-bodu#9-shrnuti`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                9. Shrnutí
+              </a>
+              <a href={`${base}docs/mnozina-bodu#10-over-si-znalosti`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                ✅ Ověř si znalosti
+              </a>
+              
+              <div class="pt-3 pb-1">
+                <span class="text-xs font-semibold uppercase tracking-wider text-primary-400 px-3">
+                  🏠 Procvičování
+                </span>
+              </div>
+              <a href={`${base}docs/mnozina-bodu-priklady`} class="sidebar-link block rounded-md px-3 py-1 text-xs font-medium text-primary-600 hover:bg-primary-200 transition-colors">
+                Příklady z praxe
+              </a>
+            </div>
+          </details>
         </nav>
       </aside>
 
       <!-- ====== Main content ====== -->
-      <main class:list={[
-        'flex-1 overflow-y-auto p-6 md:p-10 w-full',
+      <main id="main-content" class:list={[
+        'flex-1 p-6 md:p-10 w-full',
         noSidebar ? 'max-w-7xl mx-auto' : 'max-w-4xl mx-auto'
       ]}>
         <article class="prose">
@@ -105,6 +143,7 @@ const lessons = [
     </button>
 
     <script is:inline>
+      // Mobile menu toggle
       const btn = document.getElementById('menu-toggle');
       const sidebar = document.getElementById('sidebar');
       btn?.addEventListener('click', () => {
@@ -114,6 +153,39 @@ const lessons = [
         sidebar?.classList.toggle('z-40');
         sidebar?.classList.toggle('w-full');
       });
+
+      // Auto-open details if we're on that page
+      const currentPath = window.location.pathname;
+      if (currentPath.includes('mnozina-bodu')) {
+        const details = document.getElementById('details-mnozina-bodu');
+        if (details) details.open = true;
+      }
+
+      // Topic link click: navigate AND open details
+      document.querySelectorAll('.nav-topic-link').forEach(link => {
+        link.style.cursor = 'pointer';
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const details = link.closest('details');
+          if (details) details.open = true;
+          const href = link.getAttribute('data-href');
+          if (href) window.location.href = href;
+        });
+      });
+
+      // Arrow click: only toggle, don't navigate
+      document.querySelectorAll('.toggle-arrow').forEach(arrow => {
+        arrow.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const details = arrow.closest('details');
+          if (details) details.open = !details.open;
+        });
+      });
+
+      // Sidebar links now work natively with anchor navigation
+      // No custom scroll handling needed - browser handles it
     </script>
   </body>
 </html>

@@ -1,0 +1,305 @@
+---
+title: "Množina bodů daných vlastností"
+description: "Kružnice, osa úsečky, osa úhlu a rovnoběžky – základní množiny bodů v geometrii."
+order: 7
+---
+
+import SelfCheck from '../../components/SelfCheck.svelte';
+import Quiz from '../../components/Quiz.svelte';
+import VideoModal from '../../components/VideoModal.svelte';
+import ImageModal from '../../components/ImageModal.svelte';
+
+# Množina bodů daných vlastností 📐
+
+> **Klíčová otázka:** Jaké všechny body v rovině mají od bodu S vzdálenost přesně 5 cm? A jaké body jsou stejně daleko od dvou daných bodů?
+
+---
+
+<h2 id="1-o-co-jde">1. O co jde?</h2>
+
+V geometrii často hledáme **všechny body**, které splňují určitou podmínku. Těmto bodům říkáme **množina bodů dané vlastnosti**.
+
+Základní princip je jednoduchý:
+
+> 💡 **Množina bodů** = všechny body, které mají společnou vlastnost (např. stejnou vzdálenost od bodu, od přímky, od dvou bodů...)
+
+<div class="flex flex-col md:flex-row gap-4 items-start my-6">
+  <figure class="flex-1 min-w-0">
+    <ImageModal client:load src="/img/mnozina-bodu-princip.svg" alt="Princip množiny bodů" />
+    <figcaption class="text-center text-sm text-primary-400 mt-2">Různé množiny bodů – kružnice, osa úsečky, rovnoběžky.</figcaption>
+  </figure>
+  <div class="flex-1 min-w-0">
+    <VideoModal client:load src="/video-mnozina-bodu-princip.html" title="📐 Množiny bodů – animovaná vizualizace" thumbnailImg="/img/mnozina-bodu-video-thumb.svg" />
+  </div>
+</div>
+
+### Kde se s tím setkáš v praxi?
+
+<figure class="my-6">
+  <ImageModal client:load src="/img/mnozina-bodu-praxe.svg" alt="Množiny bodů v praxi" />
+  <figcaption class="text-center text-sm text-primary-400 mt-2">Příklady z praxe: dosah WiFi, umístění studny, železniční koleje a další.</figcaption>
+</figure>
+
+<SelfCheck client:load id="mb-princip" label="Chápu, co je množina bodů dané vlastnosti." />
+
+---
+
+<h2 id="2-kruznice">2. Kružnice</h2>
+
+<figure class="my-6">
+  <ImageModal client:load src="/img/mnozina-bodu-kruznice.svg" alt="Kružnice jako množina bodů" class="max-w-sm mx-auto" />
+  <figcaption class="text-center text-sm text-primary-400 mt-2">Kružnice – všechny body ve vzdálenosti r od středu S.</figcaption>
+</figure>
+
+### Definice
+
+> **Kružnice** je množina všech bodů v rovině, které mají od daného bodu S (středu) **stejnou vzdálenost r** (poloměr).
+
+$$
+k(S, r) = \{X \in \text{rovina} : |SX| = r\}
+$$
+
+### Klíčové pojmy
+
+| Pojem | Vysvětlení |
+|:------|:-----------|
+| **Střed S** | Bod, od kterého měříme vzdálenost |
+| **Poloměr r** | Vzdálenost bodů kružnice od středu |
+| **Průměr d** | $d = 2r$ |
+
+> ⚠️ **Pozor:** Kružnice je jen "obrys" – body uvnitř nepatří ke kružnici! Body uvnitř včetně kružnice tvoří **kruh**.
+
+<SelfCheck client:load id="mb-kruznice" label="Vím, že kružnice je množina bodů stejně vzdálených od středu." />
+
+---
+
+<h2 id="3-osa-usecky">3. Osa úsečky</h2>
+
+<figure class="my-6">
+  <ImageModal client:load src="/img/mnozina-bodu-osa-usecky.svg" alt="Osa úsečky" class="max-w-sm mx-auto" />
+  <figcaption class="text-center text-sm text-primary-400 mt-2">Osa úsečky – body stejně vzdálené od A i B.</figcaption>
+</figure>
+
+### Definice
+
+> **Osa úsečky AB** je množina všech bodů, které mají od bodů A a B **stejnou vzdálenost**.
+
+$$
+o_{AB} = \{X : |XA| = |XB|\}
+$$
+
+### Vlastnosti osy úsečky
+
+1. Je to **přímka**
+2. Prochází **středem úsečky**
+3. Je **kolmá** na úsečku AB
+4. Dělí rovinu na dvě poloroviny – v jedné jsou body blíže k A, ve druhé blíže k B
+
+### Konstrukce osy úsečky
+
+1. Narýsuj kružnici $k_1(A, r)$ s poloměrem $r > \frac{|AB|}{2}$
+2. Narýsuj kružnici $k_2(B, r)$ se stejným poloměrem
+3. Průsečíky $P$ a $Q$ spoj přímkou – to je osa úsečky
+
+<SelfCheck client:load id="mb-osa-usecky" label="Vím, co je osa úsečky a umím ji zkonstruovat." />
+
+---
+
+<h2 id="4-osa-uhlu">4. Osa úhlu</h2>
+
+<figure class="my-6">
+  <ImageModal client:load src="/img/mnozina-bodu-osa-uhlu.svg" alt="Osa úhlu" class="max-w-sm mx-auto" />
+  <figcaption class="text-center text-sm text-primary-400 mt-2">Osa úhlu – body stejně vzdálené od obou ramen.</figcaption>
+</figure>
+
+### Definice
+
+> **Osa úhlu** je množina všech bodů, které mají od obou ramen úhlu **stejnou vzdálenost**.
+
+### Vlastnosti osy úhlu
+
+1. Je to **polopřímka** vycházející z vrcholu úhlu
+2. **Půlí úhel** na dva shodné úhly
+3. Každý bod na ose má stejnou vzdálenost od obou ramen (měřeno kolmo)
+
+### Konstrukce osy úhlu
+
+1. Z vrcholu V narýsuj oblouk, který protne obě ramena (body P a Q)
+2. Z bodů P a Q narýsuj oblouky se stejným poloměrem
+3. Průsečík R spoj s vrcholem V – polopřímka VR je osa úhlu
+
+<SelfCheck client:load id="mb-osa-uhlu" label="Vím, co je osa úhlu a jak ji sestrojit." />
+
+---
+
+<h2 id="5-rovnobezky">5. Rovnoběžky</h2>
+
+<figure class="my-6">
+  <ImageModal client:load src="/img/mnozina-bodu-rovnobezky.svg" alt="Rovnoběžky" class="max-w-sm mx-auto" />
+  <figcaption class="text-center text-sm text-primary-400 mt-2">Množina bodů ve vzdálenosti d od přímky p.</figcaption>
+</figure>
+
+### Definice
+
+> Množina všech bodů, které mají od přímky p **vzdálenost d**, jsou **dvě rovnoběžky** s přímkou p.
+
+### Vlastnosti
+
+1. Jedna rovnoběžka je "nad" přímkou p, druhá "pod"
+2. Obě rovnoběžky jsou ve vzdálenosti d od p
+3. Vzdálenost bodu od přímky měříme vždy **kolmo**
+
+> 📌 Pokud hledáme body ve vzdálenosti d od přímky, dostaneme **dvě přímky** (nebo jednu, pokud d = 0).
+
+<SelfCheck client:load id="mb-rovnobezky" label="Vím, že body ve stejné vzdálenosti od přímky tvoří dvě rovnoběžky." />
+
+---
+
+<h2 id="6-prehled">6. Přehled množin bodů</h2>
+
+| Vlastnost | Množina bodů |
+|:----------|:-------------|
+| Body ve vzdálenosti r od bodu S | **Kružnice** k(S, r) |
+| Body stejně daleko od bodů A a B | **Osa úsečky** AB |
+| Body stejně daleko od ramen úhlu | **Osa úhlu** |
+| Body ve vzdálenosti d od přímky p | **Dvě rovnoběžky** s p |
+
+---
+
+<h2 id="rychly-test">🧠 Ověř si znalosti: Rozumíš principům a pojmům?</h2>
+
+<Quiz
+  client:load
+  questions={[
+    {
+      question: "Co je kružnice?",
+      options: ["Množina bodů uvnitř kruhu", "Množina všech bodů ve stejné vzdálenosti od středu", "Množina bodů na přímce", "Množina bodů mezi dvěma přímkami"],
+      correct: 1,
+      explanation: "Kružnice je množina všech bodů v rovině, které mají od středu S stejnou vzdálenost r (poloměr)."
+    },
+    {
+      question: "Jaký tvar má osa úsečky AB?",
+      options: ["Kružnice", "Úsečka", "Přímka kolmá na AB procházející středem", "Rovnoběžka s AB"],
+      correct: 2,
+      explanation: "Osa úsečky je přímka, která je kolmá na úsečku AB a prochází jejím středem."
+    },
+    {
+      question: "Kolik bodů tvoří množinu bodů ve vzdálenosti 3 cm od dané přímky?",
+      options: ["Jeden bod", "Dva body", "Jednu přímku", "Dvě rovnoběžné přímky"],
+      correct: 3,
+      explanation: "Body ve vzdálenosti d od přímky tvoří dvě rovnoběžky – jednu 'nad' a jednu 'pod' danou přímkou."
+    },
+    {
+      question: "Co platí pro každý bod ležící na ose úhlu?",
+      options: ["Je stejně daleko od vrcholu úhlu", "Je stejně daleko od obou ramen úhlu", "Leží na kružnici", "Je nejblíže jednomu rameni"],
+      correct: 1,
+      explanation: "Osa úhlu je množina bodů stejně vzdálených od obou ramen úhlu."
+    },
+    {
+      question: "Průsečík os stran trojúhelníku je střed...",
+      options: ["Vepsané kružnice", "Opsané kružnice", "Těžiště", "Žádné kružnice"],
+      correct: 1,
+      explanation: "Osy stran trojúhelníku se protínají v jednom bodě – středu kružnice opsané trojúhelníku."
+    }
+  ]}
+/>
+
+<SelfCheck client:load id="mb-kviz" label="Odpověděl(a) jsem správně na většinu otázek." />
+
+---
+
+<h2 id="7-priklady">7. Příklady</h2>
+
+### Příklad 1: Množina bodů stejně vzdálených od dvou bodů
+
+> 📝 **Zadání:** Najdi množinu všech bodů v rovině, které jsou stejně vzdálené od bodů A a B, kde |AB| = 8 cm.
+
+**Rozbor:**
+- Hledáme body X takové, že |XA| = |XB|
+- Každý takový bod leží na **ose úsečky AB**
+
+**Řešení:**
+1. Narýsuj úsečku AB = 8 cm
+2. Sestroj osu úsečky AB (kolmice procházející středem úsečky)
+3. Výsledkem je **přímka** – osa úsečky AB
+
+**Odpověď:** Množina všech bodů stejně vzdálených od bodů A a B je **osa úsečky AB** (přímka kolmá na AB procházející jejím středem).
+
+<VideoModal client:load src="/video-priklad-osa-usecky.html" title="🎬 Video: Konstrukce osy úsečky" thumbnailImg="/img/thumb-osa-usecky.svg" />
+
+---
+
+### Příklad 2: Množina bodů stejně vzdálených od dvou přímek
+
+> 📝 **Zadání:** Najdi množinu všech bodů v rovině, které jsou stejně vzdálené od dvou různoběžek p a q.
+
+**Rozbor:**
+- Hledáme body X takové, že vzdálenost od přímky p = vzdálenost od přímky q
+- Přímky p a q se protínají v bodě V a svírají úhel
+
+**Řešení:**
+1. Najdi průsečík V přímek p a q
+2. Sestroj osy úhlů, které přímky svírají
+3. Výsledkem jsou **dvě přímky** – osy úhlů (na sebe kolmé)
+
+**Odpověď:** Množina všech bodů stejně vzdálených od dvou různoběžek tvoří **dvě na sebe kolmé přímky** – osy úhlů, které tyto přímky svírají.
+
+<VideoModal client:load src="/video-priklad-osy-uhlu.html" title="🎬 Video: Osy úhlů" thumbnailImg="/img/thumb-osy-uhlu.svg" />
+
+<SelfCheck client:load id="mb-priklady" label="Umím určit množinu bodů daných vlastností." />
+
+> 💡 **Další příklady z praxe** najdeš na samostatné stránce **[Příklady z praxe](/docs/mnozina-bodu-priklady)**.
+
+---
+
+<h2 id="8-pozor">8. Na co si dát pozor</h2>
+
+| Chyba | Proč je špatně |
+|:------|:---------------|
+| Záměna kružnice a kruhu | Kružnice je jen obrys, kruh zahrnuje i vnitřek |
+| Osa úsečky není kolmá | Osa musí být kolmá na úsečku a procházet středem |
+| Zapomenutá druhá rovnoběžka | Body ve vzdálenosti d od přímky tvoří DVĚ rovnoběžky |
+| Špatný poloměr při konstrukci osy | Poloměr musí být větší než polovina úsečky |
+
+---
+
+<h2 id="9-shrnuti">9. Shrnutí</h2>
+
+1. **Kružnice** = body ve stejné vzdálenosti od středu
+2. **Osa úsečky** = body stejně daleko od koncových bodů (kolmice středem)
+3. **Osa úhlu** = body stejně daleko od ramen úhlu (půlí úhel)
+4. **Rovnoběžky** = body ve stejné vzdálenosti od přímky (dvě přímky)
+
+---
+
+<h2 id="10-over-si-znalosti">✅ Ověř si znalosti</h2>
+
+<Quiz
+  client:load
+  questions={[
+    {
+      question: "Jaká je množina bodů, které mají od bodu M vzdálenost 5 cm?",
+      options: ["Přímka", "Kružnice k(M, 5cm)", "Kruh", "Dvě rovnoběžky"],
+      correct: 1,
+      explanation: "Body ve vzdálenosti 5 cm od bodu M tvoří kružnici se středem M a poloměrem 5 cm."
+    },
+    {
+      question: "Kde leží střed kružnice opsané trojúhelníku?",
+      options: ["V těžišti", "V průsečíku os stran", "V průsečíku os úhlů", "Ve vrcholu"],
+      correct: 1,
+      explanation: "Střed kružnice opsané leží v průsečíku os stran trojúhelníku."
+    },
+    {
+      question: "Kde leží střed kružnice vepsané trojúhelníku?",
+      options: ["V těžišti", "V průsečíku os stran", "V průsečíku os úhlů", "Ve vrcholu"],
+      correct: 2,
+      explanation: "Střed kružnice vepsané leží v průsečíku os vnitřních úhlů trojúhelníku."
+    },
+    {
+      question: "Kolik os souměrnosti má kružnice?",
+      options: ["Jednu", "Dvě", "Čtyři", "Nekonečně mnoho"],
+      correct: 3,
+      explanation: "Kružnice má nekonečně mnoho os souměrnosti – každý průměr je osou souměrnosti."
+    }
+  ]}
+/>

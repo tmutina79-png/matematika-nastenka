@@ -1,9 +1,6 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
-import { getCollection } from 'astro:content';
 
-const docs = await getCollection('docs');
-const sorted = docs.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
 const baseUrl = import.meta.env.BASE_URL;
 const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 ---
@@ -11,13 +8,14 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 <MainLayout title="Materiály">
   <h1 class="text-2xl font-bold text-gray-900 mb-6">Vítej na Studijním portálu 🎓</h1>
 
-  <ul class="list-none p-0 m-0 space-y-2">
-    {sorted.map((doc) => (
+  <section class="mb-8">
+    <h2 class="text-lg font-semibold text-primary-700 mb-4">📐 MATEMATIKA: Tercie</h2>
+    <ul class="list-none p-0 m-0 space-y-2 ml-4">
       <li>
-        <a href={`${base}docs/${doc.id}`} class="text-indigo-600 hover:text-indigo-800 hover:underline transition-colors">
-          {doc.data.title}
+        <a href={`${base}docs/mnozina-bodu`} class="text-indigo-600 hover:text-indigo-800 hover:underline transition-colors font-medium">
+          Množina bodů daných vlastností
         </a>
       </li>
-    ))}
-  </ul>
+    </ul>
+  </section>
 </MainLayout>

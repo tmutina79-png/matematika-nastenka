@@ -434,7 +434,14 @@ let activeMarkerPos=null;
 function frame(ts){
   if(lastTs===null)lastTs=ts;
   const dt=ts-lastTs;lastTs=ts;
-  if(playing&&!scrubbing){currentTime=Math.min(DUR,currentTime+dt);if(currentTime>=DUR)currentTime=0}
+  if(playing&&!scrubbing){
+    currentTime=Math.min(DUR,currentTime+dt);
+    if(currentTime>=DUR){
+      playing=false;
+      playIcon.textContent='▶';
+      playLabel.textContent='Přehrát';
+    }
+  }
   const t=currentTime;
   if(!scrubbing)scrubber.value=t;
 

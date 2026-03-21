@@ -1,0 +1,138 @@
+---
+title: Příklady z praxe – Množina bodů
+---
+
+import SelfCheck from '../../components/SelfCheck.svelte';
+import StepByStepSolution from '../../components/StepByStepSolution.svelte';
+
+# 🏠 Příklady z praxe – Množina bodů daných vlastností
+
+V této sekci najdeš praktické příklady, kde se využívá znalost množin bodů daných vlastností. Každý příklad je formulován jako slovní úloha z běžného života.
+
+---
+
+## Příklad 1: Umístění studny
+
+> 📝 **Zadání:** Dva sousedé (domy A a B) chtějí vykopat společnou studnu tak, aby byla od obou domů stejně daleko. Kde může studna ležet?
+
+<StepByStepSolution 
+  client:load
+  hint="Přemýšlej, která <strong>množina bodů</strong> obsahuje všechny body stejně vzdálené od dvou daných bodů."
+  steps={[
+    "Označíme si domy jako body <strong>A</strong> a <strong>B</strong> v rovině.",
+    "Hledáme všechny body <strong>X</strong>, pro které platí: <strong>|XA| = |XB|</strong> (vzdálenost od A = vzdálenost od B).",
+    "Množina všech takových bodů je <strong>osa úsečky AB</strong>.",
+    "Osa úsečky je přímka <strong>kolmá na AB</strong> a procházející <strong>středem úsečky AB</strong>.",
+    "<strong>Odpověď:</strong> Studna může být umístěna v libovolném bodě na ose úsečky spojující oba domy."
+  ]}
+/>
+
+---
+
+## Příklad 2: Dosah WiFi routeru
+
+> 📝 **Zadání:** WiFi router má dosah 15 metrů. Router je umístěn uprostřed obývacího pokoje. Kde všude bude signál dostupný?
+
+<StepByStepSolution 
+  client:load
+  hint="Router je <strong>bod</strong> a dosah je <strong>vzdálenost</strong> od tohoto bodu. Která množina bodů to bude?"
+  steps={[
+    "Router představuje <strong>střed S</strong> v rovině (půdorys pokoje).",
+    "Signál dosáhne do vzdálenosti <strong>nejvýše 15 m</strong> od routeru.",
+    "Hledáme body X, pro které platí: <strong>|XS| ≤ 15</strong>.",
+    "Hranice dosahu (body přesně 15 m od routeru) tvoří <strong>kružnici k(S, 15)</strong>.",
+    "Celá oblast pokrytí je <strong>kruh</strong> – kružnice včetně vnitřku.",
+    "<strong>Odpověď:</strong> WiFi signál pokryje kruhovou oblast o poloměru 15 m kolem routeru."
+  ]}
+/>
+
+---
+
+## Příklad 3: Železniční trať
+
+> 📝 **Zadání:** Podél železniční tratě (přímky p) se nesmí stavět blíže než 50 metrů. Kde přesně je hranice, za kterou už stavět lze?
+
+<StepByStepSolution 
+  client:load
+  hint="Trať je <strong>přímka</strong>. Hledáš body v dané vzdálenosti od přímky – kolik takových množin existuje?"
+  steps={[
+    "Železniční trať představuje <strong>přímku p</strong>.",
+    "Hranice ochranného pásma jsou body přesně <strong>50 m od přímky p</strong>.",
+    "Body ve vzdálenosti 50 m od přímky tvoří <strong>dvě rovnoběžky</strong> s touto přímkou.",
+    "Jedna rovnoběžka je <strong>vlevo</strong> od tratě, druhá <strong>vpravo</strong>.",
+    "<strong>Odpověď:</strong> Hranici tvoří dvě přímky rovnoběžné s tratí, každá 50 m od ní (jedna na každé straně)."
+  ]}
+/>
+
+---
+
+## Příklad 4: Rozhodčí na hřišti
+
+> 📝 **Zadání:** Rozhodčí chce stát tak, aby měl stejný výhled na obě branky (body A a B). Kde se má postavit?
+
+<StepByStepSolution 
+  client:load
+  hint="Rozhodčí hledá pozici <strong>stejně vzdálenou</strong> od obou branek. Kterou množinu bodů už znáš?"
+  steps={[
+    "Branky označíme jako body <strong>A</strong> (levá) a <strong>B</strong> (pravá).",
+    "Rozhodčí hledá pozici X, kde <strong>|XA| = |XB|</strong>.",
+    "Toto je definice <strong>osy úsečky AB</strong>.",
+    "Na fotbalovém hřišti je osa úsečky mezi brankami vlastně <strong>půlicí čára</strong>.",
+    "<strong>Odpověď:</strong> Rozhodčí by měl stát kdekoliv na půlicí čáře hřiště."
+  ]}
+/>
+
+---
+
+## Příklad 5: Kamera na rohu budovy
+
+> 📝 **Zadání:** Na rohu budovy (kde se stýkají dvě zdi p a q) má být umístěna bezpečnostní kamera tak, aby sledovala obě zdi stejně. Kam ji umístit?
+
+<StepByStepSolution 
+  client:load
+  hint="Dvě zdi jsou <strong>dvě přímky</strong>, které se protínají. Hledáš body stejně vzdálené od obou."
+  steps={[
+    "Zdi představují <strong>dvě různoběžky p a q</strong>, které se protínají v rohu budovy (bod V).",
+    "Kamera má být stejně daleko od obou zdí: vzdálenost od p = vzdálenost od q.",
+    "Množina bodů stejně vzdálených od dvou různoběžek je <strong>osa úhlu</strong>.",
+    "Ve skutečnosti existují <strong>dvě osy</strong> (úhel a vedlejší úhel), které jsou na sebe kolmé.",
+    "Pro kameru volíme osu, která míří <strong>dovnitř</strong> sledovaného prostoru.",
+    "<strong>Odpověď:</strong> Kameru umístíme na osu úhlu mezi zdmi – směr, který půlí roh budovy."
+  ]}
+/>
+
+---
+
+## Příklad 6: Hledání pokladu
+
+> 📝 **Zadání:** Piráti ukryli poklad přesně 100 kroků od starého dubu (bod D) a zároveň 80 kroků od skály (bod S). Kde může poklad být, pokud víme, že |DS| = 120 kroků?
+
+<StepByStepSolution 
+  client:load
+  hint="Máš <strong>dvě podmínky</strong> současně. Každá podmínka určuje jednu množinu bodů. Výsledek je jejich <strong>průsečík</strong>."
+  steps={[
+    "Poklad je 100 kroků od dubu → leží na <strong>kružnici k₁(D, 100)</strong>.",
+    "Poklad je 80 kroků od skály → leží na <strong>kružnici k₂(S, 80)</strong>.",
+    "Poklad musí ležet na <strong>obou kružnicích současně</strong> → hledáme jejich průsečíky.",
+    "Ověříme, zda se kružnice protínají: <strong>|100 - 80| < 120 < 100 + 80</strong>, tj. <strong>20 < 120 < 180</strong> ✓",
+    "Podmínka je splněna → kružnice se protínají ve <strong>dvou bodech</strong>.",
+    "<strong>Odpověď:</strong> Poklad může být na jednom ze dvou míst – v průsečících kružnic k₁ a k₂."
+  ]}
+/>
+
+---
+
+<SelfCheck client:load id="mb-priklady-praxe" label="Umím aplikovat množiny bodů na praktické úlohy." />
+
+---
+
+## 📌 Shrnutí použitých množin bodů
+
+| Příklad | Typ množiny bodů |
+|:--------|:-----------------|
+| Studna mezi domy | Osa úsečky |
+| WiFi router | Kružnice / Kruh |
+| Železniční trať | Dvě rovnoběžky |
+| Rozhodčí na hřišti | Osa úsečky |
+| Kamera na rohu | Osa úhlu |
+| Hledání pokladu | Průsečík dvou kružnic |

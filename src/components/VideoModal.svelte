@@ -19,13 +19,14 @@
   function sendCmd(cmd) {
     if (!iframeEl?.contentWindow) return;
     try {
-      const doc = iframeEl.contentWindow.document;
+      // Posílám zprávu přímo do iframe pomocí postMessage
+      iframeEl.contentWindow.postMessage(cmd, '*');
       if (cmd === 'toggle') {
-        doc.getElementById('btnPlay')?.click();
         isPlaying = !isPlaying;
       }
-      if (cmd === 'rew') doc.getElementById('btnRew')?.click();
-      if (cmd === 'fwd') doc.getElementById('btnFwd')?.click();
+      if (cmd === 'stop') {
+        isPlaying = false;
+      }
     } catch(e) { /* cross-origin guard */ }
   }
 </script>
@@ -80,6 +81,14 @@
     <div class="modal-container">
       <div class="modal-header">
         <span class="modal-title">{title}</span>
+        <div class="modal-controls">
+          <button class="ctrl-btn" onclick={() => sendCmd('rew')} aria-label="Posun zpět o 0,3s" title="⏪ -0,3s">⏪</button>
+          <button class="ctrl-btn" onclick={() => sendCmd('stop')} aria-label="Stop" title="⏹ Stop">⏹</button>
+          <button class="ctrl-btn ctrl-play" onclick={() => sendCmd('toggle')} aria-label={isPlaying ? 'Pauza' : 'Přehrát'} title={isPlaying ? '⏸ Pauza' : '▶ Přehrát'}>
+            {isPlaying ? '⏸' : '▶'}
+          </button>
+          <button class="ctrl-btn" onclick={() => sendCmd('fwd')} aria-label="Posun vpřed o 0,3s" title="⏩ +0,3s">⏩</button>
+        </div>
         <button class="modal-close" onclick={() => open = false} aria-label="Zavřít">✕</button>
       </div>
       <div class="modal-body">

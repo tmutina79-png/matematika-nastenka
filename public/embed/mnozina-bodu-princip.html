@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Množina bodů – Princip</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0f172a;
+    }
+    .container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    canvas {
+      max-width: 100%;
+      max-height: 100%;
+      display: block;
+    }
+    .controls {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+    .controls button {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .controls button:hover {
+      background: rgba(255,255,255,0.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <canvas id="canvas" width="1280" height="720"></canvas>
+  </div>
+  
+  <div class="controls">
+    <button onclick="sendCmd('rew')">⏪</button>
+    <button onclick="sendCmd('toggle')">▶️ / ⏸️</button>
+    <button onclick="sendCmd('stop')">⏹️</button>
+    <button onclick="sendCmd('fwd')">⏩</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    // Responsivní resize
+    function resizeCanvas() {
+      const container = document.querySelector('.container');
+      const ratio = W / H;
+      let newW = container.clientWidth;
+      let newH = container.clientHeight;
+      
+      if (newW / newH > ratio) {
+        newW = newH * ratio;
+      } else {
+        newH = newW / ratio;
+      }
+      
+      canvas.style.width = newW + 'px';
+      canvas.style.height = newH + 'px';
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    // Animation settings
+    const DURATION = 30000;
+    let startTime = null;
+    let isPlaying = true;
+    let currentProgress = 0;
+    
+    const colors = {
+      bg1: '#0f172a', bg2: '#1e293b',
+      purple: '#818cf8', yellow: '#fbbf24', green: '#34d399',
+      red: '#f87171', text: '#e2e8f0', textDim: '#94a3b8', blue: '#60a5fa'
+    };
+    
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function easeInOut(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+    
+    function drawBackground() {
+      const gradient = ctx.createLinearGradient(0, 0, W, H);
+      gradient.addColorStop(0, colors.bg1);
+      gradient.addColorStop(1, colors.bg2);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, W, H);
+    }
+    
+    function drawText(text, x, y, size, color, align = 'center', alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.font = `bold ${size}px system-ui, -apple-system, sans-serif`;
+      ctx.textAlign = align;
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+    
+    function drawCircle(x, y, r, color, lineWidth = 3, alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
+    function drawFilledCircle(x, y, r, color, alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    
+    function drawLine(x1, y1, x2, y2, color, lineWidth = 3, alpha = 1, dash = []) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.setLineDash(dash);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
+    function drawPartialCircle(x, y, r, progress, color, lineWidth = 3, alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.beginPath();
+      ctx.arc(x, y, r, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
+    function render(progress) {
+      drawBackground();
+      
+      // Phase 1: Title (0-10%)
+      if (progress < 0.1) {
+        const p = easeOut(progress / 0.1);
+        drawText('Množina bodů daných vlastností', W/2, H/2 - 50, 56, colors.text, 'center', p);
+        drawText('Co to je a jak ji najít?', W/2, H/2 + 30, 32, colors.textDim, 'center', p);
+      }
+      
+      // Phase 2: Kružnice (10-35%)
+      else if (progress < 0.35) {
+        const phase = (progress - 0.1) / 0.25;
+        const cx = 640, cy = 360;
+        
+        drawText('1. Kružnice', W/2, 80, 42, colors.text);
+        
+        if (phase > 0) {
+          const p1 = Math.min(1, phase / 0.15);
+          drawFilledCircle(cx, cy, 8 * easeOut(p1), colors.yellow);
+          drawText('S', cx + 20, cy, 24, colors.yellow, 'left', p1);
+        }
+        
+        if (phase > 0.15) {
+          const p2 = Math.min(1, (phase - 0.15) / 0.4);
+          drawPartialCircle(cx, cy, 150, easeOut(p2), colors.purple, 4);
+        }
+        
+        if (phase > 0.55) {
+          const p3 = Math.min(1, (phase - 0.55) / 0.2);
+          drawLine(cx, cy, cx + 150 * p3, cy, colors.green, 3, easeOut(p3));
+          if (p3 > 0.5) {
+            drawText('r', cx + 75, cy - 20, 24, colors.green, 'center', (p3 - 0.5) * 2);
+          }
+        }
+        
+        if (phase > 0.75) {
+          const p4 = easeOut((phase - 0.75) / 0.25);
+          const angles = [0, Math.PI/3, 2*Math.PI/3, Math.PI, 4*Math.PI/3, 5*Math.PI/3];
+          angles.forEach((angle) => {
+            const px = cx + 150 * Math.cos(angle);
+            const py = cy + 150 * Math.sin(angle);
+            drawFilledCircle(px, py, 6, colors.red, p4);
+          });
+          drawText('Všechny body ve vzdálenosti r od S', W/2, H - 100, 28, colors.textDim, 'center', p4);
+        }
+      }
+      
+      // Phase 3: Osa úsečky (35-55%)
+      else if (progress < 0.55) {
+        const phase = (progress - 0.35) / 0.2;
+        const cx = 640, cy = 360;
+        
+        drawText('2. Osa úsečky', W/2, 80, 42, colors.text);
+        
+        if (phase > 0) {
+          const p1 = Math.min(1, phase / 0.2);
+          const len = 300 * easeOut(p1);
+          drawLine(cx - len/2, cy, cx + len/2, cy, colors.red, 4);
+          drawFilledCircle(cx - 150, cy, 8, colors.red, p1);
+          drawFilledCircle(cx + 150, cy, 8, colors.red, p1);
+          drawText('A', cx - 150, cy + 30, 24, colors.red, 'center', p1);
+          drawText('B', cx + 150, cy + 30, 24, colors.red, 'center', p1);
+        }
+        
+        if (phase > 0.3) {
+          const p2 = Math.min(1, (phase - 0.3) / 0.3);
+          const h = 250 * easeOut(p2);
+          drawLine(cx, cy - h, cx, cy + h, colors.purple, 4);
+          drawText('o', cx - 25, cy - 220, 24, colors.purple, 'center', p2);
+        }
+        
+        if (phase > 0.6) {
+          const p3 = easeOut((phase - 0.6) / 0.4);
+          const py = cy - 150;
+          drawFilledCircle(cx, py, 6, colors.green, p3);
+          drawText('X', cx + 20, py, 20, colors.green, 'left', p3);
+          drawLine(cx, py, cx - 150, cy, colors.blue, 2, p3 * 0.7, [5, 5]);
+          drawLine(cx, py, cx + 150, cy, colors.blue, 2, p3 * 0.7, [5, 5]);
+          drawText('|AX| = |BX|', W/2, H - 100, 28, colors.textDim, 'center', p3);
+        }
+      }
+      
+      // Phase 4: Osa úhlu (55-75%)
+      else if (progress < 0.75) {
+        const phase = (progress - 0.55) / 0.2;
+        const cx = 640, cy = 450;
+        
+        drawText('3. Osa úhlu', W/2, 80, 42, colors.text);
+        
+        if (phase > 0) {
+          const p1 = Math.min(1, phase / 0.2);
+          const len = 300 * easeOut(p1);
+          drawLine(cx, cy, cx - len * 0.7, cy - len * 0.5, colors.green, 4);
+          drawLine(cx, cy, cx + len * 0.7, cy - len * 0.5, colors.green, 4);
+          drawFilledCircle(cx, cy, 8, colors.yellow, p1);
+          drawText('V', cx + 20, cy + 10, 24, colors.yellow, 'left', p1);
+        }
+        
+        if (phase > 0.3) {
+          const p2 = Math.min(1, (phase - 0.3) / 0.3);
+          const h = 320 * easeOut(p2);
+          drawLine(cx, cy, cx, cy - h, colors.purple, 4, 1, [10, 5]);
+          drawText('o', cx + 20, cy - 280, 24, colors.purple, 'left', p2);
+        }
+        
+        if (phase > 0.6) {
+          const p3 = easeOut((phase - 0.6) / 0.4);
+          const py = cy - 180;
+          drawFilledCircle(cx, py, 6, colors.red, p3);
+          drawText('X', cx + 20, py, 20, colors.red, 'left', p3);
+          drawText('Stejná vzdálenost od obou ramen', W/2, H - 80, 28, colors.textDim, 'center', p3);
+        }
+      }
+      
+      // Phase 5: Rovnoběžky (75-90%)
+      else if (progress < 0.9) {
+        const phase = (progress - 0.75) / 0.15;
+        const cy = 360;
+        
+        drawText('4. Rovnoběžky', W/2, 80, 42, colors.text);
+        
+        if (phase > 0) {
+          const p1 = Math.min(1, phase / 0.2);
+          drawLine(100, cy, W - 100, cy, colors.yellow, 4, easeOut(p1));
+          drawText('p', W - 80, cy, 24, colors.yellow, 'left', p1);
+        }
+        
+        if (phase > 0.3) {
+          const p2 = Math.min(1, (phase - 0.3) / 0.3);
+          const d = 100;
+          drawLine(100, cy - d, W - 100, cy - d, colors.purple, 3, easeOut(p2), [10, 5]);
+          drawLine(100, cy + d, W - 100, cy + d, colors.purple, 3, easeOut(p2), [10, 5]);
+          drawLine(200, cy, 200, cy - d, colors.green, 2, p2);
+          drawLine(200, cy, 200, cy + d, colors.green, 2, p2);
+          drawText('d', 180, cy - 50, 20, colors.green, 'center', p2);
+          drawText('d', 180, cy + 50, 20, colors.green, 'center', p2);
+        }
+        
+        if (phase > 0.6) {
+          const p3 = easeOut((phase - 0.6) / 0.4);
+          drawFilledCircle(500, cy - 100, 6, colors.red, p3);
+          drawFilledCircle(700, cy - 100, 6, colors.red, p3);
+          drawFilledCircle(600, cy + 100, 6, colors.red, p3);
+          drawText('Body ve vzdálenosti d od přímky p', W/2, H - 80, 28, colors.textDim, 'center', p3);
+        }
+      }
+      
+      // Phase 6: Summary (90-100%)
+      else {
+        const phase = (progress - 0.9) / 0.1;
+        
+        drawText('Shrnutí', W/2, 80, 48, colors.text, 'center', easeOut(phase));
+        
+        const items = [
+          { icon: '○', text: 'Kružnice = body stejně vzdálené od středu', color: colors.purple },
+          { icon: '⊥', text: 'Osa úsečky = body stejně vzdálené od A i B', color: colors.red },
+          { icon: '∠', text: 'Osa úhlu = body stejně vzdálené od ramen', color: colors.green },
+          { icon: '∥', text: 'Rovnoběžky = body ve vzdálenosti d od přímky', color: colors.yellow }
+        ];
+        
+        items.forEach((item, i) => {
+          const delay = i * 0.15;
+          const p = Math.max(0, Math.min(1, (phase - delay) / 0.25));
+          const y = 200 + i * 100;
+          drawText(item.icon, 200, y, 36, item.color, 'center', easeOut(p));
+          drawText(item.text, 260, y, 28, colors.text, 'left', easeOut(p));
+        });
+      }
+      
+      // Progress bar
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(100, H - 50, W - 200, 6);
+      ctx.fillStyle = colors.purple;
+      ctx.fillRect(100, H - 50, (W - 200) * progress, 6);
+    }
+    
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      
+      if (isPlaying) {
+        currentProgress = Math.min((timestamp - startTime) / DURATION, 1);
+      }
+      
+      render(currentProgress);
+      
+      if (currentProgress < 1 || !isPlaying) {
+        requestAnimationFrame(animate);
+      } else {
+        render(1);
+      }
+    }
+    
+    function sendCmd(cmd) {
+      switch (cmd) {
+        case 'toggle':
+          if (currentProgress >= 1) {
+            startTime = null;
+            currentProgress = 0;
+            isPlaying = true;
+          } else {
+            isPlaying = !isPlaying;
+            if (isPlaying) startTime = performance.now() - currentProgress * DURATION;
+          }
+          requestAnimationFrame(animate);
+          break;
+        case 'stop':
+          isPlaying = false;
+          currentProgress = 0;
+          startTime = null;
+          render(0);
+          break;
+        case 'rew':
+          currentProgress = Math.max(0, currentProgress - 0.02);
+          startTime = performance.now() - currentProgress * DURATION;
+          render(currentProgress);
+          break;
+        case 'fwd':
+          currentProgress = Math.min(1, currentProgress + 0.02);
+          startTime = performance.now() - currentProgress * DURATION;
+          render(currentProgress);
+          break;
+      }
+    }
+    
+    // External message handling (for iframe embedding)
+    window.addEventListener('message', (e) => {
+      if (typeof e.data === 'string') sendCmd(e.data);
+    });
+    
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
