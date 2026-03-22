@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WiFi router – dosah signálu</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    canvas { max-width: 100%; max-height: 100vh; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="1280" height="720"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+
+    const DURATION = 28000;
+    let startTime = null;
+    let isPlaying = true;
+    let currentProgress = 0;
+
+    const col = {
+      bg1: '#0f172a', bg2: '#1e293b',
+      blue: '#60a5fa', green: '#34d399', red: '#f87171',
+      yellow: '#fbbf24', purple: '#818cf8', cyan: '#22d3ee',
+      text: '#e2e8f0', dim: '#94a3b8', orange: '#fb923c'
+    };
+
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function easeInOut(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+    function clamp01(t) { return Math.max(0, Math.min(1, t)); }
+    function phase(progress, start, dur) { return clamp01((progress - start) / dur); }
+
+    // Geometry
+    const Rx = W/2, Ry = H/2 + 20;
+    const R_PX = 200; // radius in pixels (represents 10 m)
+
+    function drawBg() {
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, col.bg1); g.addColorStop(1, col.bg2);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
+
+    function drawText(text, x, y, size, color, align, alpha) {
+      if (alpha <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.font = (size > 20 ? 'bold ' : '') + size + 'px system-ui';
+      ctx.fillStyle = color;
+      ctx.textAlign = align || 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    function drawDot(x, y, r, color, alpha) {
+      if (alpha <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+      ctx.fillStyle = color; ctx.fill();
+      ctx.restore();
+    }
+
+    function drawCircleArc(cx, cy, r, color, alpha, progress, lw) {
+      if (progress <= 0 || alpha <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + Math.PI*2*clamp01(progress));
+      ctx.strokeStyle = color; ctx.lineWidth = lw || 3;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawDashedCircle(cx, cy, r, color, alpha, progress) {
+      if (progress <= 0 || alpha <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + Math.PI*2*clamp01(progress));
+      ctx.strokeStyle = color; ctx.lineWidth = 3;
+      ctx.setLineDash([8, 4]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    function drawDisk(cx, cy, r, color, alpha) {
+      if (alpha <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.fillStyle = color; ctx.fill();
+      ctx.restore();
+    }
+
+    function drawLine(x1, y1, x2, y2, color, lw, alpha, dash) {
+      if (alpha <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color; ctx.lineWidth = lw;
+      ctx.setLineDash(dash || []); ctx.stroke(); ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    function drawWifiIcon(x, y, alpha) {
+      if (alpha <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      // Router body
+      ctx.fillStyle = col.orange;
+      ctx.beginPath();
+      ctx.roundRect(x - 20, y - 8, 40, 16, 4);
+      ctx.fill();
+      // Antenna
+      ctx.strokeStyle = col.orange; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(x - 8, y - 8); ctx.lineTo(x - 12, y - 22); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x + 8, y - 8); ctx.lineTo(x + 12, y - 22); ctx.stroke();
+      // Dots on antennas
+      drawDot(x - 12, y - 24, 3, col.orange, alpha);
+      drawDot(x + 12, y - 24, 3, col.orange, alpha);
+      ctx.restore();
+    }
+
+    // Animated wifi waves
+    function drawWifiWaves(x, y, alpha, time) {
+      if (alpha <= 0) return;
+      ctx.save();
+      for (let i = 0; i < 3; i++) {
+        const r = 30 + i * 20 + ((time * 60) % 20);
+        const a = alpha * Math.max(0, 1 - i * 0.3 - ((time * 2) % 1) * 0.3);
+        ctx.globalAlpha = a;
+        ctx.beginPath();
+        ctx.arc(x, y - 15, r, -Math.PI * 0.7, -Math.PI * 0.3);
+        ctx.strokeStyle = col.cyan; ctx.lineWidth = 2; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawProgressBar(p) {
+      const barY = H - 20, barH = 5, pad = 100;
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(pad, barY, W - 2*pad, barH);
+      ctx.fillStyle = col.purple;
+      ctx.fillRect(pad, barY, (W - 2*pad) * p, barH);
+      ctx.beginPath();
+      ctx.arc(pad + (W - 2*pad) * p, barY + barH/2, 6, 0, Math.PI*2);
+      ctx.fillStyle = col.purple; ctx.fill();
+    }
+
+    // Points on boundary
+    function drawBoundaryPoints(cx, cy, r, alpha, count) {
+      if (alpha <= 0) return;
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count - Math.PI / 2;
+        const px = cx + r * Math.cos(angle);
+        const py = cy + r * Math.sin(angle);
+        drawDot(px, py, 5, col.red, alpha);
+      }
+    }
+
+    function render(p) {
+      drawBg();
+
+      const time = p * DURATION / 1000;
+
+      // Phase timings
+      const pTitle    = easeOut(phase(p, 0.00, 0.07));
+      const pTask     = easeOut(phase(p, 0.05, 0.06));
+      const pRouter   = easeOut(phase(p, 0.10, 0.06));
+      const pLabel    = easeOut(phase(p, 0.14, 0.05));
+      const pWaves    = easeOut(phase(p, 0.17, 0.04));
+      const pRadius   = easeOut(phase(p, 0.22, 0.08));
+      const pRadLabel = easeOut(phase(p, 0.28, 0.05));
+      const pCircle   = phase(p, 0.34, 0.18);
+      const pCircleA  = easeOut(clamp01(pCircle * 4));
+      const pBdPts    = easeOut(phase(p, 0.48, 0.06));
+      const pBdExpl   = easeOut(phase(p, 0.52, 0.05));
+      const pDiskFill = easeOut(phase(p, 0.60, 0.08));
+      const pDiskExpl = easeOut(phase(p, 0.66, 0.06));
+      const pFormula1 = easeOut(phase(p, 0.74, 0.05));
+      const pFormula2 = easeOut(phase(p, 0.78, 0.05));
+      const pAnswer   = easeOut(phase(p, 0.85, 0.07));
+
+      // 1) Title
+      drawText('Příklad: Dosah WiFi routeru', W/2, 50, 36, col.text, 'center', pTitle);
+
+      // 2) Task text
+      drawText('Router je v bodě R, dosah signálu = 10 m', W/2, 90, 18, col.dim, 'center', pTask);
+
+      // 3) Disk fill (behind everything)
+      if (pDiskFill > 0) {
+        drawDisk(Rx, Ry, R_PX, 'rgba(96, 165, 250, 0.12)', pDiskFill);
+      }
+
+      // 4) Circle (kružnice) - boundary
+      drawCircleArc(Rx, Ry, R_PX, col.purple, pCircleA, pCircle, 4);
+
+      // 5) Router icon + point
+      drawDot(Rx, Ry, 9, col.orange, pRouter);
+      drawWifiIcon(Rx, Ry - 20, pRouter);
+      drawText('R', Rx + 25, Ry + 5, 24, col.orange, 'left', pLabel);
+
+      // WiFi waves animation
+      if (pWaves > 0 && p < 0.95) {
+        drawWifiWaves(Rx, Ry, pWaves * 0.5, time);
+      }
+
+      // 6) Radius line
+      if (pRadius > 0) {
+        const endX = Rx + R_PX * pRadius;
+        drawLine(Rx, Ry, endX, Ry, col.green, 3, pRadius);
+        drawDot(endX, Ry, 5, col.green, pRadius);
+      }
+
+      // 7) Radius label
+      drawText('r = 10 m', Rx + R_PX/2, Ry - 20, 18, col.green, 'center', pRadLabel);
+
+      // 8) Points on boundary
+      drawBoundaryPoints(Rx, Ry, R_PX, pBdPts, 8);
+
+      // 9) Boundary explanation
+      drawText('Hranice dosahu = kružnice k(R, 10 m)', W/2, H - 140, 20, col.purple, 'center', pBdExpl);
+      drawText('body ve vzdálenosti přesně 10 m od R', W/2, H - 116, 15, col.dim, 'center', pBdExpl);
+
+      // 10) Disk explanation
+      drawText('Oblast pokrytí = kruh K(R, 10 m)', W/2, H - 86, 20, col.blue, 'center', pDiskExpl);
+      drawText('všechny body ve vzdálenosti ≤ 10 m od R', W/2, H - 62, 15, col.dim, 'center', pDiskExpl);
+
+      // 11) Formulas
+      drawText('k(R, 10) = { X : |RX| = 10 m }', W/2 - 250, H - 185, 16, col.purple, 'center', pFormula1);
+      drawText('K(R, 10) = { X : |RX| ≤ 10 m }', W/2 + 250, H - 185, 16, col.blue, 'center', pFormula2);
+
+      // 12) Answer
+      if (pAnswer > 0) {
+        // Highlight box
+        ctx.save();
+        ctx.globalAlpha = pAnswer * 0.15;
+        ctx.fillStyle = col.yellow;
+        ctx.beginPath();
+        ctx.roundRect(W/2 - 380, 118, 760, 38, 8);
+        ctx.fill();
+        ctx.restore();
+        drawText('✅  Hranice dosahu = kružnice  •  Celé pokrytí = kruh', W/2, 137, 20, col.yellow, 'center', pAnswer);
+      }
+
+      drawProgressBar(p);
+    }
+
+    // Animation loop
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      if (isPlaying) {
+        currentProgress = Math.min((timestamp - startTime) / DURATION, 1);
+      }
+      render(currentProgress);
+      if (currentProgress < 1 || !isPlaying) {
+        requestAnimationFrame(animate);
+      } else {
+        render(1);
+      }
+    }
+
+    // External controls
+    window.addEventListener('message', (e) => {
+      switch (e.data) {
+        case 'toggle':
+          if (currentProgress >= 1) {
+            startTime = null; currentProgress = 0; isPlaying = true;
+            requestAnimationFrame(animate);
+          } else {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+              startTime = performance.now() - currentProgress * DURATION;
+              requestAnimationFrame(animate);
+            }
+          }
+          break;
+        case 'stop':
+          isPlaying = false; currentProgress = 0; startTime = null;
+          render(0);
+          break;
+        case 'rew':
+          currentProgress = Math.max(0, currentProgress - 0.01);
+          startTime = performance.now() - currentProgress * DURATION;
+          render(currentProgress);
+          break;
+        case 'fwd':
+          currentProgress = Math.min(1, currentProgress + 0.01);
+          startTime = performance.now() - currentProgress * DURATION;
+          render(currentProgress);
+          break;
+      }
+    });
+
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
