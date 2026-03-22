@@ -338,6 +338,9 @@ const lessons = [
       <p>Interaktivní tabuli vytvořili: <strong class="text-gray-700">Ing. Tomáš Mutina</strong> a <strong class="text-gray-700">Mgr. Aleš Bajnar</strong></p>
     </footer>
 
+    <!-- ====== Mobile sidebar backdrop ====== -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
     <!-- ====== Mobile menu toggle ====== -->
     <button
       id="menu-toggle"
@@ -347,8 +350,13 @@ const lessons = [
       ]}
       aria-label="Otevřít menu"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <!-- Hamburger icon -->
+      <svg id="menu-icon-open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <!-- Close icon (hidden by default) -->
+      <svg id="menu-icon-close" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
 
@@ -356,13 +364,32 @@ const lessons = [
       // Mobile menu toggle
       const btn = document.getElementById('menu-toggle');
       const sidebar = document.getElementById('sidebar');
-      btn?.addEventListener('click', () => {
-        sidebar?.classList.toggle('hidden');
-        sidebar?.classList.toggle('fixed');
-        sidebar?.classList.toggle('inset-0');
-        sidebar?.classList.toggle('z-40');
-        sidebar?.classList.toggle('w-full');
-      });
+      const backdrop = document.getElementById('sidebar-backdrop');
+      const iconOpen = document.getElementById('menu-icon-open');
+      const iconClose = document.getElementById('menu-icon-close');
+      let menuOpen = false;
+
+      function toggleMenu() {
+        menuOpen = !menuOpen;
+        if (menuOpen) {
+          sidebar?.classList.remove('hidden');
+          sidebar?.classList.add('sidebar-open');
+          backdrop?.classList.add('active');
+          iconOpen?.classList.add('hidden');
+          iconClose?.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        } else {
+          sidebar?.classList.add('hidden');
+          sidebar?.classList.remove('sidebar-open');
+          backdrop?.classList.remove('active');
+          iconOpen?.classList.remove('hidden');
+          iconClose?.classList.add('hidden');
+          document.body.style.overflow = '';
+        }
+      }
+
+      btn?.addEventListener('click', toggleMenu);
+      backdrop?.addEventListener('click', toggleMenu);
 
       // ── Persist open/close state of sidebar details across navigations ──
       const STORAGE_KEY = 'sidebar-details-state';
