@@ -1,0 +1,221 @@
+---
+title: "Množina bodů – Osa úhlu"
+description: "Osa úhlu jako množina bodů stejně vzdálených od obou ramen úhlu."
+order: 11
+---
+
+import SelfCheck from '../../components/SelfCheck.svelte';
+import Quiz from '../../components/Quiz.svelte';
+import VideoModal from '../../components/VideoModal.svelte';
+import ImageModal from '../../components/ImageModal.svelte';
+
+# Množina bodů – Osa úhlu 📐
+
+> **Klíčová otázka:** Kde v rovině leží všechny body, které jsou stejně daleko od obou ramen úhlu?
+
+---
+
+<h2 id="1-osa-uhlu">1. Osa úhlu</h2>
+
+<figure class="my-6">
+  <ImageModal client:load src="/img/mnozina-bodu-osa-uhlu.svg" alt="Osa úhlu jako množina bodů" class="max-w-sm mx-auto" />
+  <figcaption class="text-center text-sm text-primary-400 mt-2">Osa úhlu – body stejně vzdálené od obou ramen.</figcaption>
+</figure>
+
+### Definice
+
+> **Osa úhlu** je množina všech bodů v rovině, které mají od obou ramen úhlu **stejnou vzdálenost** (měřenou kolmo k ramenům).
+
+$$
+o = \{X \in \text{rovina} : d(X, a) = d(X, b)\}
+$$
+
+kde $a$, $b$ jsou ramena úhlu a $d(X, a)$ označuje kolmou vzdálenost bodu $X$ od přímky $a$.
+
+### 📖 Modelové ukázky
+
+<div class="flex justify-center my-8">
+  <div class="group relative rounded-2xl border-2 border-rose-200 bg-gradient-to-br from-rose-50 to-white shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden max-w-lg w-full">
+    <div class="p-4">
+      <ImageModal client:load src="/img/osa-uhlu-1.svg" alt="Osa úhlu – pojmy a značení" />
+    </div>
+    <div class="px-4 pb-4 text-center">
+      <p class="text-sm font-semibold text-rose-700">Osa úhlu – pojmy a značení</p>
+      <p class="text-xs text-gray-500 mt-1">Klikni pro zvětšení 🔍</p>
+    </div>
+  </div>
+</div>
+
+### Klíčové pojmy
+
+| Pojem | Vysvětlení |
+|:------|:-----------|
+| **Osa úhlu** | Polopřímka z vrcholu úhlu, na které leží body stejně vzdálené od obou ramen |
+| **Vrchol V** | Bod, ze kterého vycházejí obě ramena úhlu |
+| **Ramena a, b** | Dvě polopřímky vycházející z vrcholu V |
+| **Kolmá vzdálenost** | Vzdálenost bodu od přímky měřená **kolmo** na přímku |
+
+### Vlastnosti osy úhlu
+
+1. Je to **polopřímka** vycházející z vrcholu úhlu
+2. **Půlí úhel** na dva shodné úhly: $\alpha/2 + \alpha/2 = \alpha$
+3. Každý bod na ose má **stejnou kolmou vzdálenost** od obou ramen
+4. Leží-li bod X na ose úhlu, pak $d(X, a) = d(X, b)$
+5. Konvexní úhel má **jednu osu**, ale dvojice přímek tvoří **dvě osy** (navzájem kolmé)
+
+> ⚠️ **Pozor:** Vzdálenost bodu od ramene se měří vždy **kolmo** – ne šikmo, ne po rameni!
+
+### Jak sestrojit osu úhlu
+
+| Krok | Co uděláš |
+|:-----|:----------|
+| 1. | Z vrcholu V narýsuj oblouk, který protne obě ramena v bodech **P** a **Q** |
+| 2. | Z bodu P narýsuj oblouk s poloměrem $r$ |
+| 3. | Z bodu Q narýsuj oblouk se **stejným** poloměrem $r$ |
+| 4. | Označ průsečík oblouků jako bod **R** |
+| 5. | Polopřímka **VR** je osa úhlu |
+
+> 💡 **Proč to funguje?** Body P a Q jsou stejně daleko od V (oba na oblouku). Bod R je stejně daleko od P i Q (oba oblouky mají poloměr r). Proto R leží na ose úsečky PQ, a protože |VP| = |VQ|, bod R leží na ose úhlu.
+
+<SelfCheck client:load id="mb4-osa-uhlu" label="Vím, co je osa úhlu a umím ji zkonstruovat." />
+
+---
+
+<h2 id="rychly-test">🧠 Ověř si znalosti: Rozumíš pojmům?</h2>
+
+<Quiz
+  client:load
+  questions={[
+    {
+      question: "Co je osa úhlu?",
+      options: ["Přímka procházející vrcholem", "Úsečka spojující ramena", "Množina bodů stejně vzdálených od obou ramen", "Kružnice se středem ve vrcholu"],
+      correct: 2,
+      explanation: "Osa úhlu je množina všech bodů, které mají od obou ramen úhlu stejnou kolmou vzdálenost."
+    },
+    {
+      question: "Jaký geometrický útvar je osa konvexního úhlu?",
+      options: ["Přímka", "Úsečka", "Polopřímka", "Kružnice"],
+      correct: 2,
+      explanation: "Osa konvexního úhlu je polopřímka vycházející z vrcholu úhlu."
+    },
+    {
+      question: "Jak měříme vzdálenost bodu od ramene úhlu?",
+      options: ["Po rameni od vrcholu", "Šikmo k rameni", "Kolmo na rameno", "Libovolným směrem"],
+      correct: 2,
+      explanation: "Vzdálenost bodu od přímky (ramene) se vždy měří kolmou vzdáleností."
+    },
+    {
+      question: "Co platí pro osu úhlu a samotný úhel?",
+      options: ["Osa je kolmá na ramena", "Osa půlí úhel na dva shodné úhly", "Osa je rovnoběžná s ramenem", "Osa prochází středem ramene"],
+      correct: 1,
+      explanation: "Osa úhlu půlí úhel na dvě shodné poloviny: α/2 + α/2 = α."
+    },
+    {
+      question: "Bod X leží na ose úhlu AVB. Co platí?",
+      options: ["d(X,a) > d(X,b)", "d(X,a) < d(X,b)", "d(X,a) = d(X,b)", "d(X,a) + d(X,b) = |VA|"],
+      correct: 2,
+      explanation: "Každý bod na ose úhlu má od obou ramen stejnou kolmou vzdálenost: d(X,a) = d(X,b)."
+    }
+  ]}
+/>
+
+<SelfCheck client:load id="mb4-kviz" label="Odpověděl(a) jsem správně na většinu otázek." />
+
+---
+
+<h2 id="priklady">2. Příklady</h2>
+
+### Příklad 1: Lampa na rohu chodby
+
+> 📝 **Zadání:** Na rohu dvou chodeb (zdi a a b) chceme umístit lampu tak, aby osvětlovala obě zdi stejně – tedy aby byla od obou zdí stejně daleko. Kde lampu zavěsit?
+
+**Rozbor:**
+- Zdi tvoří dvě ramena úhlu s vrcholem V (roh)
+- Hledáme bod X, kde $d(X, a) = d(X, b)$
+- To je přesně definice osy úhlu
+
+**Řešení:**
+1. Zdi jsou ramena **a** a **b** úhlu s vrcholem **V**
+2. Lampa má být stejně daleko od obou zdí → hledáme body, kde $d(X, a) = d(X, b)$
+3. Množina takových bodů je **osa úhlu**
+
+**Odpověď:** Lampu zavěsíme v libovolném bodě na **ose úhlu** tvořeného zdmi – polopřímce z rohu, která úhel půlí.
+
+<VideoModal client:load src="/video-lampa-osa-uhlu.html" title="💡 Lampa na rohu chodby – vizualizace" thumbnailImg="/img/lampa-osa-uhlu-thumb.svg" />
+
+---
+
+### Příklad 2: Bezpečnostní kamera na křižovatce
+
+> 📝 **Zadání:** Na křižovatce dvou ulic (a a b) má být umístěna bezpečnostní kamera tak, aby pokrývala obě ulice stejně – stejná vzdálenost od obou. Kde kameru umístit?
+
+**Rozbor:**
+- Ulice tvoří ramena úhlu
+- Kamera má být stejně vzdálená od obou ulic
+
+**Řešení:**
+1. Ulice jsou ramena **a** a **b** úhlu s vrcholem **V** (křižovatka)
+2. Kamera musí být stejně daleko od obou ulic → hledáme osu úhlu
+3. Na křižovatce je osa úhlu polopřímka **z rohu křižovatky**, která půlí úhel mezi ulicemi
+
+**Odpověď:** Kameru umístíme na **osu úhlu** mezi ulicemi.
+
+<VideoModal client:load src="/video-kamera-osa-uhlu.html" title="📹 Kamera na křižovatce – vizualizace" thumbnailImg="/img/kamera-osa-uhlu-thumb.svg" />
+
+> 💡 **Tip:** Osa úhlu dvou přímek je klíčový nástroj při hledání pozic „rovnoměrných" vůči dvěma směrům!
+
+<SelfCheck client:load id="mb4-priklady" label="Umím řešit příklady s osou úhlu." />
+
+---
+
+<h2 id="pozor">3. Na co si dát pozor</h2>
+
+| Chyba | Proč je špatně | Správně |
+|:------|:---------------|:--------|
+| Osa úhlu je přímka | U konvexního úhlu je osa **polopřímka** | Je to **polopřímka** z vrcholu V |
+| Vzdálenost měřím po rameni | Vzdálenost od přímky se měří kolmo | Měříme **kolmou vzdálenost** |
+| Osa neprochází vrcholem | Osa úhlu vždy vychází z vrcholu | Osa vždy **vychází z vrcholu** V |
+| Dvě přímky mají jen jednu osu | Dvě různoběžky tvoří 4 úhly a 2 osy | Dvě různoběžky mají **2 osy** (navzájem kolmé) |
+| Oblouk při konstrukci – různé poloměry | Oblouky z P a Q musí mít stejný poloměr | Poloměr oblouků z P a Q musí být **stejný** |
+
+---
+
+<h2 id="over-si-znalosti">✅ Ověř si znalosti</h2>
+
+<Quiz
+  client:load
+  questions={[
+    {
+      question: "Jak sestrojíš osu úhlu AVB?",
+      options: ["Spojíš středy ramen", "Z vrcholu V oblouk na ramena, pak dva oblouky se stejným poloměrem, spojíš průsečík s V", "Narýsuješ kolmici na jedno rameno", "Spočítáš středovou souměrnost"],
+      correct: 1,
+      explanation: "Obloukem z V vyznačíš body P, Q na ramenech, pak ze středů P a Q narýsuješ oblouky → průsečík R. Polopřímka VR je osa úhlu."
+    },
+    {
+      question: "Bod X leží na ose úhlu. Kolmá vzdálenost od ramene a je 3 cm. Jaká je jeho vzdálenost od ramene b?",
+      options: ["1,5 cm", "3 cm", "6 cm", "Nelze určit"],
+      correct: 1,
+      explanation: "Bod na ose úhlu má od obou ramen stejnou kolmou vzdálenost: d(X,a) = d(X,b) = 3 cm."
+    },
+    {
+      question: "Tři osy vnitřních úhlů trojúhelníku se protínají v jednom bodě. Jak se tento bod nazývá?",
+      options: ["Těžiště", "Střed kružnice opsané", "Střed kružnice vepsané", "Ortocentrum"],
+      correct: 2,
+      explanation: "Průsečík os vnitřních úhlů trojúhelníku je střed kružnice vepsané (je stejně daleko od všech tří stran)."
+    },
+    {
+      question: "Kolik os úhlů mají dvě různoběžné přímky?",
+      options: ["Jednu", "Dvě (navzájem kolmé)", "Tři", "Čtyři"],
+      correct: 1,
+      explanation: "Dvě různoběžky svírají 4 úhly. Osy protějších úhlů splývají → vzniknou 2 osy, které jsou na sebe kolmé."
+    },
+    {
+      question: "Kolik os úhlů trojúhelníku musíš sestrojit, abys našel střed kružnice vepsané?",
+      options: ["Jednu", "Aspoň dvě", "Právě tři", "Čtyři"],
+      correct: 1,
+      explanation: "Stačí sestrojit dvě osy vnitřních úhlů – jejich průsečík je střed kružnice vepsané. Třetí osa projde stejným bodem."
+    }
+  ]}
+/>
+
+<SelfCheck client:load id="mb4-final" label="Zvládám příklady s osou úhlu." />

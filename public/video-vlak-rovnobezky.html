@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koleje a vlak – rovnoběžky</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    canvas { max-width: 100%; max-height: 100vh; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="1280" height="720"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    const DURATION = 30000;
+    let startTime = null;
+    let isPlaying = true;
+    let currentProgress = 0;
+
+    const colors = {
+      bg1: '#0f172a', bg2: '#1e293b',
+      rail: '#94a3b8', railDark: '#64748b',
+      sleeper: '#78350f', sleeperLight: '#92400e',
+      text: '#e2e8f0', textDim: '#94a3b8',
+      blue: '#60a5fa', green: '#34d399', yellow: '#fbbf24',
+      red: '#f87171', purple: '#a78bfa', orange: '#fb923c',
+      line: '#818cf8', ground: '#1c1917'
+    };
+
+    // Railway center (přímka p)
+    const railY = 380;
+    const railX1 = 60, railX2 = 1220;
+    const d = 80; // distance from center to each rail
+
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function drawBackground() {
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, colors.bg1);
+      g.addColorStop(1, colors.bg2);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    function drawGround(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = colors.ground;
+      ctx.fillRect(40, railY - 130, 1200, 260);
+
+      // Gravel texture
+      for (let i = 0; i < 200; i++) {
+        ctx.fillStyle = 'rgba(120,115,110,' + (0.1 + Math.random()*0.15) + ')';
+        const gx = 50 + Math.random() * 1180;
+        const gy = railY - 120 + Math.random() * 240;
+        ctx.fillRect(gx, gy, 2 + Math.random()*3, 2 + Math.random()*3);
+      }
+      ctx.restore();
+    }
+
+    function drawSleepers(alpha, count) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      for (let i = 0; i < count; i++) {
+        const sx = railX1 + 40 + i * 35;
+        if (sx > railX2 - 20) break;
+        ctx.fillStyle = colors.sleeper;
+        ctx.fillRect(sx - 4, railY - d - 20, 8, d*2 + 40);
+        ctx.fillStyle = colors.sleeperLight;
+        ctx.fillRect(sx - 3, railY - d - 18, 6, 4);
+        ctx.fillRect(sx - 3, railY + d + 14, 6, 4);
+      }
+      ctx.restore();
+    }
+
+    function drawCenterLine(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.setLineDash([15, 10]);
+      ctx.strokeStyle = colors.yellow;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(railX1, railY);
+      ctx.lineTo(railX2, railY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = colors.yellow;
+      ctx.font = 'bold 22px system-ui';
+      ctx.textAlign = 'left';
+      ctx.fillText('přímka p (osa trati)', railX2 - 240, railY - 15);
+      ctx.restore();
+    }
+
+    function drawRail(y, label, color, alpha, len) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+
+      const endX = railX1 + len;
+      // Rail
+      ctx.strokeStyle = colors.rail;
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(railX1, y);
+      ctx.lineTo(endX, y);
+      ctx.stroke();
+
+      // Rail shine
+      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(railX1, y - 2);
+      ctx.lineTo(endX, y - 2);
+      ctx.stroke();
+
+      // Label
+      if (len > 200) {
+        ctx.fillStyle = color;
+        ctx.font = 'bold 20px system-ui';
+        ctx.textAlign = 'left';
+        ctx.fillText(label, endX + 15, y + 6);
+      }
+
+      ctx.restore();
+    }
+
+    function drawDistanceMarker(x, y1, y2, label, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x, y1);
+      ctx.lineTo(x, y2);
+      ctx.stroke();
+
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x-5, y1+6); ctx.lineTo(x+5, y1+6); ctx.lineTo(x, y1); ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(x-5, y2-6); ctx.lineTo(x+5, y2-6); ctx.lineTo(x, y2); ctx.fill();
+
+      ctx.strokeRect(x, y2 > y1 ? y2-10 : y1-10, 10, 10);
+
+      ctx.font = 'bold 18px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x + 25, (y1+y2)/2 + 5);
+      ctx.restore();
+    }
+
+    function drawTrain(x, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+
+      // Locomotive body
+      ctx.fillStyle = '#dc2626';
+      ctx.beginPath();
+      ctx.roundRect(x, railY - d + 8, 120, d*2 - 16, 8);
+      ctx.fill();
+
+      // Windows
+      ctx.fillStyle = '#bfdbfe';
+      ctx.fillRect(x + 15, railY - d + 18, 25, 20);
+      ctx.fillRect(x + 50, railY - d + 18, 25, 20);
+      ctx.fillRect(x + 85, railY - d + 18, 25, 20);
+
+      // Front
+      ctx.fillStyle = '#b91c1c';
+      ctx.beginPath();
+      ctx.roundRect(x + 115, railY - d + 15, 20, d*2 - 30, [0, 6, 6, 0]);
+      ctx.fill();
+
+      // Headlight
+      ctx.fillStyle = colors.yellow;
+      ctx.beginPath();
+      ctx.arc(x + 132, railY, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Wheels
+      ctx.fillStyle = '#1e293b';
+      for (let wx of [x+20, x+60, x+100]) {
+        ctx.beginPath();
+        ctx.arc(wx, railY - d + 5, 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(wx, railY + d - 5, 10, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function drawText(text, x, y, size, color, align, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha || 1;
+      ctx.fillStyle = color;
+      ctx.font = 'bold ' + size + 'px system-ui';
+      ctx.textAlign = align || 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    function drawInfoBox(text, x, y, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.font = 'bold 20px system-ui';
+      const w = ctx.measureText(text).width + 40;
+      ctx.fillStyle = 'rgba(0,0,0,0.75)';
+      ctx.beginPath();
+      ctx.roundRect(x - w/2, y - 20, w, 40, 10);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    function render(progress) {
+      drawBackground();
+
+      // ── Title ──
+      if (progress < 0.10) {
+        const p = easeOut(progress / 0.07);
+        drawText('🚂 Koleje a vlak', W/2, H/2 - 20, 42, colors.text, 'center', p);
+        drawText('Koleje jsou dvě rovnoběžky – stejně daleko od osy trati', W/2, H/2 + 30, 20, colors.textDim, 'center', Math.max(0, (progress - 0.02) / 0.06));
+        return;
+      }
+
+      // ── Ground ──
+      const ga = Math.min(1, (progress - 0.10) / 0.05);
+      drawGround(ga);
+
+      // ── Center line (axis of track) ──
+      if (progress > 0.15) {
+        const ca = easeOut(Math.min(1, (progress - 0.15) / 0.05));
+        drawCenterLine(ca);
+      }
+
+      // ── Sleepers ──
+      if (progress > 0.22) {
+        const sa = easeOut(Math.min(1, (progress - 0.22) / 0.06));
+        const count = Math.floor(sa * 33);
+        drawSleepers(Math.min(1, (progress - 0.22)/0.03), count);
+      }
+
+      // ── Rails (rovnoběžky p₁, p₂) ──
+      if (progress > 0.30) {
+        const rp = easeOut(Math.min(1, (progress - 0.30) / 0.12));
+        const railLen = (railX2 - railX1) * rp;
+        drawRail(railY - d, 'Kolej p₁', colors.line, Math.min(1, (progress - 0.30)/0.04), railLen);
+        drawRail(railY + d, 'Kolej p₂', colors.line, Math.min(1, (progress - 0.30)/0.04), railLen);
+      }
+
+      // ── Distance markers ──
+      if (progress > 0.45) {
+        const da = easeOut(Math.min(1, (progress - 0.45) / 0.05));
+        drawDistanceMarker(250, railY - d, railY, 'd', colors.green, da);
+        drawDistanceMarker(250, railY, railY + d, 'd', colors.green, da);
+      }
+
+      // ── Info ──
+      if (progress > 0.52) {
+        const ia = easeOut(Math.min(1, (progress - 0.52) / 0.04));
+        drawInfoBox('Obě koleje jsou ve vzdálenosti d od osy trati', W/2, 100, ia);
+      }
+
+      // ── Train arrives ──
+      if (progress > 0.60) {
+        const tp = easeOut(Math.min(1, (progress - 0.60) / 0.15));
+        const trainX = lerp(-150, 500, tp);
+        drawTrain(trainX, Math.min(1, (progress - 0.60) / 0.04));
+      }
+
+      // ── Result info ──
+      if (progress > 0.78) {
+        const ia = easeOut(Math.min(1, (progress - 0.78) / 0.04));
+        drawInfoBox('✅  p₁ ∥ p ∥ p₂ – dvě rovnoběžky ve vzdálenosti d', W/2, 100, ia);
+      }
+
+      // ── Explanation ──
+      if (progress > 0.82) {
+        const ea = easeOut(Math.min(1, (progress - 0.82) / 0.05));
+        ctx.save();
+        ctx.globalAlpha = ea;
+        ctx.fillStyle = 'rgba(0,0,0,0.8)';
+        ctx.beginPath();
+        ctx.roundRect(W/2 - 320, H - 130, 640, 100, 14);
+        ctx.fill();
+        ctx.fillStyle = colors.text;
+        ctx.font = 'bold 22px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('Koleje = dvě rovnoběžky ve stejné', W/2, H - 98);
+        ctx.fillText('vzdálenosti d od osy (přímky p).', W/2, H - 70);
+        ctx.fillStyle = colors.line;
+        ctx.font = '18px system-ui';
+        ctx.fillText('Množina bodů ve vzdálenosti d od přímky → 2 rovnoběžky', W/2, H - 42);
+        ctx.restore();
+      }
+
+      // ── Summary ──
+      if (progress > 0.92) {
+        const sa = easeOut(Math.min(1, (progress - 0.92) / 0.05));
+        ctx.save();
+        ctx.globalAlpha = sa * 0.9;
+        ctx.fillStyle = 'rgba(0,0,0,0.85)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+
+        drawText('🚂 Koleje = rovnoběžky', W/2, H/2 - 50, 36, colors.green, 'center', sa);
+        drawText('Body ve vzdálenosti d od přímky p tvoří', W/2, H/2, 24, colors.text, 'center', sa);
+        drawText('dvě rovnoběžky p₁ a p₂ s přímkou p.', W/2, H/2 + 35, 24, colors.text, 'center', sa);
+        drawText('d(X, p) = d', W/2, H/2 + 80, 28, colors.line, 'center', sa);
+      }
+    }
+
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      if (isPlaying) {
+        currentProgress = Math.min(1, (timestamp - startTime) / DURATION);
+      }
+      render(currentProgress);
+      if (currentProgress < 1) requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('message', (e) => {
+      const d = e.data;
+      if (d === 'toggle') {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          startTime = performance.now() - currentProgress * DURATION;
+          requestAnimationFrame(animate);
+        }
+      } else if (d === 'stop') {
+        isPlaying = false;
+        currentProgress = 0;
+        startTime = null;
+        render(0);
+      } else if (d === 'rew') {
+        currentProgress = Math.max(0, currentProgress - 0.05);
+        startTime = performance.now() - currentProgress * DURATION;
+        render(currentProgress);
+      } else if (d === 'fwd') {
+        currentProgress = Math.min(1, currentProgress + 0.05);
+        startTime = performance.now() - currentProgress * DURATION;
+        render(currentProgress);
+      }
+    });
+
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lampa na rohu chodby – osa úhlu</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    canvas { max-width: 100%; max-height: 100vh; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="1280" height="720"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    const DURATION = 30000;
+    let startTime = null;
+    let isPlaying = true;
+    let currentProgress = 0;
+    
+    const colors = {
+      bg1: '#0f172a', bg2: '#1e293b',
+      wall: '#64748b', wallDark: '#475569', wallLight: '#94a3b8',
+      white: '#ffffff', yellow: '#fbbf24', green: '#34d399',
+      red: '#f87171', text: '#e2e8f0', textDim: '#94a3b8',
+      blue: '#60a5fa', orange: '#fb923c', purple: '#a78bfa',
+      floor: '#1e293b', floorLight: '#334155',
+      lamp: '#fbbf24', lampGlow: 'rgba(251,191,36,0.15)',
+      bisector: '#818cf8'
+    };
+    
+    // Corridor corner geometry
+    // Vertex of the angle (corner of corridor)
+    const VX = 350, VY = 420;
+    // Wall A goes up-left (rameno a)
+    const wallAendX = 100, wallAendY = 120;
+    // Wall B goes right (rameno b)
+    const wallBendX = 900, wallBendY = 240;
+    
+    // Direction vectors
+    const dAx = wallAendX - VX, dAy = wallAendY - VY;
+    const dAlen = Math.sqrt(dAx*dAx + dAy*dAy);
+    const nAx = dAx/dAlen, nAy = dAy/dAlen;
+    
+    const dBx = wallBendX - VX, dBy = wallBendY - VY;
+    const dBlen = Math.sqrt(dBx*dBx + dBy*dBy);
+    const nBx = dBx/dBlen, nBy = dBy/dBlen;
+    
+    // Bisector direction
+    const bisX = nAx + nBx, bisY = nAy + nBy;
+    const bisLen = Math.sqrt(bisX*bisX + bisY*bisY);
+    const bisDx = bisX/bisLen, bisDy = bisY/bisLen;
+    
+    // Bisector end point (extending far)
+    const bisEndX = VX + bisDx * 500;
+    const bisEndY = VY + bisDy * 500;
+    
+    // Lamp positions
+    const lampCorrectDist = 200;
+    const lampCorrectX = VX + bisDx * lampCorrectDist;
+    const lampCorrectY = VY + bisDy * lampCorrectDist;
+    
+    // Wrong position (closer to wall B)
+    const lampWrongX = VX + nBx * 180 + bisDx * 40;
+    const lampWrongY = VY + nBy * 180 + bisDy * 40;
+    
+    // Perpendicular foot from point to line through V
+    function perpFoot(px, py, nx, ny) {
+      const t = (px - VX)*nx + (py - VY)*ny;
+      return { x: VX + t*nx, y: VY + t*ny };
+    }
+    
+    function dist(x1, y1, x2, y2) {
+      return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+    }
+    
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function easeInOut(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    
+    function drawBackground() {
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, colors.bg1);
+      g.addColorStop(1, colors.bg2);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+    
+    function drawWalls(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      
+      // Wall A (rameno a)
+      ctx.strokeStyle = colors.wall;
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(VX, VY);
+      ctx.lineTo(wallAendX, wallAendY);
+      ctx.stroke();
+      
+      // Wall B (rameno b)
+      ctx.beginPath();
+      ctx.moveTo(VX, VY);
+      ctx.lineTo(wallBendX, wallBendY);
+      ctx.stroke();
+      
+      // Wall thickness effect
+      ctx.strokeStyle = colors.wallDark;
+      ctx.lineWidth = 12;
+      ctx.globalAlpha = alpha * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(VX, VY);
+      ctx.lineTo(wallAendX, wallAendY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(VX, VY);
+      ctx.lineTo(wallBendX, wallBendY);
+      ctx.stroke();
+      
+      ctx.restore();
+    }
+    
+    function drawCornerVertex(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = colors.red;
+      ctx.beginPath();
+      ctx.arc(VX, VY, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 20px system-ui';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('V', VX - 25, VY + 20);
+      ctx.restore();
+    }
+    
+    function drawWallLabels(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      
+      // Label "Zeď a" near wall A
+      const labelAx = VX + nAx * 180 + 25;
+      const labelAy = VY + nAy * 180 - 15;
+      ctx.fillStyle = colors.wallLight;
+      ctx.font = 'bold 22px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('Zeď a', labelAx, labelAy);
+      
+      // Label "Zeď b" near wall B
+      const labelBx = VX + nBx * 300;
+      const labelBy = VY + nBy * 300 - 25;
+      ctx.fillText('Zeď b', labelBx, labelBy);
+      
+      ctx.restore();
+    }
+    
+    function drawAngleArc(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      
+      const angleA = Math.atan2(nAy, nAx);
+      const angleB = Math.atan2(nBy, nBx);
+      
+      ctx.strokeStyle = colors.orange;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(VX, VY, 55, angleB, angleA, false);
+      ctx.stroke();
+      
+      // α label
+      const midAngle = (angleA + angleB) / 2;
+      ctx.fillStyle = colors.orange;
+      ctx.font = 'bold 20px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('α', VX + 75 * Math.cos(midAngle), VY + 75 * Math.sin(midAngle));
+      
+      ctx.restore();
+    }
+    
+    function drawLamp(x, y, glowRadius, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      
+      // Glow effect
+      if (glowRadius > 0) {
+        const glow = ctx.createRadialGradient(x, y, 0, x, y, glowRadius);
+        glow.addColorStop(0, 'rgba(251,191,36,0.25)');
+        glow.addColorStop(0.5, 'rgba(251,191,36,0.08)');
+        glow.addColorStop(1, 'rgba(251,191,36,0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(x, y, glowRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // Lamp body
+      ctx.fillStyle = color || colors.lamp;
+      ctx.beginPath();
+      ctx.arc(x, y, 14, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Inner glow
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(x, y, 7, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Light symbol
+      ctx.font = 'bold 12px system-ui';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = color || colors.lamp;
+      ctx.fillText('💡', x, y);
+      
+      ctx.restore();
+    }
+    
+    function drawDistanceLine(x1, y1, x2, y2, label, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.setLineDash([8, 5]);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      const mx = (x1 + x2) / 2;
+      const my = (y1 + y2) / 2;
+      ctx.fillStyle = color;
+      ctx.font = 'bold 16px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, mx + 15, my - 10);
+      ctx.restore();
+    }
+    
+    function drawBisector(alpha, len) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.setLineDash([14, 7]);
+      ctx.strokeStyle = colors.bisector;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(VX, VY);
+      ctx.lineTo(VX + bisDx * len, VY + bisDy * len);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+    
+    function drawRightAngleMark(footX, footY, toPointX, toPointY, wallNx, wallNy, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      const s = 12;
+      const dx = toPointX - footX, dy = toPointY - footY;
+      const dlen = Math.sqrt(dx*dx + dy*dy);
+      const ux = dx/dlen, uy = dy/dlen;
+      
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(footX + ux*s, footY + uy*s);
+      ctx.lineTo(footX + ux*s + wallNx*s, footY + uy*s + wallNy*s);
+      ctx.lineTo(footX + wallNx*s, footY + wallNy*s);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
+    function drawText(text, x, y, size, color, align, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha || 1;
+      ctx.fillStyle = color;
+      ctx.font = 'bold ' + size + 'px system-ui';
+      ctx.textAlign = align || 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+    
+    function drawInfoBox(text, x, y, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.font = 'bold 20px system-ui';
+      const w = ctx.measureText(text).width + 40;
+      ctx.fillStyle = 'rgba(0,0,0,0.75)';
+      ctx.beginPath();
+      ctx.roundRect(x - w/2, y - 20, w, 40, 10);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+    
+    function render(progress) {
+      drawBackground();
+      
+      // ── Phase 0–0.10: Title ──
+      if (progress < 0.10) {
+        const p = easeOut(progress / 0.07);
+        drawText('💡 Lampa na rohu chodby', W/2, H/2 - 20, 42, colors.text, 'center', p);
+        drawText('Kde umístit lampu, aby svítila stejně na obě zdi?', W/2, H/2 + 30, 20, colors.textDim, 'center', Math.max(0, (progress - 0.02) / 0.06));
+        return;
+      }
+      
+      // ── Phase 0.10–0.22: Walls appear ──
+      const wallAlpha = Math.min(1, (progress - 0.10) / 0.06);
+      drawWalls(wallAlpha);
+      
+      if (progress > 0.14) {
+        const a = easeOut(Math.min(1, (progress - 0.14) / 0.05));
+        drawCornerVertex(a);
+        drawWallLabels(a);
+      }
+      
+      if (progress > 0.18) {
+        const a = easeOut(Math.min(1, (progress - 0.18) / 0.04));
+        drawAngleArc(a);
+      }
+      
+      // ── Phase 0.22–0.42: Wrong position ──
+      if (progress > 0.22 && progress < 0.55) {
+        const pa = easeOut(Math.min(1, (progress - 0.22) / 0.05));
+        drawLamp(lampWrongX, lampWrongY, 100, colors.lamp, pa);
+        
+        if (progress > 0.28) {
+          const da = easeOut(Math.min(1, (progress - 0.28) / 0.05));
+          const footA = perpFoot(lampWrongX, lampWrongY, nAx, nAy);
+          const footB = perpFoot(lampWrongX, lampWrongY, nBx, nBy);
+          const distA = dist(lampWrongX, lampWrongY, footA.x, footA.y);
+          const distB = dist(lampWrongX, lampWrongY, footB.x, footB.y);
+          
+          drawDistanceLine(lampWrongX, lampWrongY, footA.x, footA.y, 'd₁ = ' + Math.round(distA), colors.blue, da);
+          drawDistanceLine(lampWrongX, lampWrongY, footB.x, footB.y, 'd₂ = ' + Math.round(distB), colors.orange, da);
+        }
+        
+        if (progress > 0.34) {
+          const ia = easeOut(Math.min(1, (progress - 0.34) / 0.04));
+          drawInfoBox('❌  d₁ ≠ d₂ → nerovnoměrné osvětlení', W/2, 80, ia);
+        }
+      }
+      
+      // ── Phase 0.42–0.55: Transition to bisector ──
+      if (progress > 0.42) {
+        const ba = easeOut(Math.min(1, (progress - 0.42) / 0.06));
+        const bisectorLen = 450 * ba;
+        drawBisector(ba, bisectorLen);
+        
+        if (progress > 0.46) {
+          const la = easeOut(Math.min(1, (progress - 0.46) / 0.04));
+          drawText('osa úhlu o', VX + bisDx * 300 + 40, VY + bisDy * 300 - 20, 20, colors.bisector, 'left', la);
+        }
+      }
+      
+      // ── Phase 0.55–0.80: Correct position ──
+      if (progress > 0.55) {
+        const ca = easeOut(Math.min(1, (progress - 0.55) / 0.05));
+        drawLamp(lampCorrectX, lampCorrectY, 140 * ca, colors.green, ca);
+        
+        if (progress > 0.60) {
+          const da = easeOut(Math.min(1, (progress - 0.60) / 0.06));
+          const footA = perpFoot(lampCorrectX, lampCorrectY, nAx, nAy);
+          const footB = perpFoot(lampCorrectX, lampCorrectY, nBx, nBy);
+          const distA = dist(lampCorrectX, lampCorrectY, footA.x, footA.y);
+          
+          drawDistanceLine(lampCorrectX, lampCorrectY, footA.x, footA.y, 'd₁', colors.green, da);
+          drawDistanceLine(lampCorrectX, lampCorrectY, footB.x, footB.y, 'd₂', colors.green, da);
+          
+          drawRightAngleMark(footA.x, footA.y, lampCorrectX, lampCorrectY, nAx, nAy, colors.green, da);
+          drawRightAngleMark(footB.x, footB.y, lampCorrectX, lampCorrectY, nBx, nBy, colors.green, da);
+        }
+        
+        if (progress > 0.68) {
+          const ia = easeOut(Math.min(1, (progress - 0.68) / 0.04));
+          drawInfoBox('✅  d₁ = d₂ → rovnoměrné osvětlení!', W/2, 80, ia);
+        }
+      }
+      
+      // ── Phase 0.80–0.92: Explanation ──
+      if (progress > 0.80) {
+        const ea = easeOut(Math.min(1, (progress - 0.80) / 0.05));
+        
+        ctx.save();
+        ctx.globalAlpha = ea;
+        ctx.fillStyle = 'rgba(0,0,0,0.8)';
+        ctx.beginPath();
+        ctx.roundRect(W/2 - 280, H - 130, 560, 100, 14);
+        ctx.fill();
+        
+        ctx.fillStyle = colors.text;
+        ctx.font = 'bold 22px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('Bod na ose úhlu je stejně daleko', W/2, H - 98);
+        ctx.fillText('od obou ramen (zdí).', W/2, H - 70);
+        ctx.fillStyle = colors.bisector;
+        ctx.font = '18px system-ui';
+        ctx.fillText('Lampa na ose úhlu ↔ rovnoměrné osvětlení', W/2, H - 42);
+        ctx.restore();
+      }
+      
+      // ── Phase 0.92–1.0: Summary ──
+      if (progress > 0.92) {
+        const sa = easeOut(Math.min(1, (progress - 0.92) / 0.05));
+        
+        ctx.save();
+        ctx.globalAlpha = sa * 0.9;
+        ctx.fillStyle = 'rgba(0,0,0,0.85)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+        
+        drawText('💡 Osa úhlu = ideální pozice lampy', W/2, H/2 - 50, 36, colors.green, 'center', sa);
+        drawText('Každý bod na ose úhlu má od obou ramen', W/2, H/2, 24, colors.text, 'center', sa);
+        drawText('stejnou kolmou vzdálenost.', W/2, H/2 + 35, 24, colors.text, 'center', sa);
+        drawText('|XP| = |XQ|', W/2, H/2 + 80, 28, colors.bisector, 'center', sa);
+      }
+    }
+    
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      
+      if (isPlaying) {
+        currentProgress = Math.min(1, (timestamp - startTime) / DURATION);
+      }
+      
+      render(currentProgress);
+      
+      if (currentProgress < 1) {
+        requestAnimationFrame(animate);
+      }
+    }
+    
+    // PostMessage API (same as other videos)
+    window.addEventListener('message', (e) => {
+      const d = e.data;
+      if (d === 'toggle') {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          startTime = performance.now() - currentProgress * DURATION;
+          requestAnimationFrame(animate);
+        }
+      } else if (d === 'stop') {
+        isPlaying = false;
+        currentProgress = 0;
+        startTime = null;
+        render(0);
+      } else if (d === 'rew') {
+        currentProgress = Math.max(0, currentProgress - 0.05);
+        startTime = performance.now() - currentProgress * DURATION;
+        render(currentProgress);
+        if (!isPlaying) render(currentProgress);
+      } else if (d === 'fwd') {
+        currentProgress = Math.min(1, currentProgress + 0.05);
+        startTime = performance.now() - currentProgress * DURATION;
+        render(currentProgress);
+        if (!isPlaying) render(currentProgress);
+      }
+    });
+    
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

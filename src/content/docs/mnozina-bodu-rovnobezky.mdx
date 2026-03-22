@@ -1,0 +1,225 @@
+---
+title: "Množina bodů – Rovnoběžky"
+description: "Rovnoběžky jako množina bodů ve stejné vzdálenosti od přímky."
+order: 12
+---
+
+import SelfCheck from '../../components/SelfCheck.svelte';
+import Quiz from '../../components/Quiz.svelte';
+import VideoModal from '../../components/VideoModal.svelte';
+import ImageModal from '../../components/ImageModal.svelte';
+
+# Množina bodů – Rovnoběžky 📏
+
+> **Klíčová otázka:** Kde v rovině leží všechny body, které mají od dané přímky stejnou vzdálenost?
+
+---
+
+<h2 id="1-rovnobezky">1. Rovnoběžky</h2>
+
+<figure class="my-6">
+  <ImageModal client:load src="/img/mnozina-bodu-rovnobezky.svg" alt="Rovnoběžky jako množina bodů" class="max-w-sm mx-auto" />
+  <figcaption class="text-center text-sm text-primary-400 mt-2">Množina bodů ve vzdálenosti d od přímky p.</figcaption>
+</figure>
+
+### Definice
+
+> **Množina všech bodů**, které mají od přímky $p$ **vzdálenost $d$**, jsou **dvě rovnoběžky** $p_1$ a $p_2$ s přímkou $p$.
+
+$$
+d(X, p) = d \;\Rightarrow\; X \in p_1 \cup p_2
+$$
+
+kde $p_1 \parallel p$, $p_2 \parallel p$ a obě leží ve vzdálenosti $d$ od $p$ (jedna nad, druhá pod).
+
+### 📖 Modelové ukázky
+
+<div class="flex justify-center my-8">
+  <div class="group relative rounded-2xl border-2 border-teal-200 bg-gradient-to-br from-teal-50 to-white shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden max-w-lg w-full">
+    <div class="p-4">
+      <ImageModal client:load src="/img/rovnobezky-1.svg" alt="Rovnoběžky – pojmy a značení" />
+    </div>
+    <div class="px-4 pb-4 text-center">
+      <p class="text-sm font-semibold text-teal-700">Rovnoběžky – pojmy a značení</p>
+      <p class="text-xs text-gray-500 mt-1">Klikni pro zvětšení 🔍</p>
+    </div>
+  </div>
+</div>
+
+### Klíčové pojmy
+
+| Pojem | Vysvětlení |
+|:------|:-----------|
+| **Přímka p** | Daná přímka, od které měříme vzdálenost |
+| **Vzdálenost d** | Kolmá vzdálenost bodu od přímky p |
+| **Rovnoběžka p₁** | Přímka rovnoběžná s p ve vzdálenosti d nad přímkou p |
+| **Rovnoběžka p₂** | Přímka rovnoběžná s p ve vzdálenosti d pod přímkou p |
+| **Kolmá vzdálenost** | Vzdálenost bodu od přímky měřená **kolmo** na přímku |
+
+### Vlastnosti
+
+1. Množina bodů ve vzdálenosti $d$ od přímky $p$ jsou **dvě rovnoběžky** $p_1$ a $p_2$
+2. Jedna rovnoběžka je nad přímkou $p$, druhá pod (na obou stranách)
+3. Obě rovnoběžky jsou ve vzdálenosti $d$ od $p$: $d(p_1, p) = d(p_2, p) = d$
+4. Vzdálenost bodu od přímky měříme vždy **kolmo** na přímku
+5. Speciální případ: pokud $d = 0$, dostaneme **jedinou přímku** – samotnou přímku $p$
+
+> ⚠️ **Pozor:** Vzdálenost bodu od přímky se měří vždy **kolmo** – ne šikmo!
+
+### Jak sestrojit rovnoběžky ve vzdálenosti d
+
+| Krok | Co uděláš |
+|:-----|:----------|
+| 1. | Na přímce $p$ zvol libovolný bod **A** |
+| 2. | V bodě A sestroj **kolmici** $k$ na přímku $p$ |
+| 3. | Na kolmici $k$ vynes od bodu A vzdálenost $d$ **nad** přímku $p$ → bod **B₁** |
+| 4. | Na kolmici $k$ vynes od bodu A vzdálenost $d$ **pod** přímku $p$ → bod **B₂** |
+| 5. | Bodem **B₁** veď rovnoběžku s $p$ → přímka $p_1$ |
+| 6. | Bodem **B₂** veď rovnoběžku s $p$ → přímka $p_2$ |
+
+> 💡 **Proč to funguje?** Každý bod na $p_1$ má od $p$ kolmou vzdálenost $d$ (rovnoběžky mají konstantní vzdálenost). Stejně tak každý bod na $p_2$.
+
+<SelfCheck client:load id="mb5-rovnobezky" label="Vím, že body ve stejné vzdálenosti od přímky tvoří dvě rovnoběžky." />
+
+---
+
+<h2 id="rychly-test">🧠 Ověř si znalosti: Rozumíš pojmům?</h2>
+
+<Quiz
+  client:load
+  questions={[
+    {
+      question: "Co tvoří množina bodů ve vzdálenosti d od přímky p?",
+      options: ["Jednu přímku", "Kružnici", "Dvě rovnoběžky s přímkou p", "Osu úsečky"],
+      correct: 2,
+      explanation: "Body ve vzdálenosti d od přímky p tvoří dvě rovnoběžky – jednu nad a jednu pod přímkou p."
+    },
+    {
+      question: "Jak měříme vzdálenost bodu od přímky?",
+      options: ["Libovolným směrem", "Po přímce", "Kolmo na přímku", "Šikmo k přímce"],
+      correct: 2,
+      explanation: "Vzdálenost bodu od přímky se vždy měří kolmou vzdáleností – nejkratší vzdáleností od bodu k přímce."
+    },
+    {
+      question: "Co dostaneme, pokud je vzdálenost d = 0?",
+      options: ["Dvě rovnoběžky", "Kružnici", "Jedinou přímku – samotnou přímku p", "Prázdnou množinu"],
+      correct: 2,
+      explanation: "Pokud d = 0, pak množina bodů ve vzdálenosti 0 od přímky p je samotná přímka p."
+    },
+    {
+      question: "Kolik rovnoběžek ve vzdálenosti d > 0 od přímky p existuje?",
+      options: ["Žádná", "Jedna", "Právě dvě", "Nekonečně mnoho"],
+      correct: 2,
+      explanation: "Pro d > 0 existují právě dvě rovnoběžky s přímkou p – jedna na každé straně."
+    },
+    {
+      question: "Bod X leží ve vzdálenosti 5 cm od přímky p. Co o něm můžeš říci?",
+      options: ["Leží na přímce p", "Leží na jedné ze dvou rovnoběžek ve vzdálenosti 5 cm od p", "Leží na kružnici", "Leží na ose přímky p"],
+      correct: 1,
+      explanation: "Bod X leží na jedné ze dvou rovnoběžek s přímkou p ve vzdálenosti 5 cm – nad nebo pod přímkou p."
+    }
+  ]}
+/>
+
+<SelfCheck client:load id="mb5-kviz" label="Odpověděl(a) jsem správně na většinu otázek." />
+
+---
+
+<h2 id="priklady">2. Příklady</h2>
+
+### Příklad 1: Plot kolem záhonu
+
+> 📝 **Zadání:** Podél zahradní cestičky (přímka p) chceme na obou stranách postavit plot ve vzdálenosti 2 metry. Kde budou ploty?
+
+**Rozbor:**
+- Cestička je přímka $p$
+- Hledáme body ve vzdálenosti $d = 2\,\text{m}$ od přímky $p$
+- Množina takových bodů jsou dvě rovnoběžky
+
+**Řešení:**
+1. Cestička je přímka **p**
+2. Hledáme body ve vzdálenosti $d = 2\,\text{m}$ od přímky $p$
+3. Množina takových bodů jsou **dvě rovnoběžky** $p_1$ a $p_2$ s přímkou $p$
+4. Jeden plot bude na přímce $p_1$ (2 m nad cestičkou), druhý na $p_2$ (2 m pod cestičkou)
+
+**Odpověď:** Ploty budou na dvou rovnoběžkách s cestičkou, obě ve vzdálenosti 2 m.
+
+<VideoModal client:load src="/video-plot-rovnobezky.html" title="🌻 Plot kolem záhonu – vizualizace" thumbnailImg="/img/plot-rovnobezky-thumb.svg" />
+
+---
+
+### Příklad 2: Koleje a vlak
+
+> 📝 **Zadání:** Osa železniční trati je přímka p. Obě koleje musí být ve vzdálenosti d od osy trati. Kde přesně koleje vedou?
+
+**Rozbor:**
+- Osa trati je přímka $p$
+- Koleje musí být ve vzdálenosti $d$ od osy – hledáme body, kde $d(X, p) = d$
+
+**Řešení:**
+1. Osa trati je přímka **p**
+2. Koleje musí být ve vzdálenosti $d$ od osy → hledáme body, kde $d(X, p) = d$
+3. Množina takových bodů jsou **dvě rovnoběžky** $p_1 \parallel p$ a $p_2 \parallel p$
+4. Kolej $p_1$ vede na jedné straně, kolej $p_2$ na druhé straně osy
+
+**Odpověď:** Koleje vedou po dvou rovnoběžkách $p_1$ a $p_2$ s osou trati, obě ve vzdálenosti $d$.
+
+<VideoModal client:load src="/video-vlak-rovnobezky.html" title="🚂 Koleje a vlak – vizualizace" thumbnailImg="/img/vlak-rovnobezky-thumb.svg" />
+
+> 💡 **Tip:** Rovnoběžky se vzdáleností od přímky jsou jedním z nejčastějších příkladů množiny bodů dané vlastnosti v praxi!
+
+<SelfCheck client:load id="mb5-priklady" label="Umím řešit příklady s rovnoběžkami a vzdáleností od přímky." />
+
+---
+
+<h2 id="pozor">3. Na co si dát pozor</h2>
+
+| Chyba | Proč je špatně | Správně |
+|:------|:---------------|:--------|
+| Body ve vzdálenosti d od přímky tvoří jednu přímku | Je jich nekonečně mnoho na **obou stranách** | Tvoří **dvě rovnoběžky** (jednu nad, jednu pod) |
+| Vzdálenost měřím šikmo | Vzdálenost od přímky se měří **kolmo** | Měříme **kolmou vzdálenost** |
+| Rovnoběžky mohou být různě daleko od p | Obě rovnoběžky musí být ve **stejné** vzdálenosti d | $d(p_1, p) = d(p_2, p) = d$ |
+| Pro d = 0 jsou dvě přímky | Pro d = 0 je množina jen **samotná přímka p** | $d = 0 \Rightarrow$ jen přímka $p$ |
+| Zapomenu na druhou rovnoběžku | Vždy existují body na **obou stranách** přímky | Řešení jsou **dvě** rovnoběžky |
+
+---
+
+<h2 id="over-si-znalosti">✅ Ověř si znalosti</h2>
+
+<Quiz
+  client:load
+  questions={[
+    {
+      question: "Jak sestrojíš rovnoběžky ve vzdálenosti d od přímky p?",
+      options: ["Narýsuji oblouk z bodu na p", "Na kolmici k přímce p vynesu vzdálenost d na obě strany, body spojím rovnoběžkami s p", "Narýsuji osu úhlu", "Sestrojím kružnici s poloměrem d"],
+      correct: 1,
+      explanation: "V bodě na přímce p sestrojíš kolmici, na ní vyneseš vzdálenost d na obě strany a body spojíš rovnoběžkami s p."
+    },
+    {
+      question: "Přímka p je vodorovná. Kde leží body ve vzdálenosti 4 cm od p?",
+      options: ["Na jedné vodorovné přímce nad p", "Na dvou vodorovných přímkách – 4 cm nad a 4 cm pod p", "Na kružnici se středem na p", "Na svislé přímce"],
+      correct: 1,
+      explanation: "Body ve vzdálenosti 4 cm od vodorovné přímky p leží na dvou vodorovných rovnoběžkách – jedna 4 cm nad a druhá 4 cm pod přímkou p."
+    },
+    {
+      question: "Přímky p₁ a p₂ jsou rovnoběžné s přímkou p ve vzdálenosti 3 cm. Jaká je vzdálenost p₁ od p₂?",
+      options: ["3 cm", "6 cm", "0 cm", "Nelze určit"],
+      correct: 1,
+      explanation: "Pokud p₁ je 3 cm nad p a p₂ je 3 cm pod p, pak vzájemná vzdálenost p₁ a p₂ je 3 + 3 = 6 cm."
+    },
+    {
+      question: "Bod X leží ve vzdálenosti 2 cm od přímky p a zároveň ve vzdálenosti 3 cm od přímky q rovnoběžné s p. Je to možné?",
+      options: ["Nikdy", "Ano, pokud vzdálenost p a q je 1 cm nebo 5 cm", "Ano, vždy", "Jen pokud p = q"],
+      correct: 1,
+      explanation: "Bod X je 2 cm od p a 3 cm od q. To je možné, pokud d(p,q) = 2+3 = 5 cm nebo d(p,q) = 3-2 = 1 cm."
+    },
+    {
+      question: "Kolik bodů leží ve vzdálenosti 5 cm od přímky p a zároveň ve vzdálenosti 5 cm od bodu S ležícího na p?",
+      options: ["Žádný", "Jeden", "Dva", "Čtyři"],
+      correct: 2,
+      explanation: "Body ve vzdálenosti 5 cm od p tvoří dvě rovnoběžky. Body ve vzdálenosti 5 cm od S tvoří kružnici k(S;5). Kružnice protne každou rovnoběžku v právě 1 bodě – celkem vzniknou 2 průsečíky."
+    }
+  ]}
+/>
+
+<SelfCheck client:load id="mb5-final" label="Zvládám příklady s rovnoběžkami." />

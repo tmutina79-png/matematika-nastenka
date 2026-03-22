@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bezpečnostní kamera – osa úhlu</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    canvas { max-width: 100%; max-height: 100vh; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="1280" height="720"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    const DURATION = 30000;
+    let startTime = null;
+    let isPlaying = true;
+    let currentProgress = 0;
+    
+    const colors = {
+      bg1: '#0f172a', bg2: '#1e293b',
+      road: '#475569', roadLine: '#fbbf24', roadEdge: '#64748b',
+      white: '#ffffff', yellow: '#fbbf24', green: '#34d399',
+      red: '#f87171', text: '#e2e8f0', textDim: '#94a3b8',
+      blue: '#60a5fa', orange: '#fb923c', purple: '#a78bfa',
+      bisector: '#818cf8', camera: '#ef4444',
+      grassLight: '#166534', grassDark: '#14532d'
+    };
+    
+    // Intersection point (vertex)
+    const VX = 420, VY = 440;
+    
+    // Road A direction (up-left)
+    const roadAangle = -2.2;
+    const nAx = Math.cos(roadAangle), nAy = Math.sin(roadAangle);
+    
+    // Road B direction (right-up)
+    const roadBangle = -0.5;
+    const nBx = Math.cos(roadBangle), nBy = Math.sin(roadBangle);
+    
+    // Bisector
+    const bisX = nAx + nBx, bisY = nAy + nBy;
+    const bisLen = Math.sqrt(bisX*bisX + bisY*bisY);
+    const bisDx = bisX/bisLen, bisDy = bisY/bisLen;
+    
+    // Road endpoints
+    const roadLen = 550;
+    const roadAendX = VX + nAx * roadLen, roadAendY = VY + nAy * roadLen;
+    const roadBendX = VX + nBx * roadLen, roadBendY = VY + nBy * roadLen;
+    
+    // Camera positions
+    const camCorrectDist = 200;
+    const camCorrectX = VX + bisDx * camCorrectDist;
+    const camCorrectY = VY + bisDy * camCorrectDist;
+    
+    const camWrongX = VX + nBx * 200 + bisDx * 30;
+    const camWrongY = VY + nBy * 200 + bisDy * 30;
+    
+    function perpFoot(px, py, nx, ny) {
+      const t = (px - VX)*nx + (py - VY)*ny;
+      return { x: VX + t*nx, y: VY + t*ny };
+    }
+    
+    function dist(x1, y1, x2, y2) {
+      return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+    }
+    
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    
+    function drawBackground() {
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, colors.bg1);
+      g.addColorStop(1, colors.bg2);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+    
+    function drawRoads(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      
+      // Road A
+      ctx.strokeStyle = colors.road;
+      ctx.lineWidth = 40;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(VX, VY);
+      ctx.lineTo(roadAendX, roadAendY);
+      ctx.stroke();
+      
+      // Road A center line
+      ctx.strokeStyle = colors.roadLine;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([15, 10]);
+      ctx.beginPath();
+      ctx.moveTo(VX + nAx*30, VY + nAy*30);
+      ctx.lineTo(roadAendX, roadAendY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Road B
+      ctx.strokeStyle = colors.road;
+      ctx.lineWidth = 40;
+      ctx.beginPath();
+      ctx.moveTo(VX, VY);
+      ctx.lineTo(roadBendX, roadBendY);
+      ctx.stroke();
+      
+      // Road B center line
+      ctx.strokeStyle = colors.roadLine;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([15, 10]);
+      ctx.beginPath();
+      ctx.moveTo(VX + nBx*30, VY + nBy*30);
+      ctx.lineTo(roadBendX, roadBendY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      ctx.restore();
+    }
+    
+    function drawIntersection(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      
+      ctx.fillStyle = colors.red;
+      ctx.beginPath();
+      ctx.arc(VX, VY, 10, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 22px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('V', VX - 25, VY + 25);
+      ctx.restore();
+    }
+    
+    function drawRoadLabels(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.font = 'bold 20px system-ui';
+      ctx.textAlign = 'center';
+      
+      ctx.fillStyle = colors.roadEdge;
+      ctx.fillText('Ulice a', VX + nAx * 250, VY + nAy * 250 - 30);
+      ctx.fillText('Ulice b', VX + nBx * 300, VY + nBy * 300 - 30);
+      
+      ctx.restore();
+    }
+    
+    function drawAngleArc(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      
+      const angleA = Math.atan2(nAy, nAx);
+      const angleB = Math.atan2(nBy, nBx);
+      
+      ctx.strokeStyle = colors.orange;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(VX, VY, 55, angleA, angleB, true);
+      ctx.stroke();
+      
+      const midAngle = (angleA + angleB) / 2;
+      ctx.fillStyle = colors.orange;
+      ctx.font = 'bold 20px system-ui';
+      ctx.fillText('α', VX + 75 * Math.cos(midAngle), VY + 75 * Math.sin(midAngle));
+      
+      ctx.restore();
+    }
+    
+    function drawCamera(x, y, fovAngle, fovLen, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      
+      // FOV cone
+      if (fovLen > 0) {
+        const bisAngle = Math.atan2(bisDy, bisDx);
+        ctx.fillStyle = 'rgba(239,68,68,0.08)';
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.arc(x, y, fovLen, bisAngle - fovAngle/2, bisAngle + fovAngle/2);
+        ctx.closePath();
+        ctx.fill();
+      }
+      
+      // Camera body
+      ctx.fillStyle = color || colors.camera;
+      ctx.beginPath();
+      ctx.roundRect(x - 12, y - 8, 24, 16, 4);
+      ctx.fill();
+      
+      // Lens
+      ctx.fillStyle = '#1e293b';
+      ctx.beginPath();
+      ctx.arc(x + 8, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#60a5fa';
+      ctx.beginPath();
+      ctx.arc(x + 8, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // LED
+      ctx.fillStyle = color === colors.green ? '#34d399' : '#f87171';
+      ctx.beginPath();
+      ctx.arc(x - 6, y - 4, 3, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+    
+    function drawDistanceLine(x1, y1, x2, y2, label, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.setLineDash([8, 5]);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      const mx = (x1 + x2) / 2;
+      const my = (y1 + y2) / 2;
+      ctx.fillStyle = color;
+      ctx.font = 'bold 16px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, mx + 15, my - 10);
+      ctx.restore();
+    }
+    
+    function drawBisector(alpha, len) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.setLineDash([14, 7]);
+      ctx.strokeStyle = colors.bisector;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(VX, VY);
+      ctx.lineTo(VX + bisDx * len, VY + bisDy * len);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+    
+    function drawText(text, x, y, size, color, align, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha || 1;
+      ctx.fillStyle = color;
+      ctx.font = 'bold ' + size + 'px system-ui';
+      ctx.textAlign = align || 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+    
+    function drawInfoBox(text, x, y, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.font = 'bold 20px system-ui';
+      const w = ctx.measureText(text).width + 40;
+      ctx.fillStyle = 'rgba(0,0,0,0.75)';
+      ctx.beginPath();
+      ctx.roundRect(x - w/2, y - 20, w, 40, 10);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+    
+    function render(progress) {
+      drawBackground();
+      
+      // ── Title ──
+      if (progress < 0.10) {
+        const p = easeOut(progress / 0.07);
+        drawText('📹 Bezpečnostní kamera na křižovatce', W/2, H/2 - 20, 38, colors.text, 'center', p);
+        drawText('Kde umístit kameru, aby pokryla obě ulice stejně?', W/2, H/2 + 30, 20, colors.textDim, 'center', Math.max(0, (progress - 0.02) / 0.06));
+        return;
+      }
+      
+      // ── Roads appear ──
+      const roadAlpha = Math.min(1, (progress - 0.10) / 0.06);
+      drawRoads(roadAlpha);
+      
+      if (progress > 0.14) {
+        const a = easeOut(Math.min(1, (progress - 0.14) / 0.05));
+        drawIntersection(a);
+        drawRoadLabels(a);
+      }
+      
+      if (progress > 0.18) {
+        const a = easeOut(Math.min(1, (progress - 0.18) / 0.04));
+        drawAngleArc(a);
+      }
+      
+      // ── Wrong position ──
+      if (progress > 0.22 && progress < 0.55) {
+        const pa = easeOut(Math.min(1, (progress - 0.22) / 0.05));
+        drawCamera(camWrongX, camWrongY, 0.8, 100, colors.camera, pa);
+        
+        if (progress > 0.28) {
+          const da = easeOut(Math.min(1, (progress - 0.28) / 0.05));
+          const footA = perpFoot(camWrongX, camWrongY, nAx, nAy);
+          const footB = perpFoot(camWrongX, camWrongY, nBx, nBy);
+          const distA = dist(camWrongX, camWrongY, footA.x, footA.y);
+          const distB = dist(camWrongX, camWrongY, footB.x, footB.y);
+          
+          drawDistanceLine(camWrongX, camWrongY, footA.x, footA.y, 'd₁ = ' + Math.round(distA), colors.blue, da);
+          drawDistanceLine(camWrongX, camWrongY, footB.x, footB.y, 'd₂ = ' + Math.round(distB), colors.orange, da);
+        }
+        
+        if (progress > 0.34) {
+          const ia = easeOut(Math.min(1, (progress - 0.34) / 0.04));
+          drawInfoBox('❌  d₁ ≠ d₂ → nerovnoměrné pokrytí', W/2, 80, ia);
+        }
+      }
+      
+      // ── Bisector ──
+      if (progress > 0.42) {
+        const ba = easeOut(Math.min(1, (progress - 0.42) / 0.06));
+        drawBisector(ba, 420 * ba);
+        
+        if (progress > 0.46) {
+          const la = easeOut(Math.min(1, (progress - 0.46) / 0.04));
+          drawText('osa úhlu o', VX + bisDx * 280 + 40, VY + bisDy * 280 - 20, 20, colors.bisector, 'left', la);
+        }
+      }
+      
+      // ── Correct position ──
+      if (progress > 0.55) {
+        const ca = easeOut(Math.min(1, (progress - 0.55) / 0.05));
+        drawCamera(camCorrectX, camCorrectY, 1.0, 140 * ca, colors.green, ca);
+        
+        if (progress > 0.60) {
+          const da = easeOut(Math.min(1, (progress - 0.60) / 0.06));
+          const footA = perpFoot(camCorrectX, camCorrectY, nAx, nAy);
+          const footB = perpFoot(camCorrectX, camCorrectY, nBx, nBy);
+          
+          drawDistanceLine(camCorrectX, camCorrectY, footA.x, footA.y, 'd₁', colors.green, da);
+          drawDistanceLine(camCorrectX, camCorrectY, footB.x, footB.y, 'd₂', colors.green, da);
+        }
+        
+        if (progress > 0.68) {
+          const ia = easeOut(Math.min(1, (progress - 0.68) / 0.04));
+          drawInfoBox('✅  d₁ = d₂ → rovnoměrné pokrytí obou ulic!', W/2, 80, ia);
+        }
+      }
+      
+      // ── Explanation ──
+      if (progress > 0.80) {
+        const ea = easeOut(Math.min(1, (progress - 0.80) / 0.05));
+        
+        ctx.save();
+        ctx.globalAlpha = ea;
+        ctx.fillStyle = 'rgba(0,0,0,0.8)';
+        ctx.beginPath();
+        ctx.roundRect(W/2 - 300, H - 130, 600, 100, 14);
+        ctx.fill();
+        
+        ctx.fillStyle = colors.text;
+        ctx.font = 'bold 22px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('Kamera na ose úhlu pokryje obě ulice stejně.', W/2, H - 92);
+        ctx.fillStyle = colors.bisector;
+        ctx.font = '18px system-ui';
+        ctx.fillText('Bod na ose úhlu → stejná vzdálenost od obou ramen', W/2, H - 55);
+        ctx.restore();
+      }
+      
+      // ── Summary ──
+      if (progress > 0.92) {
+        const sa = easeOut(Math.min(1, (progress - 0.92) / 0.05));
+        
+        ctx.save();
+        ctx.globalAlpha = sa * 0.9;
+        ctx.fillStyle = 'rgba(0,0,0,0.85)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+        
+        drawText('📹 Osa úhlu = optimální pozice kamery', W/2, H/2 - 50, 36, colors.green, 'center', sa);
+        drawText('Osa úhlu je množina bodů stejně vzdálených', W/2, H/2, 24, colors.text, 'center', sa);
+        drawText('od obou ramen úhlu (ulic, zdí, …)', W/2, H/2 + 35, 24, colors.text, 'center', sa);
+        drawText('|XP| = |XQ|', W/2, H/2 + 80, 28, colors.bisector, 'center', sa);
+      }
+    }
+    
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      if (isPlaying) {
+        currentProgress = Math.min(1, (timestamp - startTime) / DURATION);
+      }
+      render(currentProgress);
+      if (currentProgress < 1) requestAnimationFrame(animate);
+    }
+    
+    window.addEventListener('message', (e) => {
+      const d = e.data;
+      if (d === 'toggle') {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          startTime = performance.now() - currentProgress * DURATION;
+          requestAnimationFrame(animate);
+        }
+      } else if (d === 'stop') {
+        isPlaying = false;
+        currentProgress = 0;
+        startTime = null;
+        render(0);
+      } else if (d === 'rew') {
+        currentProgress = Math.max(0, currentProgress - 0.05);
+        startTime = performance.now() - currentProgress * DURATION;
+        render(currentProgress);
+      } else if (d === 'fwd') {
+        currentProgress = Math.min(1, currentProgress + 0.05);
+        startTime = performance.now() - currentProgress * DURATION;
+        render(currentProgress);
+      }
+    });
+    
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

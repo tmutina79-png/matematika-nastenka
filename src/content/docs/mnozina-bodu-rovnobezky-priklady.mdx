@@ -1,0 +1,152 @@
+---
+title: Příklady – Rovnoběžky
+---
+
+import SelfCheck from '../../components/SelfCheck.svelte';
+import StepByStepSolution from '../../components/StepByStepSolution.svelte';
+import PDFWorksheetRovnobezky from '../../components/PDFWorksheetRovnobezky.svelte';
+
+<div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+  <h1 class="m-0">📏 Příklady – Množina bodů daných vlastností – Rovnoběžky</h1>
+  <PDFWorksheetRovnobezky client:load title="Pracovní list – Rovnoběžky" />
+</div>
+
+V této sekci najdeš konstrukční příklady zaměřené na rovnoběžky a body ve stejné vzdálenosti od přímky. Každý příklad má nápovědu a postup řešení krok za krokem.
+
+---
+
+## Příklad 1: Rovnoběžky ve vzdálenosti d – základní konstrukce
+
+> 📝 **Zadání:** Je dána přímka p. Sestroj množinu všech bodů, které mají od přímky p vzdálenost d = 3 cm. Kolik přímek tvoří výslednou množinu?
+
+<StepByStepSolution
+  client:load
+  hint="Hledáš body ve vzdálenosti 3 cm od přímky p. Takové body leží na <strong>obou stranách</strong> přímky – nezapomeň na obě rovnoběžky."
+  steps={[
+    "Narýsuj přímku <strong>p</strong>.",
+    "Na přímce p zvol bod <strong>A</strong>.",
+    "V bodě A sestroj <strong>kolmici k</strong> na přímku p.",
+    "Na kolmici k vynes od A vzdálenost <strong>3 cm nad</strong> přímku p, bod <strong>B₁</strong>.",
+    "Na kolmici k vynes od A vzdálenost <strong>3 cm pod</strong> přímku p, bod <strong>B₂</strong>.",
+    "Bodem <strong>B₁</strong> veď rovnoběžku s p, přímka <strong>p₁</strong>.",
+    "Bodem <strong>B₂</strong> veď rovnoběžku s p, přímka <strong>p₂</strong>.",
+    "<strong>Odpověď:</strong> Množina bodů ve vzdálenosti 3 cm od přímky p jsou <strong>dvě rovnoběžky</strong> p₁ a p₂."
+  ]}
+/>
+
+---
+
+## Příklad 2: Bod na rovnoběžce a na kružnici
+
+> 📝 **Zadání:** Je dána přímka p a bod S ležící na přímce p. Najdi všechny body X, které mají od přímky p vzdálenost 4 cm a zároveň od bodu S vzdálenost 5 cm.
+
+<StepByStepSolution
+  client:load
+  hint="Bod X musí splňovat <strong>dvě podmínky</strong> současně: ležet ve vzdálenosti 4 cm od p (na jedné z rovnoběžek) a ve vzdálenosti 5 cm od S (na kružnici). Hledáš průsečíky."
+  steps={[
+    "Narýsuj přímku <strong>p</strong> a bod <strong>S</strong> na ní.",
+    "Sestroj rovnoběžku <strong>p₁</strong> s p ve vzdálenosti 4 cm nad p.",
+    "Sestroj rovnoběžku <strong>p₂</strong> s p ve vzdálenosti 4 cm pod p.",
+    "Sestroj kružnici <strong>k(S; 5 cm)</strong>.",
+    "Ověření: r = 5 > d = 4, proto kružnice protne obě rovnoběžky.",
+    "Průsečíky <strong>X₁, X₂ = k ∩ p₁</strong> a <strong>X₃, X₄ = k ∩ p₂</strong>.",
+    "<strong>Odpověď:</strong> Existují <strong>4 body</strong> X₁, X₂, X₃, X₄, které splňují obě podmínky."
+  ]}
+/>
+
+---
+
+## Příklad 3: Pás mezi dvěma rovnoběžkami
+
+> 📝 **Zadání:** Je dána přímka p. Urči množinu všech bodů X, pro které platí: d(X, p) ≤ 3 cm. Jaký útvar tato množina tvoří?
+
+<StepByStepSolution
+  client:load
+  hint="Podmínka d(X, p) ≤ 3 zahrnuje všechny body od p do vzdálenosti nejvýše 3 cm – včetně bodů <strong>na přímce p</strong> a <strong>mezi rovnoběžkami</strong>."
+  steps={[
+    "Narýsuj přímku <strong>p</strong>.",
+    "Sestroj rovnoběžku <strong>p₁</strong> ve vzdálenosti 3 cm nad p.",
+    "Sestroj rovnoběžku <strong>p₂</strong> ve vzdálenosti 3 cm pod p.",
+    "Body s d(X, p) = 3 leží na p₁ a p₂. Body s d(X, p) < 3 leží <strong>mezi</strong> p₁ a p₂.",
+    "Množina všech bodů s d(X, p) ≤ 3 je <strong>pás</strong> ohraničený rovnoběžkami p₁ a p₂.",
+    "Šířka pásu je <strong>2 x 3 = 6 cm</strong>.",
+    "<strong>Odpověď:</strong> Množina tvoří <strong>pás</strong> (nekonečný pruh) šířky 6 cm, symetrický podle přímky p."
+  ]}
+/>
+
+---
+
+## Příklad 4: Průnik rovnoběžek s osou úsečky
+
+> 📝 **Zadání:** Je dána přímka p a úsečka AB, kde A leží na přímce p. Najdi body X, které jsou ve vzdálenosti 2 cm od přímky p a zároveň jsou stejně vzdálené od bodů A a B.
+
+<StepByStepSolution
+  client:load
+  hint="Body ve vzdálenosti 2 cm od p tvoří dvě rovnoběžky. Body stejně vzdálené od A a B tvoří <strong>osu úsečky</strong> AB. Hledáš průsečíky."
+  steps={[
+    "Narýsuj přímku <strong>p</strong>, bod <strong>A</strong> na ní a bod <strong>B</strong> mimo přímku.",
+    "Sestroj rovnoběžku <strong>p₁</strong> s p ve vzdálenosti 2 cm nad p.",
+    "Sestroj rovnoběžku <strong>p₂</strong> s p ve vzdálenosti 2 cm pod p.",
+    "Sestroj <strong>osu úsečky o</strong> (kolmice na AB procházející středem AB).",
+    "Průsečíky: <strong>X₁ = o ∩ p₁</strong>, <strong>X₂ = o ∩ p₂</strong>.",
+    "Osa úsečky je přímka, protne každou rovnoběžku v <strong>právě jednom bodě</strong> (pokud nejsou rovnoběžné).",
+    "<strong>Odpověď:</strong> Existují <strong>nejvýše 2 body</strong> X₁ a X₂ (závisí na vzájemné poloze osy a rovnoběžek)."
+  ]}
+/>
+
+---
+
+## Příklad 5: Dvě rovnoběžné přímky – společné body
+
+> 📝 **Zadání:** Jsou dány dvě rovnoběžné přímky p a q ve vzdálenosti 5 cm. Najdi množinu bodů X, které mají od přímky p vzdálenost 2 cm a od přímky q vzdálenost 3 cm.
+
+<StepByStepSolution
+  client:load
+  hint="Vzdálenost p a q je 5 cm. Bod X je 2 cm od p a 3 cm od q. Protože 2 + 3 = 5 = d(p, q), hledáme rovnoběžku <strong>mezi</strong> přímkami."
+  steps={[
+    "Narýsuj rovnoběžné přímky <strong>p</strong> a <strong>q</strong> ve vzdálenosti 5 cm.",
+    "Body ve vzdálenosti 2 cm od p: dvě rovnoběžky – <strong>p₁</strong> (mezi p a q) a <strong>p₂</strong> (na opačné straně od q).",
+    "Body ve vzdálenosti 3 cm od q: dvě rovnoběžky – <strong>q₁</strong> (mezi p a q) a <strong>q₂</strong> (na opačné straně od p).",
+    "Hledáme průsečíky: rovnoběžka p₁ (2 cm od p, mezi p a q) je <strong>3 cm od q</strong> – splývá s q₁!",
+    "Rovnoběžka p₂ (2 cm od p, na vnější straně): vzdálenost od q je 5 + 2 = 7 cm, nevyhovuje.",
+    "Rovnoběžka q₂ (3 cm od q, na vnější straně): vzdálenost od p je 5 + 3 = 8 cm, nevyhovuje.",
+    "<strong>Odpověď:</strong> Množina bodů je <strong>jedna přímka</strong> ležící mezi p a q, 2 cm od p a 3 cm od q."
+  ]}
+/>
+
+---
+
+## Příklad 6: Osa pásu a kružnice
+
+> 📝 **Zadání:** Jsou dány dvě rovnoběžné přímky p₁ a p₂ ve vzdálenosti 6 cm. Mezi nimi leží bod S ve vzdálenosti 3 cm od obou přímek. Najdi body X na ose pásu (přímka procházející S rovnoběžně s p₁ a p₂), které mají od bodu S vzdálenost 4 cm.
+
+<StepByStepSolution
+  client:load
+  hint="Osa pásu je přímka uprostřed mezi p₁ a p₂ – ve vzdálenosti 3 cm od obou. Bod X leží na ose a na kružnici k(S; 4). Hledáš průsečíky."
+  steps={[
+    "Narýsuj rovnoběžky <strong>p₁</strong> a <strong>p₂</strong> ve vzdálenosti 6 cm.",
+    "Označ bod <strong>S</strong> ve středu – 3 cm od obou přímek.",
+    "Osa pásu je přímka <strong>o</strong> procházející S, rovnoběžná s p₁ a p₂.",
+    "Sestroj kružnici <strong>k(S; 4 cm)</strong>.",
+    "Průsečíky <strong>X₁, X₂ = o ∩ k</strong>.",
+    "Kružnice protne přímku o ve <strong>dvou bodech</strong> (poloměr 4 > 0 a S leží na o).",
+    "<strong>Odpověď:</strong> Existují <strong>právě 2 body</strong> X₁ a X₂ na ose pásu ve vzdálenosti 4 cm od S."
+  ]}
+/>
+
+---
+
+<SelfCheck client:load id="mb5-rovnobezky-priklady" label="Umím řešit konstrukční úlohy s rovnoběžkami." />
+
+---
+
+## 📌 Shrnutí
+
+| Příklad | Klíčový postup | Počet řešení |
+|:--------|:---------------|:-------------|
+| Rovnoběžky ve vzdálenosti d – základní | Kolmice + vynesení d na obě strany | 2 přímky |
+| Rovnoběžka + kružnice | Dvě rovnoběžky ∩ kružnice | 0, 2 nebo 4 |
+| Pás (d(X, p) ≤ d) | Oblast mezi rovnoběžkami | Nekonečně mnoho (pás) |
+| Rovnoběžky + osa úsečky | Dvě rovnoběžky ∩ osa úsečky | 0, 1 nebo 2 |
+| Dvě rovnoběžné přímky – vzdálenosti | Průnik množin rovnoběžek | 0 nebo 1 přímka |
+| Osa pásu + kružnice | Přímka ∩ kružnice | 0, 1 nebo 2 |

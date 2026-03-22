@@ -1,0 +1,152 @@
+---
+title: Příklady – Osa úhlu
+---
+
+import SelfCheck from '../../components/SelfCheck.svelte';
+import StepByStepSolution from '../../components/StepByStepSolution.svelte';
+import PDFWorksheetOsaUhlu from '../../components/PDFWorksheetOsaUhlu.svelte';
+
+<div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+  <h1 class="m-0">📐 Příklady – Množina bodů daných vlastností – Osa úhlu</h1>
+  <PDFWorksheetOsaUhlu client:load title="Pracovní list – Osa úhlu" />
+</div>
+
+V této sekci najdeš konstrukční příklady zaměřené na osu úhlu a body stejně vzdálené od obou ramen úhlu. Každý příklad má nápovědu a postup řešení krok za krokem.
+
+---
+
+## Příklad 1: Osa úhlu – základní konstrukce
+
+> 📝 **Zadání:** Je dán úhel AVB o velikosti 60°. Sestroj osu úhlu AVB. Ověř, že osa půlí úhel na dva shodné úhly.
+
+<StepByStepSolution
+  client:load
+  hint="K sestrojení osy úhlu potřebuješ narýsovat oblouk z <strong>vrcholu V</strong>, který protne obě ramena. Pak ze vznikajících bodů narýsuj dva oblouky se <strong>stejným poloměrem</strong>."
+  steps={[
+    "Narýsuj úhel <strong>AVB</strong> o velikosti 60° s vrcholem V.",
+    "Z vrcholu V narýsuj oblouk (poloměr r₁ libovolný), který protne rameno VA v bodě <strong>P</strong> a rameno VB v bodě <strong>Q</strong>.",
+    "Z bodu P narýsuj oblouk poloměru <strong>r₂</strong> (r₂ > 0, libovolný).",
+    "Z bodu Q narýsuj oblouk se <strong>stejným</strong> poloměrem <strong>r₂</strong>.",
+    "Oblouky se protínají v bodě <strong>R</strong> (uvnitř úhlu).",
+    "Polopřímka <strong>VR</strong> je osou úhlu AVB.",
+    "Ověření: Změř úhly AVR a RVB → oba mají velikost <strong>30°</strong>. Osa půlí úhel na dva shodné úhly. ✓",
+    "<strong>Odpověď:</strong> Osa úhlu AVB je polopřímka VR, kde |∠AVR| = |∠RVB| = 30°."
+  ]}
+/>
+
+---
+
+## Příklad 2: Bod na ose úhlu v dané vzdálenosti od ramene
+
+> 📝 **Zadání:** Je dán úhel AVB o velikosti 90°. Sestroj osu úhlu. Na ose najdi bod X tak, aby kolmá vzdálenost od ramene VA byla 3 cm. Ověř, že vzdálenost od ramene VB je také 3 cm.
+
+<StepByStepSolution
+  client:load
+  hint="Každý bod na ose úhlu je <strong>stejně vzdálený</strong> od obou ramen (kolmá vzdálenost). Bod X musí ležet na ose úhlu a zároveň ve vzdálenosti 3 cm od ramene VA – to je <strong>rovnoběžka</strong> s VA."
+  steps={[
+    "Narýsuj pravý úhel <strong>AVB</strong> (90°) s vrcholem V.",
+    "Sestroj <strong>osu úhlu o</strong> standardním postupem (oblouk z V → body P, Q → dva oblouky → bod R → polopřímka VR).",
+    "Osa pravého úhlu svírá s každým ramenem úhel <strong>45°</strong>.",
+    "Sestroj rovnoběžku <strong>p</strong> s ramenem VA ve vzdálenosti 3 cm (na stranu dovnitř úhlu).",
+    "Průsečík <strong>X = o ∩ p</strong> je hledaný bod.",
+    "Ověření: Změř kolmou vzdálenost bodu X od ramene VB → je rovněž <strong>3 cm</strong>. ✓",
+    "<strong>Odpověď:</strong> Na ose úhlu existuje <strong>právě 1 bod</strong> X ve vzdálenosti 3 cm od ramene VA (a tedy i 3 cm od ramene VB)."
+  ]}
+/>
+
+---
+
+## Příklad 3: Kružnice vepsaná trojúhelníku
+
+> 📝 **Zadání:** Je dán trojúhelník ABC s délkami stran a = 6 cm, b = 5 cm, c = 7 cm. Sestrojením os úhlů najdi střed kružnice vepsané a kružnici narýsuj.
+
+<StepByStepSolution
+  client:load
+  hint="Střed kružnice <strong>vepsané</strong> trojúhelníku je bod, který je <strong>stejně vzdálený od všech tří stran</strong>. Takový bod leží na ose každého vnitřního úhlu trojúhelníku. Stačí sestrojit <strong>dvě osy</strong> – jejich průsečík je hledaný střed."
+  steps={[
+    "Sestroj trojúhelník ABC: <strong>c = |AB| = 7 cm</strong>, <strong>a = |BC| = 6 cm</strong>, <strong>b = |AC| = 5 cm</strong>.",
+    "Sestroj <strong>osu úhlu u vrcholu A</strong> (o₁). Každý bod na o₁ má d(X, AB) = d(X, AC).",
+    "Sestroj <strong>osu úhlu u vrcholu B</strong> (o₂). Každý bod na o₂ má d(X, AB) = d(X, BC).",
+    "Průsečík <strong>S = o₁ ∩ o₂</strong> je středem kružnice vepsané. Splňuje d(S, AB) = d(S, BC) = d(S, AC).",
+    "Poloměr kružnice vepsané: <strong>ρ = d(S, AB)</strong> – změř kolmou vzdálenost bodu S od libovolné strany.",
+    "Narýsuj kružnici <strong>k(S; ρ)</strong> – musí se <strong>dotýkat</strong> všech tří stran trojúhelníku.",
+    "<strong>Odpověď:</strong> Střed kružnice vepsané S je průsečíkem os vnitřních úhlů. Kružnice k(S; ρ) se dotýká všech tří stran."
+  ]}
+/>
+
+---
+
+## Příklad 4: Osa úhlu a kružnice
+
+> 📝 **Zadání:** Je dán úhel AVB o velikosti 80°. Na ose úhlu leží střed kružnice k, která se dotýká obou ramen. Poloměr kružnice je r = 2 cm. Sestroj osu úhlu a kružnici.
+
+<StepByStepSolution
+  client:load
+  hint="Kružnice se dotýká obou ramen → její střed je od obou ramen ve vzdálenosti <strong>r = 2 cm</strong>. Proto střed leží na <strong>ose úhlu</strong>. Poloměr kružnice je zároveň kolmou vzdáleností středu od ramen."
+  steps={[
+    "Narýsuj úhel <strong>AVB</strong> o velikosti 80° s vrcholem V.",
+    "Sestroj <strong>osu úhlu o</strong> polopřímku z V.",
+    "Sestroj <strong>rovnoběžku p</strong> s ramenem VA ve vzdálenosti 2 cm (dovnitř úhlu).",
+    "Průsečík <strong>S = o ∩ p</strong> je středem kružnice.",
+    "Sestroj kružnici <strong>k(S; 2 cm)</strong>.",
+    "Ověření: Kružnice se dotýká ramene VA v bodě T₁ a ramene VB v bodě T₂ (|ST₁| = |ST₂| = 2 cm). ✓",
+    "<strong>Odpověď:</strong> Kružnice k(S; 2 cm) se středem na ose úhlu se dotýká obou ramen."
+  ]}
+/>
+
+---
+
+## Příklad 5: Osa úhlu a přímka
+
+> 📝 **Zadání:** Je dán úhel AVB o velikosti 70° a přímka *p* rovnoběžná s ramenem VA, procházející vnitřkem úhlu, ve vzdálenosti 4 cm od VA. Najdi na přímce *p* bod X, který je stejně vzdálený od obou ramen.
+
+<StepByStepSolution
+  client:load
+  hint="Bod X musí splňovat <strong>dvě podmínky</strong> současně: ležet na přímce p (daná podmínka) a být stejně vzdálený od obou ramen (→ leží na ose úhlu). Hledáme průsečík."
+  steps={[
+    "Narýsuj úhel <strong>AVB</strong> o velikosti 70° a přímku <strong>p</strong> rovnoběžnou s VA ve vzdálenosti 4 cm uvnitř úhlu.",
+    "Sestroj <strong>osu úhlu o</strong> (polopřímka z V).",
+    "Průsečík <strong>X = o ∩ p</strong> je hledaný bod.",
+    "Bod X leží na ose úhlu → d(X, VA) = d(X, VB). Bod X leží na přímce p → d(X, VA) = 4 cm.",
+    "Proto d(X, VB) = 4 cm. ✓",
+    "Osa úhlu protne přímku p v <strong>právě jednom bodě</strong> (nejsou rovnoběžné).",
+    "<strong>Odpověď:</strong> Existuje <strong>právě 1 bod</strong> X na přímce p, který je stejně vzdálený od obou ramen. Jeho vzdálenost od obou ramen je 4 cm."
+  ]}
+/>
+
+---
+
+## Příklad 6: Bod stejně vzdálený od tří stran trojúhelníku
+
+> 📝 **Zadání:** Je dán trojúhelník ABC (|AB| = 6 cm, |BC| = 5 cm, |AC| = 7 cm). Najdi bod X, který je stejně vzdálený od všech tří stran. Jaká je vzdálenost od stran?
+
+<StepByStepSolution
+  client:load
+  hint="Bod stejně vzdálený od stran AB a AC leží na <strong>ose úhlu u vrcholu A</strong>. Bod stejně vzdálený od stran AB a BC leží na <strong>ose úhlu u vrcholu B</strong>. Průsečík obou os je hledaný bod – jde o střed kružnice vepsané."
+  steps={[
+    "Sestroj trojúhelník <strong>ABC</strong>: |AB| = 6 cm, |BC| = 5 cm, |AC| = 7 cm.",
+    "<strong>Podmínka d(X, AB) = d(X, AC):</strong> Bod X leží na ose vnitřního úhlu u vrcholu A → sestroj <strong>osu o₁</strong>.",
+    "<strong>Podmínka d(X, AB) = d(X, BC):</strong> Bod X leží na ose vnitřního úhlu u vrcholu B → sestroj <strong>osu o₂</strong>.",
+    "Průsečík <strong>X = o₁ ∩ o₂</strong> splňuje d(X, AB) = d(X, AC) (z o₁) a d(X, AB) = d(X, BC) (z o₂) → d(X, AB) = d(X, BC) = d(X, AC).",
+    "Změř kolmou vzdálenost <strong>d(X, AB)</strong> – to je poloměr kružnice vepsané ρ.",
+    "Ověření: Sestroj kružnici <strong>k(X; ρ)</strong> – musí se dotýkat všech tří stran.",
+    "<strong>Odpověď:</strong> Existuje <strong>právě 1 bod</strong> X (střed kružnice vepsané), vzdálenost od všech tří stran je ρ ≈ 1,96 cm."
+  ]}
+/>
+
+---
+
+<SelfCheck client:load id="mb4-osa-uhlu-priklady" label="Umím řešit konstrukční úlohy s osou úhlu." />
+
+---
+
+## 📌 Shrnutí
+
+| Příklad | Klíčový postup | Počet řešení |
+|:--------|:---------------|:-------------|
+| Osa úhlu – základní konstrukce | Oblouk z V, dva oblouky se stejným r | 1 osa |
+| Bod na ose ve vzdálenosti od ramene | Osa úhlu + rovnoběžka s ramenem | 1 |
+| Kružnice vepsaná trojúhelníku | Průsečík dvou os vnitřních úhlů | 1 střed |
+| Osa úhlu a kružnice | Osa úhlu + rovnoběžka (= poloměr) | 1 |
+| Osa úhlu a přímka | Osa úhlu ∩ rovnoběžka | 1 |
+| Bod stejně vzdálený od 3 stran | Průsečík dvou os vnitřních úhlů | 1 |

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plot kolem záhonu – rovnoběžky</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    canvas { max-width: 100%; max-height: 100vh; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="1280" height="720"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    const DURATION = 30000;
+    let startTime = null;
+    let isPlaying = true;
+    let currentProgress = 0;
+
+    const colors = {
+      bg1: '#0f172a', bg2: '#1e293b',
+      grass: '#166534', grassLight: '#22c55e',
+      path: '#a16207', pathLight: '#ca8a04',
+      fence: '#78350f', fenceLight: '#92400e',
+      flower: '#f472b6', flowerAlt: '#c084fc',
+      text: '#e2e8f0', textDim: '#94a3b8',
+      blue: '#60a5fa', green: '#34d399', yellow: '#fbbf24',
+      red: '#f87171', purple: '#a78bfa', orange: '#fb923c',
+      line: '#818cf8'
+    };
+
+    // Garden path (přímka p) – horizontal
+    const pathY = 380;
+    const pathX1 = 120, pathX2 = 1160;
+
+    // Fence distance
+    const d = 100;
+
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function drawBackground() {
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, colors.bg1);
+      g.addColorStop(1, colors.bg2);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    function drawGarden(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+
+      // Ground
+      ctx.fillStyle = '#1a3a1a';
+      ctx.beginPath();
+      ctx.roundRect(80, 180, 1120, 360, 16);
+      ctx.fill();
+
+      // Grass texture
+      for (let i = 0; i < 60; i++) {
+        const gx = 100 + Math.random() * 1080;
+        const gy = 200 + Math.random() * 320;
+        ctx.strokeStyle = 'rgba(34,197,94,0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(gx, gy);
+        ctx.lineTo(gx + (Math.random()-0.5)*6, gy - 8 - Math.random()*8);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function drawPath(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+
+      // Garden path (přímka p)
+      ctx.strokeStyle = colors.pathLight;
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.moveTo(pathX1, pathY);
+      ctx.lineTo(pathX2, pathY);
+      ctx.stroke();
+
+      // Path texture
+      ctx.strokeStyle = colors.path;
+      ctx.lineWidth = 6;
+      ctx.setLineDash([20, 8]);
+      ctx.beginPath();
+      ctx.moveTo(pathX1, pathY);
+      ctx.lineTo(pathX2, pathY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Label
+      ctx.fillStyle = colors.yellow;
+      ctx.font = 'bold 24px system-ui';
+      ctx.textAlign = 'right';
+      ctx.fillText('Cestička p', pathX1 - 15, pathY + 8);
+
+      ctx.restore();
+    }
+
+    function drawDistanceMarker(x, y1, y2, label, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x, y1);
+      ctx.lineTo(x, y2);
+      ctx.stroke();
+
+      // Arrows
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x - 5, y1 + 8);
+      ctx.lineTo(x + 5, y1 + 8);
+      ctx.lineTo(x, y1);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(x - 5, y2 - 8);
+      ctx.lineTo(x + 5, y2 - 8);
+      ctx.lineTo(x, y2);
+      ctx.fill();
+
+      // Right angle mark
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x, y2 - 10, 10, 10);
+
+      // Label
+      ctx.fillStyle = color;
+      ctx.font = 'bold 18px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x + 25, (y1 + y2) / 2 + 5);
+
+      ctx.restore();
+    }
+
+    function drawFenceLine(y, label, color, alpha, progress01) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+
+      const len = (pathX2 - pathX1) * progress01;
+
+      // Fence posts
+      const postCount = Math.floor(len / 50);
+      for (let i = 0; i <= postCount; i++) {
+        const px = pathX1 + i * 50;
+        if (px > pathX1 + len) break;
+        ctx.fillStyle = colors.fence;
+        ctx.fillRect(px - 3, y - 15, 6, 30);
+        ctx.fillStyle = colors.fenceLight;
+        ctx.fillRect(px - 2, y - 12, 4, 4);
+      }
+
+      // Fence rails
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(pathX1, y - 5);
+      ctx.lineTo(pathX1 + len, y - 5);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(pathX1, y + 5);
+      ctx.lineTo(pathX1 + len, y + 5);
+      ctx.stroke();
+
+      // Label
+      if (progress01 > 0.8) {
+        ctx.fillStyle = color;
+        ctx.font = 'bold 20px system-ui';
+        ctx.textAlign = 'left';
+        ctx.fillText(label, pathX1 + len + 15, y + 6);
+      }
+
+      ctx.restore();
+    }
+
+    function drawFlower(x, y, color, size, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x + Math.cos(a)*size*0.6, y + Math.sin(a)*size*0.6, size*0.4, 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.fillStyle = colors.yellow;
+      ctx.beginPath();
+      ctx.arc(x, y, size*0.3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawPointOnFence(x, y, label, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 16px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x, y - 15);
+      ctx.restore();
+    }
+
+    function drawText(text, x, y, size, color, align, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha || 1;
+      ctx.fillStyle = color;
+      ctx.font = 'bold ' + size + 'px system-ui';
+      ctx.textAlign = align || 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    function drawInfoBox(text, x, y, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.font = 'bold 20px system-ui';
+      const w = ctx.measureText(text).width + 40;
+      ctx.fillStyle = 'rgba(0,0,0,0.75)';
+      ctx.beginPath();
+      ctx.roundRect(x - w/2, y - 20, w, 40, 10);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    function render(progress) {
+      drawBackground();
+
+      // ── Title (0–0.10) ──
+      if (progress < 0.10) {
+        const p = easeOut(progress / 0.07);
+        drawText('🌻 Plot kolem záhonu', W/2, H/2 - 20, 42, colors.text, 'center', p);
+        drawText('Kde postavit plot ve vzdálenosti d od cestičky?', W/2, H/2 + 30, 20, colors.textDim, 'center', Math.max(0, (progress - 0.02) / 0.06));
+        return;
+      }
+
+      // ── Garden + path appear (0.10–0.22) ──
+      const gardenAlpha = Math.min(1, (progress - 0.10) / 0.06);
+      drawGarden(gardenAlpha);
+
+      if (progress > 0.13) {
+        const pa = Math.min(1, (progress - 0.13) / 0.06);
+        drawPath(pa);
+      }
+
+      // ── Show distance d concept (0.22–0.35) ──
+      if (progress > 0.22) {
+        const da = easeOut(Math.min(1, (progress - 0.22) / 0.05));
+        drawDistanceMarker(300, pathY - d, pathY, 'd', colors.green, da);
+        drawDistanceMarker(300, pathY, pathY + d, 'd', colors.green, da);
+      }
+
+      if (progress > 0.28) {
+        const ia = easeOut(Math.min(1, (progress - 0.28) / 0.04));
+        drawInfoBox('Hledáme body ve vzdálenosti d od cestičky p', W/2, 140, ia);
+      }
+
+      // ── First fence line p₁ (above) (0.35–0.50) ──
+      if (progress > 0.35) {
+        const fenceProgress = Math.min(1, (progress - 0.35) / 0.12);
+        drawFenceLine(pathY - d, 'p₁', colors.line, Math.min(1, (progress - 0.35) / 0.04), easeOut(fenceProgress));
+      }
+
+      // ── Second fence line p₂ (below) (0.50–0.65) ──
+      if (progress > 0.50) {
+        const fenceProgress = Math.min(1, (progress - 0.50) / 0.12);
+        drawFenceLine(pathY + d, 'p₂', colors.line, Math.min(1, (progress - 0.50) / 0.04), easeOut(fenceProgress));
+      }
+
+      // ── Points on fences (0.55–0.72) ──
+      if (progress > 0.58) {
+        const pa = easeOut(Math.min(1, (progress - 0.58) / 0.04));
+        drawPointOnFence(500, pathY - d, 'X₁', colors.red, pa);
+        drawPointOnFence(700, pathY - d, 'X₂', colors.red, pa);
+        drawPointOnFence(600, pathY + d, 'X₃', colors.red, pa);
+        drawPointOnFence(850, pathY + d, 'X₄', colors.red, pa);
+      }
+
+      // ── Flowers for decoration (0.60+) ──
+      if (progress > 0.60) {
+        const fa = easeOut(Math.min(1, (progress - 0.60) / 0.05));
+        drawFlower(450, pathY - d - 40, colors.flower, 8, fa);
+        drawFlower(650, pathY - d - 35, colors.flowerAlt, 7, fa);
+        drawFlower(550, pathY + d + 40, colors.flower, 9, fa);
+        drawFlower(800, pathY + d + 35, colors.flowerAlt, 7, fa);
+      }
+
+      // ── Info box result (0.68–0.82) ──
+      if (progress > 0.68) {
+        const ia = easeOut(Math.min(1, (progress - 0.68) / 0.04));
+        drawInfoBox('✅  Dvě rovnoběžky p₁ a p₂ ve vzdálenosti d od p', W/2, 140, ia);
+      }
+
+      // ── Explanation (0.82–0.92) ──
+      if (progress > 0.82) {
+        const ea = easeOut(Math.min(1, (progress - 0.82) / 0.05));
+
+        ctx.save();
+        ctx.globalAlpha = ea;
+        ctx.fillStyle = 'rgba(0,0,0,0.8)';
+        ctx.beginPath();
+        ctx.roundRect(W/2 - 320, H - 130, 640, 100, 14);
+        ctx.fill();
+
+        ctx.fillStyle = colors.text;
+        ctx.font = 'bold 22px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('Body ve vzdálenosti d od přímky p', W/2, H - 98);
+        ctx.fillText('tvoří dvě rovnoběžky s přímkou p.', W/2, H - 70);
+        ctx.fillStyle = colors.line;
+        ctx.font = '18px system-ui';
+        ctx.fillText('Jedna „nad" a jedna „pod" přímkou p', W/2, H - 42);
+        ctx.restore();
+      }
+
+      // ── Summary overlay (0.92–1.0) ──
+      if (progress > 0.92) {
+        const sa = easeOut(Math.min(1, (progress - 0.92) / 0.05));
+
+        ctx.save();
+        ctx.globalAlpha = sa * 0.9;
+        ctx.fillStyle = 'rgba(0,0,0,0.85)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+
+        drawText('🌻 Rovnoběžky = body ve stejné vzdálenosti od přímky', W/2, H/2 - 50, 32, colors.green, 'center', sa);
+        drawText('Množina bodů ve vzdálenosti d od přímky p', W/2, H/2, 24, colors.text, 'center', sa);
+        drawText('jsou dvě rovnoběžky p₁ ∥ p a p₂ ∥ p.', W/2, H/2 + 35, 24, colors.text, 'center', sa);
+        drawText('d(X, p) = d  ⟹  X ∈ p₁ ∪ p₂', W/2, H/2 + 80, 26, colors.line, 'center', sa);
+      }
+    }
+
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      if (isPlaying) {
+        currentProgress = Math.min(1, (timestamp - startTime) / DURATION);
+      }
+      render(currentProgress);
+      if (currentProgress < 1) requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('message', (e) => {
+      const d = e.data;
+      if (d === 'toggle') {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          startTime = performance.now() - currentProgress * DURATION;
+          requestAnimationFrame(animate);
+        }
+      } else if (d === 'stop') {
+        isPlaying = false;
+        currentProgress = 0;
+        startTime = null;
+        render(0);
+      } else if (d === 'rew') {
+        currentProgress = Math.max(0, currentProgress - 0.05);
+        startTime = performance.now() - currentProgress * DURATION;
+        render(currentProgress);
+      } else if (d === 'fwd') {
+        currentProgress = Math.min(1, currentProgress + 0.05);
+        startTime = performance.now() - currentProgress * DURATION;
+        render(currentProgress);
+      }
+    });
+
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
