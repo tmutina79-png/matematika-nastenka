@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5f0ff"/>
+      <stop offset="100%" stop-color="#ede8ff"/>
+    </linearGradient>
+    <marker id="arrowSec" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#06b6d4"/>
+    </marker>
+    <marker id="arrowSec2" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+      <path d="M8,0 L0,3 L8,6" fill="#06b6d4"/>
+    </marker>
+    <marker id="arrowTan" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#ef4444"/>
+    </marker>
+    <marker id="arrowTan2" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+      <path d="M8,0 L0,3 L8,6" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="520" rx="16" fill="url(#bg2)" stroke="#c4b5fd" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="360" y="38" text-anchor="middle" font-size="22" font-weight="700" fill="#5b21b6">Kružnice – tětiva, sečna, tečna</text>
+
+  <!-- Kružnice -->
+  <circle cx="330" cy="260" r="160" fill="none" stroke="#7c3aed" stroke-width="3"/>
+
+  <!-- Střed S -->
+  <circle cx="330" cy="260" r="7" fill="#f59e0b"/>
+  <text x="345" y="278" font-size="18" font-weight="700" fill="#f59e0b">S</text>
+
+  <!-- ===== TĚTIVA ===== -->
+  <!-- Tětiva CD: dva body na kružnici, úhly ~120° a ~240° -->
+  <!-- C = 330 + 160·cos(130°), 260 - 160·sin(130°) = (330-102.8, 260-122.6) = (227, 137) -->
+  <!-- D = 330 + 160·cos(230°), 260 - 160·sin(230°) = (330-102.8, 260+122.6) = (227, 383) -->
+  <!-- Lepší – vezmu úhly tak, aby tětiva byla vlevo svisle -->
+  <!-- C = 330 + 160·cos(150°), 260 - 160·sin(150°) = (330-138.6, 260-80) = (191, 180) -->
+  <!-- D = 330 + 160·cos(210°), 260 - 160·sin(210°) = (330-138.6, 260+80) = (191, 340) -->
+  <line x1="191" y1="180" x2="191" y2="340" stroke="#10b981" stroke-width="3"/>
+  <circle cx="191" cy="180" r="6" fill="#10b981"/>
+  <text x="170" y="173" font-size="16" font-weight="700" fill="#10b981">C</text>
+  <circle cx="191" cy="340" r="6" fill="#10b981"/>
+  <text x="170" y="350" font-size="16" font-weight="700" fill="#10b981">D</text>
+
+  <!-- Tětiva label -->
+  <rect x="100" y="248" width="78" height="26" rx="7" fill="#10b981" opacity="0.15"/>
+  <text x="139" y="266" text-anchor="middle" font-size="15" font-weight="700" fill="#10b981">tětiva</text>
+
+  <!-- ===== SEČNA ===== -->
+  <!-- Sečna: přímka protínající kružnici ve dvou bodech -->
+  <!-- Vezmeme přímku procházející přibližně (220, 55) a (530, 430) -->
+  <!-- Průsečíky s kružnicí: E a F -->
+  <!-- E přibližně na úhlu ~50° → E = (330+160·cos(50°), 260-160·sin(50°)) = (330+102.8, 260-122.6) = (433, 137) -->
+  <!-- F přibližně na úhlu ~320° → F = (330+160·cos(-40°), 260-160·sin(-40°)) = (330+122.6, 260+102.8) = (453, 363) -->
+  <!-- Sečna prodloužená za E a F -->
+  <line x1="395" y1="60" x2="500" y2="440" stroke="#06b6d4" stroke-width="2.5" marker-start="url(#arrowSec2)" marker-end="url(#arrowSec)"/>
+
+  <!-- Průsečíky E, F na kružnici -->
+  <!-- Spočítám průsečíky přímky s kružnicí. Přímka z (395,60) do (500,440). Směr: (105, 380) -->
+  <!-- Parametricky: x=395+105t, y=60+380t. Na kružnici: (x-330)²+(y-260)²=160² -->
+  <!-- (65+105t)²+(380t-200)²=25600 -->
+  <!-- 4225+13650t+11025t² + 144400t²-152000t+40000 = 25600 -->
+  <!-- 155425t² - 138350t + 44225 = 25600 -->
+  <!-- 155425t² - 138350t + 18625 = 0 -->
+  <!-- t = (138350 ± sqrt(138350²-4·155425·18625)) / (2·155425) -->
+  <!-- D = 19140722500 - 11578500000 = 7562222500, sqrt ≈ 86963 -->
+  <!-- t1 = (138350-86963)/310850 = 51387/310850 ≈ 0.1653 -->
+  <!-- t2 = (138350+86963)/310850 = 225313/310850 ≈ 0.7249 -->
+  <!-- E: x=395+105·0.1653=412.4, y=60+380·0.1653=122.8 → (412, 123) -->
+  <!-- F: x=395+105·0.7249=471.1, y=60+380·0.7249=335.5 → (471, 335) -->
+  <circle cx="412" cy="123" r="6" fill="#06b6d4"/>
+  <text x="425" y="113" font-size="16" font-weight="700" fill="#06b6d4">E</text>
+  <circle cx="471" cy="335" r="6" fill="#06b6d4"/>
+  <text x="484" y="348" font-size="16" font-weight="700" fill="#06b6d4">F</text>
+
+  <!-- Sečna label -->
+  <rect x="500" y="390" width="78" height="26" rx="7" fill="#06b6d4" opacity="0.15"/>
+  <text x="539" y="408" text-anchor="middle" font-size="15" font-weight="700" fill="#06b6d4">sečna</text>
+
+  <!-- ===== TEČNA ===== -->
+  <!-- Tečna: přímka dotýkající se kružnice v jednom bodě T -->
+  <!-- T na kružnici, úhel ~0° → T = (490, 260) -->
+  <circle cx="490" cy="260" r="7" fill="#ef4444"/>
+  <text x="505" y="252" font-size="16" font-weight="700" fill="#ef4444">T</text>
+
+  <!-- Tečna je kolmá na poloměr v bodě dotyku T, tedy svislá přímka x=490 -->
+  <line x1="490" y1="100" x2="490" y2="420" stroke="#ef4444" stroke-width="2.5" marker-start="url(#arrowTan2)" marker-end="url(#arrowTan)"/>
+
+  <!-- Poloměr S→T -->
+  <line x1="330" y1="260" x2="490" y2="260" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8,4"/>
+  <text x="410" y="250" text-anchor="middle" font-size="16" font-weight="600" fill="#f59e0b">r</text>
+
+  <!-- Kolmost značka u T -->
+  <rect x="474" y="260" width="16" height="16" fill="none" stroke="#64748b" stroke-width="2"/>
+
+  <!-- Tečna label -->
+  <rect x="508" y="140" width="78" height="26" rx="7" fill="#ef4444" opacity="0.15"/>
+  <text x="547" y="158" text-anchor="middle" font-size="15" font-weight="700" fill="#ef4444">tečna</text>
+
+  <!-- Bod dotyku label -->
+  <text x="505" y="270" font-size="12" fill="#ef4444" font-weight="600">bod dotyku</text>
+
+  <!-- Kružnice label -->
+  <rect x="335" y="72" width="120" height="28" rx="8" fill="#7c3aed" opacity="0.12"/>
+  <text x="395" y="92" text-anchor="middle" font-size="16" font-weight="700" fill="#7c3aed">k(S, r)</text>
+
+  <!-- Rozdíl kružnice vs kruh -->
+  <rect x="548" y="55" width="160" height="52" rx="10" fill="white" stroke="#c4b5fd" stroke-width="1.5"/>
+  <text x="628" y="74" text-anchor="middle" font-size="12" font-weight="700" fill="#7c3aed">Kružnice vs. Kruh</text>
+  <text x="628" y="90" text-anchor="middle" font-size="11" fill="#64748b">kružnice = obrys (|SX| = r)</text>
+  <text x="628" y="103" text-anchor="middle" font-size="11" fill="#64748b">kruh = plocha (|SX| ≤ r)</text>
+
+  <!-- Legend box -->
+  <rect x="20" y="448" width="680" height="58" rx="10" fill="white" stroke="#c4b5fd" stroke-width="1.5"/>
+  <circle cx="50" cy="467" r="5" fill="#10b981"/>
+  <text x="62" y="472" font-size="13" fill="#334155"><tspan font-weight="600">Tětiva CD</tspan> – úsečka s koncovými body na kružnici</text>
+  <circle cx="50" cy="490" r="5" fill="#06b6d4"/>
+  <text x="62" y="495" font-size="13" fill="#334155"><tspan font-weight="600">Sečna</tspan> – přímka protínající kružnici ve dvou bodech</text>
+  <circle cx="380" cy="467" r="5" fill="#ef4444"/>
+  <text x="392" y="472" font-size="13" fill="#334155"><tspan font-weight="600">Tečna</tspan> – přímka dotýkající se kružnice v jednom bodě</text>
+  <circle cx="380" cy="490" r="5" fill="#f59e0b"/>
+  <text x="392" y="495" font-size="13" fill="#334155"><tspan font-weight="600">Poloměr r</tspan> – ⊥ na tečnu v bodě dotyku T</text>
+</svg>

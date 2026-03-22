@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f0f4ff"/>
+      <stop offset="100%" stop-color="#e8eeff"/>
+    </linearGradient>
+    <marker id="arrowG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#10b981"/>
+    </marker>
+    <marker id="arrowG2" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+      <path d="M8,0 L0,3 L8,6" fill="#10b981"/>
+    </marker>
+    <marker id="arrowO" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowO2" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+      <path d="M8,0 L0,3 L8,6" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="520" rx="16" fill="url(#bg1)" stroke="#c7d2fe" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="360" y="38" text-anchor="middle" font-size="22" font-weight="700" fill="#1e40af">Kružnice – pojmy a značení</text>
+
+  <!-- Kružnice k(S, r) -->
+  <circle cx="340" cy="260" r="160" fill="none" stroke="#3b82f6" stroke-width="3"/>
+
+  <!-- Střed S -->
+  <circle cx="340" cy="260" r="8" fill="#f59e0b"/>
+  <text x="355" y="282" font-size="20" font-weight="700" fill="#f59e0b">S</text>
+
+  <!-- Bod X na kružnici (vpravo nahoře, úhel ~35°) -->
+  <!-- X = S + r·(cos(-35°), sin(-35°)) = 340 + 160·0.819, 260 - 160·0.574 = (471, 168) -->
+  <circle cx="471" cy="168" r="7" fill="#10b981"/>
+  <text x="490" y="162" font-size="18" font-weight="700" fill="#10b981">X</text>
+
+  <!-- Poloměr r: S → X -->
+  <line x1="340" y1="260" x2="471" y2="168" stroke="#10b981" stroke-width="2.5"/>
+  <text x="420" y="200" text-anchor="middle" font-size="18" font-weight="700" fill="#10b981">r</text>
+
+  <!-- Rovnost -->
+  <rect x="415" y="128" width="125" height="30" rx="8" fill="#10b981" opacity="0.15"/>
+  <text x="477" y="149" text-anchor="middle" font-size="16" font-weight="700" fill="#10b981">|SX| = r</text>
+
+  <!-- Bod Y na kružnici (vlevo, úhel ~155°) -->
+  <!-- Y = 340 + 160·cos(155°), 260 - 160·sin(155°) = (340 - 145, 260 - 67.6) = (195, 192) -->
+  <circle cx="195" cy="192" r="7" fill="#8b5cf6"/>
+  <text x="175" y="186" font-size="18" font-weight="700" fill="#8b5cf6">Y</text>
+
+  <!-- Poloměr r: S → Y (tenčí, ukazuje že každý bod má stejnou vzdálenost) -->
+  <line x1="340" y1="260" x2="195" y2="192" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="252" y="218" text-anchor="middle" font-size="16" font-weight="600" fill="#8b5cf6">r</text>
+
+  <!-- Průměr d: přímka procházející středem -->
+  <!-- Bod A (vlevo na kružnici, úhel 180°) = (180, 260) -->
+  <!-- Bod B (vpravo na kružnici, úhel 0°) = (500, 260) -->
+  <circle cx="180" cy="260" r="7" fill="#ef4444"/>
+  <text x="160" y="258" font-size="18" font-weight="700" fill="#ef4444">A</text>
+  <circle cx="500" cy="260" r="7" fill="#ef4444"/>
+  <text x="520" y="258" font-size="18" font-weight="700" fill="#ef4444">B</text>
+
+  <!-- Průměr čára A→B -->
+  <line x1="180" y1="260" x2="500" y2="260" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="10,5"/>
+
+  <!-- Průměr d label (pod čárou) -->
+  <line x1="180" y1="310" x2="500" y2="310" stroke="#f59e0b" stroke-width="2" marker-start="url(#arrowO2)" marker-end="url(#arrowO)"/>
+  <text x="340" y="330" text-anchor="middle" font-size="18" font-weight="700" fill="#f59e0b">d = 2r</text>
+
+  <!-- Bod Z na kružnici (dole, úhel ~250°) -->
+  <!-- Z = 340 + 160·cos(250°), 260 - 160·sin(250°) = (340 - 54.7, 260 + 150.4) = (285, 410) -->
+  <circle cx="285" cy="410" r="7" fill="#8b5cf6"/>
+  <text x="265" y="425" font-size="18" font-weight="700" fill="#8b5cf6">Z</text>
+  <line x1="340" y1="260" x2="285" y2="410" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5"/>
+
+  <!-- Kružnice label k(S, r) -->
+  <rect x="468" y="354" width="125" height="30" rx="8" fill="#3b82f6" opacity="0.15"/>
+  <text x="530" y="375" text-anchor="middle" font-size="17" font-weight="700" fill="#3b82f6">k(S, r)</text>
+
+  <!-- Zápis definice -->
+  <rect x="135" y="56" width="410" height="34" rx="10" fill="#1e40af" opacity="0.08"/>
+  <text x="340" y="79" text-anchor="middle" font-size="15" font-weight="600" fill="#1e40af">k(S, r) = { X ∈ rovina : |SX| = r }</text>
+
+  <!-- Legend box -->
+  <rect x="20" y="448" width="680" height="58" rx="10" fill="white" stroke="#c7d2fe" stroke-width="1.5"/>
+  <circle cx="50" cy="467" r="5" fill="#f59e0b"/>
+  <text x="62" y="472" font-size="13" fill="#334155"><tspan font-weight="600">Střed S</tspan> – bod, od kterého měříme vzdálenost</text>
+  <circle cx="50" cy="490" r="5" fill="#10b981"/>
+  <text x="62" y="495" font-size="13" fill="#334155"><tspan font-weight="600">Poloměr r</tspan> – vzdálenost |SX| od středu ke kružnici</text>
+  <circle cx="380" cy="467" r="5" fill="#f59e0b"/>
+  <text x="392" y="472" font-size="13" fill="#334155"><tspan font-weight="600">Průměr d = 2r</tspan> – nejdelší tětiva</text>
+  <circle cx="380" cy="490" r="5" fill="#3b82f6"/>
+  <text x="392" y="495" font-size="13" fill="#334155"><tspan font-weight="600">Kružnice k</tspan> – všechny body ve vzdálenosti r</text>
+</svg>
