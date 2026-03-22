@@ -6,10 +6,9 @@ import SelfCheck from '../../components/SelfCheck.svelte';
 import StepByStepSolution from '../../components/StepByStepSolution.svelte';
 import PDFWorksheet from '../../components/PDFWorksheet.svelte';
 
-<div class="flex items-center justify-between flex-wrap gap-4 mb-6">
-  <h1 class="m-0">🏠 Příklady z praxe – Množina bodů daných vlastností</h1>
-  <PDFWorksheet client:load title="Pracovní list – Množina bodů" />
-</div>
+# 🏠 Příklady z praxe – Množina bodů daných vlastností
+
+<a href="#pdf-tisk" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 font-semibold text-sm no-underline hover:bg-blue-100 hover:border-blue-300 transition-all mb-4" style="text-decoration:none">🖨️ Vygenerovat příklady do PDF ↓</a>
 
 V této sekci najdeš praktické příklady, kde se využívá znalost množin bodů daných vlastností. Každý příklad je formulován jako slovní úloha z běžného života.
 
@@ -130,7 +129,15 @@ V této sekci najdeš praktické příklady, kde se využívá znalost množin b
 
 ---
 
-## 📌 Shrnutí použitých množin bodů
+<h2 id="pdf-tisk">🖨️ Příklady k tisku (PDF)</h2>
+
+Vyber si příklady, které chceš vytisknout, a klikni na tlačítko pro vygenerování PDF.
+
+<PDFWorksheet client:load />
+
+---
+
+## �📌 Shrnutí použitých množin bodů
 
 | Příklad | Typ množiny bodů |
 |:--------|:-----------------|

@@ -6,10 +6,9 @@ import SelfCheck from '../../components/SelfCheck.svelte';
 import StepByStepSolution from '../../components/StepByStepSolution.svelte';
 import PDFWorksheetKruznice from '../../components/PDFWorksheetKruznice.svelte';
 
-<div class="flex items-center justify-between flex-wrap gap-4 mb-6">
-  <h1 class="m-0">📐 Příklady – Množina bodů daných vlastností – Kružnice</h1>
-  <PDFWorksheetKruznice client:load title="Pracovní list – Kružnice" />
-</div>
+# 📐 Příklady – Množina bodů daných vlastností – Kružnice
+
+<a href="#pdf-tisk" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 font-semibold text-sm no-underline hover:bg-blue-100 hover:border-blue-300 transition-all mb-4" style="text-decoration:none">🖨️ Vygenerovat příklady do PDF ↓</a>
 
 V této sekci najdeš konstrukční příklady zaměřené na kružnice, tečny a dotyky. Každý příklad má nápovědu a postup řešení krok za krokem.
 
@@ -159,7 +158,15 @@ V této sekci najdeš konstrukční příklady zaměřené na kružnice, tečny 
 
 ---
 
-## 📌 Shrnutí
+<h2 id="pdf-tisk">🖨️ Příklady k tisku (PDF)</h2>
+
+Vyber si příklady, které chceš vytisknout, a klikni na tlačítko pro vygenerování PDF.
+
+<PDFWorksheetKruznice client:load />
+
+---
+
+## �📌 Shrnutí
 
 | Příklad | Klíčový postup | Počet řešení |
 |:--------|:---------------|:-------------|
