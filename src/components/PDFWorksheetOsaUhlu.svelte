@@ -19,15 +19,15 @@
 '    * { margin: 0; padding: 0; box-sizing: border-box; }' +
 '    @page { size: A4; margin: 15mm 20mm 20mm 20mm; }' +
 '    body { font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif; font-size: 11pt; line-height: 1.5; color: #1e293b; }' +
-'    .header { text-align: center; border-bottom: 2px solid #e11d48; padding-bottom: 12px; margin-bottom: 20px; }' +
+'    .header { text-align: center; border-bottom: 2px solid #3b82f6; padding-bottom: 12px; margin-bottom: 20px; }' +
 '    .header-small { font-size: 9pt; color: #64748b; margin-bottom: 4px; }' +
 '    .header-title { font-size: 18pt; font-weight: 700; color: #1e293b; margin: 8px 0; }' +
 '    .student-info { display: flex; justify-content: space-between; font-size: 10pt; margin-top: 12px; padding-top: 8px; border-top: 1px solid #e2e8f0; }' +
 '    .student-name { border-bottom: 1px solid #1e293b; min-width: 200px; display: inline-block; }' +
 '    .example { margin-bottom: 28px; page-break-inside: avoid; }' +
-'    .example-title { font-size: 13pt; font-weight: 700; color: #9f1239; margin-bottom: 8px; }' +
-'    .example-task { background: #fff1f2; border-left: 4px solid #e11d48; padding: 12px 16px; margin-bottom: 12px; font-size: 11pt; }' +
-'    .example-task strong { color: #9f1239; }' +
+'    .example-title { font-size: 13pt; font-weight: 700; color: #1e40af; margin-bottom: 8px; }' +
+'    .example-task { background: #f8fafc; border-left: 4px solid #3b82f6; padding: 12px 16px; margin-bottom: 12px; font-size: 11pt; }' +
+'    .example-task strong { color: #1e40af; }' +
 '    .example-task em { font-style: italic; }' +
 '    .solution-space { border: 1px solid #cbd5e1; border-radius: 8px; min-height: 140px; padding: 12px; }' +
 '    .solution-label { font-size: 9pt; color: #94a3b8; margin-bottom: 8px; }' +
@@ -100,7 +100,7 @@
     align-items: center;
     gap: 8px;
     padding: 10px 18px;
-    background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     color: white;
     font-size: 14px;
     font-weight: 600;
@@ -108,13 +108,13 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
     transition: all 0.2s ease;
   }
   .pdf-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(225, 29, 72, 0.5);
-    background: linear-gradient(135deg, #be123c 0%, #881337 100%);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   }
   .pdf-btn:active {
     transform: translateY(0);
