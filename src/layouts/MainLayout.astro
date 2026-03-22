@@ -386,30 +386,33 @@ const lessons = [
         } catch (_) {}
       }
 
-      // Auto-open ancestor details for the current page
-      const currentPath = window.location.pathname;
-      // Find the sidebar link that matches current page and open all parent <details>
-      document.querySelectorAll('#sidebar a.sidebar-link').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href && currentPath.includes(href.split('#')[0].replace(/\/$/, '').split('/').pop())) {
-          let el = link.closest('details');
-          while (el) {
-            el.open = true;
-            el = el.parentElement?.closest('details');
+      // Auto-open ancestor details for the current page ONLY if no saved state
+      const hasSavedState = !!sessionStorage.getItem(STORAGE_KEY);
+      if (!hasSavedState) {
+        const currentPath = window.location.pathname;
+        // Find the sidebar link that matches current page and open all parent <details>
+        document.querySelectorAll('#sidebar a.sidebar-link').forEach(link => {
+          const href = link.getAttribute('href');
+          if (href && currentPath.includes(href.split('#')[0].replace(/\/$/, '').split('/').pop())) {
+            let el = link.closest('details');
+            while (el) {
+              el.open = true;
+              el = el.parentElement?.closest('details');
+            }
           }
-        }
-      });
-      // Also check nav-topic-link spans
-      document.querySelectorAll('#sidebar .nav-topic-link').forEach(link => {
-        const href = link.getAttribute('data-href');
-        if (href && currentPath.includes(href.split('#')[0].replace(/\/$/, '').split('/').pop())) {
-          let el = link.closest('details');
-          while (el) {
-            el.open = true;
-            el = el.parentElement?.closest('details');
+        });
+        // Also check nav-topic-link spans
+        document.querySelectorAll('#sidebar .nav-topic-link').forEach(link => {
+          const href = link.getAttribute('data-href');
+          if (href && currentPath.includes(href.split('#')[0].replace(/\/$/, '').split('/').pop())) {
+            let el = link.closest('details');
+            while (el) {
+              el.open = true;
+              el = el.parentElement?.closest('details');
+            }
           }
-        }
-      });
+        });
+      }
 
       // Restore sub-section state from sessionStorage (overrides defaults)
       restoreDetailsState();
