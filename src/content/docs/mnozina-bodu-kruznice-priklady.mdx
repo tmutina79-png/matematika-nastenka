@@ -1,115 +1,172 @@
 ---
-title: Příklady – Kružnice a tečny
+title: Příklady – Kružnice
 ---
 
 import SelfCheck from '../../components/SelfCheck.svelte';
 import StepByStepSolution from '../../components/StepByStepSolution.svelte';
-import PDFWorksheet from '../../components/PDFWorksheet.svelte';
+import PDFWorksheetKruznice from '../../components/PDFWorksheetKruznice.svelte';
 
 <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
-  <h1 class="m-0">📐 Příklady – Kružnice a tečny</h1>
-  <a href="/pracovni-list-kruznice.pdf" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors no-underline">
-    📄 Stáhnout pracovní list (PDF)
-  </a>
+  <h1 class="m-0">📐 Příklady – Množina bodů daných vlastností – Kružnice</h1>
+  <PDFWorksheetKruznice client:load title="Pracovní list – Kružnice" />
 </div>
 
-V této sekci najdeš konstrukční příklady na kružnice, tečny a geometrické místo bodů. Každý příklad má nápovědu a postup řešení krok za krokem.
+V této sekci najdeš konstrukční příklady zaměřené na kružnice, tečny a dotyky. Každý příklad má nápovědu a postup řešení krok za krokem.
 
 ---
 
-## Příklad 1: Kružnice dotýkající se dvou různoběžek
+## Příklad 1: Kružnice dotýkající se dvou rovnoběžek
 
-> 📝 **Zadání:** Jeden z úhlů vytvořených různoběžkami *a*, *b* má velikost 80°. Sestroj všechny kružnice o poloměru 20 mm, které se přímek *a*, *b* dotýkají.
+> 📝 **Zadání:** Jsou zadány dvě rovnoběžky *a*, *b*, které jsou od sebe vzdálené 5 cm a bod A ležící 2 cm od přímky *a* a 3 cm od přímky *b*. Sestroj všechny kružnice, které se dotýkají přímek *a* a *b* a procházejí bodem A.
 
 <StepByStepSolution
   client:load
-  hint="Střed kružnice, která se dotýká dvou přímek, musí ležet na <strong>ose úhlu</strong> mezi těmito přímkami. A vzdálenost středu od přímek musí být rovna <strong>poloměru</strong>."
+  hint="Střed kružnice dotýkající se dvou rovnoběžek leží na <strong>ose pásu</strong> (přímce rovnoběžné s oběma, uprostřed). Poloměr takové kružnice je <strong>polovina vzdálenosti</strong> rovnoběžek."
   steps={[
-    "Narýsuj dvě různoběžky <strong>a</strong> a <strong>b</strong>, které svírají úhel 80°.",
-    "Sestroj <strong>osy úhlů</strong> – jsou dvě, navzájem kolmé. Na nich leží středy kružnic dotýkajících se obou přímek.",
-    "Střed kružnice musí být ve vzdálenosti přesně <strong>20 mm</strong> od obou přímek → sestroj rovnoběžky s přímkou <em>a</em> ve vzdálenosti 20 mm (dvě – po obou stranách).",
-    "Sestroj rovnoběžky s přímkou <em>b</em> ve vzdálenosti 20 mm (dvě – po obou stranách).",
-    "Průsečíky těchto rovnoběžek s osami úhlů jsou <strong>středy hledaných kružnic</strong>.",
-    "Celkem existují <strong>4 kružnice</strong> – v každém ze čtyř úhlů (dva páry vedlejších úhlů) jedna.",
-    "<strong>Odpověď:</strong> Existují 4 kružnice o poloměru 20 mm, které se dotýkají obou různoběžek. Jejich středy leží na osách úhlů ve vzdálenosti 20 mm od obou přímek."
+    "Narýsuj rovnoběžky <strong>a</strong> a <strong>b</strong> ve vzdálenosti 5 cm a vyznač bod <strong>A</strong> (2 cm od <em>a</em>, 3 cm od <em>b</em>) – bod A leží přesně uprostřed pásu.",
+    "Kružnice se dotýká obou rovnoběžek → její střed leží na <strong>ose pásu o</strong> (rovnoběžka s <em>a</em>, <em>b</em> ve vzdálenosti 2,5 cm od obou).",
+    "Poloměr hledané kružnice musí být <strong>r = 2,5 cm</strong> (polovina vzdálenosti rovnoběžek).",
+    "Kružnice také prochází bodem A → střed S leží ve vzdálenosti 2,5 cm od A → sestroj <strong>kružnici m(A; 2,5 cm)</strong>.",
+    "Průsečíky kružnice <strong>m</strong> s osou pásu <strong>o</strong> jsou středy hledaných kružnic S₁ a S₂.",
+    "Bod A leží na ose pásu, takže |AS| = 2,5 cm → kružnice m protne osu o ve <strong>dvou bodech</strong>.",
+    "<strong>Odpověď:</strong> Existují <strong>2 kružnice</strong> o poloměru 2,5 cm, které se dotýkají obou rovnoběžek a procházejí bodem A."
   ]}
 />
 
 ---
 
-## Příklad 2: Tečny z bodu ke kružnici
+## Příklad 2: Kružnice dotýkající se kružnice a procházející bodem (vnějšek)
 
-> 📝 **Zadání:** Je dána kružnice *k*(*S*; 2,8 cm) a bod *A* tak, že |*SA*| = 4,3 cm. Sestroj tečny z bodu *A* ke kružnici *k*.
+> 📝 **Zadání:** Je zadána kružnice *k*(*S*; 4 cm) a bod D ve vzdálenosti 5 cm od S. Nalezněte všechny kružnice o poloměru 2 cm, které se dotýkají kružnice *k* a procházejí bodem D.
 
 <StepByStepSolution
   client:load
-  hint="Tečna je kolmá na poloměr v bodě dotyku. Bod dotyku leží na kružnici <strong>a zároveň</strong> na kružnici sestrojené nad průměrem SA (Thaletova kružnice)."
+  hint="Při <strong>vnějším dotyku</strong> je vzdálenost středů rovna součtu poloměrů (4 + 2 = 6 cm), při <strong>vnitřním dotyku</strong> je rovna rozdílu (4 − 2 = 2 cm). Střed hledané kružnice musí být i ve vzdálenosti 2 cm od bodu D."
   steps={[
-    "Narýsuj kružnici <strong>k(S; 2,8 cm)</strong> a vyznač bod <strong>A</strong> ve vzdálenosti 4,3 cm od S.",
-    "Najdi <strong>střed M</strong> úsečky SA (M je střed SA).",
-    "Sestroj <strong>Thaletovu kružnici</strong> t(M; |SA|/2) – kružnici s průměrem SA.",
-    "Thaletova kružnice protne kružnici k ve dvou bodech – to jsou <strong>body dotyku T₁ a T₂</strong>.",
-    "Proč to funguje? Thaletova věta říká, že úhel vepsaný do půlkruhu je <strong>pravý</strong> → úhel ST₁A = 90° → ST₁ ⊥ AT₁ → přímka AT₁ je tečna.",
-    "Spoj bod A s body T₁ a T₂ – přímky <strong>AT₁</strong> a <strong>AT₂</strong> jsou hledané tečny.",
-    "<strong>Odpověď:</strong> Z bodu A vedou ke kružnici k dvě tečny. Najdeme je pomocí Thaletovy kružnice nad průměrem SA."
+    "Narýsuj kružnici <strong>k(S; 4 cm)</strong> a vyznač bod <strong>D</strong> ve vzdálenosti 5 cm od S (bod D leží vně kružnice, protože 5 > 4).",
+    "<strong>Podmínka 1 (dotyk s k):</strong> Při vnějším dotyku: |SS'| = 4 + 2 = 6 → střed S' leží na kružnici <strong>k₁(S; 6)</strong>. Při vnitřním dotyku: |SS'| = 4 − 2 = 2 → střed S' leží na kružnici <strong>k₂(S; 2)</strong>.",
+    "<strong>Podmínka 2 (prochází D):</strong> Střed S' leží ve vzdálenosti 2 cm od D → na kružnici <strong>m(D; 2)</strong>.",
+    "Hledáme průsečíky: <strong>k₁(S; 6) ∩ m(D; 2)</strong> a <strong>k₂(S; 2) ∩ m(D; 2)</strong>.",
+    "Pro vnější dotyk: |SD| = 5, součet poloměrů = 6 + 2 = 8, rozdíl = 6 − 2 = 4 → 4 < 5 < 8 → <strong>dva průsečíky</strong>.",
+    "Pro vnitřní dotyk: |SD| = 5, součet = 2 + 2 = 4, rozdíl = 0 → 5 > 4 → kružnice se <strong>neprotínají</strong>.",
+    "<strong>Odpověď:</strong> Existují <strong>2 kružnice</strong> o poloměru 2 cm (obě s vnějším dotykem), které se dotýkají k a procházejí bodem D."
   ]}
 />
 
 ---
 
-## Příklad 3: Kružnice procházející bodem a dotýkající se přímky
+## Příklad 3: Kružnice dotýkající se dvou soustředných kružnic a přímky
 
-> 📝 **Zadání:** Je dána přímka *p* a bod *A* od ní vzdálený 4 cm. Sestroj kružnici *k* o poloměru 3 cm, která prochází bodem *A* a dotýká se přímky *p*.
+> 📝 **Zadání:** Jsou zadány dvě soustředné kružnice *k*₁(*S*; 2 cm), *k*₂(*S*; 5 cm) a přímka *p*, která je vzdálená 4 cm od bodu S. Nalezněte všechny kružnice, které se dotýkají kružnice *k*₁, *k*₂ a přímky *p*.
 
 <StepByStepSolution
   client:load
-  hint="Střed kružnice, která se dotýká přímky, leží ve vzdálenosti <strong>r = 3 cm</strong> od přímky. Střed kružnice procházející bodem A leží ve vzdálenosti <strong>3 cm od A</strong>. Hledej průnik těchto dvou podmínek."
+  hint="Hledaná kružnice leží <strong>mezi</strong> oběma soustřednými kružnicemi (v mezikruží). Její poloměr se dá odvodit z podmínek dotyku s <em>k</em>₁ a <em>k</em>₂. Třetí podmínkou je dotyk s přímkou <em>p</em>."
   steps={[
-    "Narýsuj přímku <strong>p</strong> a bod <strong>A</strong> ve vzdálenosti 4 cm od přímky.",
-    "<strong>Podmínka 1:</strong> Kružnice se dotýká přímky p → střed S leží ve vzdálenosti 3 cm od p → sestroj rovnoběžku <strong>p'</strong> s přímkou p ve vzdálenosti 3 cm (na straně bodu A).",
-    "<strong>Podmínka 2:</strong> Kružnice prochází bodem A → střed S leží ve vzdálenosti 3 cm od A → sestroj kružnici <strong>m(A; 3 cm)</strong>.",
-    "Průsečíky rovnoběžky p' a kružnice m(A; 3) jsou <strong>možné středy S</strong>.",
-    "Bod A je 4 cm od p, rovnoběžka p' je 3 cm od p (tedy 1 cm od A). Kružnice m(A; 3) protne rovnoběžku p' ve <strong>dvou bodech</strong>.",
-    "Pro každý nalezený střed narýsuj kružnici k(S; 3 cm) a ověř, že prochází A a dotýká se p.",
-    "<strong>Odpověď:</strong> Existují dvě kružnice o poloměru 3 cm, které prochází bodem A a dotýkají se přímky p."
+    "Narýsuj kružnice <strong>k₁(S; 2)</strong> a <strong>k₂(S; 5)</strong> a přímku <strong>p</strong> ve vzdálenosti 4 cm od S.",
+    "Hledaná kružnice se dotýká k₁ zvenku a k₂ zevnitř → leží v mezikruží. Poloměr: r = (5 − 2) / 2 = <strong>1,5 cm</strong>.",
+    "Vzdálenost středu S' od S: |SS'| = 2 + 1,5 = <strong>3,5 cm</strong> (vnější dotyk s k₁) nebo |SS'| = 5 − 1,5 = <strong>3,5 cm</strong> (vnitřní dotyk s k₂) – obě podmínky dávají totéž.",
+    "Střed S' leží na kružnici <strong>k₃(S; 3,5)</strong>.",
+    "Dotyk s přímkou p → vzdálenost středu S' od p je r = 1,5 cm → střed leží na rovnoběžce <strong>p'</strong> s p ve vzdálenosti 1,5 cm (na straně k S).",
+    "Průsečíky <strong>k₃(S; 3,5) ∩ p'</strong> dají středy hledaných kružnic.",
+    "<strong>Odpověď:</strong> Existují <strong>2 kružnice</strong>, které se dotýkají obou soustředných kružnic i přímky p."
   ]}
 />
 
 ---
 
-## Příklad 4: Tečny z bodu ke kružnici + výpočet vzdálenosti
+## Příklad 4: Kružnice dotýkající se kružnice a procházející bodem (vnitřek)
 
-> 📝 **Zadání:** Narýsuj kružnici *k*(*S*; 2,1 cm) a vyznač bod *B* tak, aby |*SB*| = 5 cm. Sestroj tečny bodem *B* ke kružnici *k* a vypočítej vzdálenost bodu *B* od dotykových bodů těchto tečen.
+> 📝 **Zadání:** Je zadána kružnice *k*(*S*; 4 cm) a bod C ve vzdálenosti 3 cm od S. Nalezněte všechny kružnice o poloměru 2 cm, které se dotýkají kružnice *k* a procházejí bodem C.
 
 <StepByStepSolution
   client:load
-  hint="Konstrukce tečen je stejná jako v příkladu 2 (Thaletova kružnice). Pro výpočet vzdálenosti použij <strong>Pythagorovu větu</strong> v pravoúhlém trojúhelníku STB."
+  hint="Bod C leží <strong>uvnitř</strong> kružnice k (protože 3 < 4). Rozmysli si, zda je možný vnější i vnitřní dotyk hledané kružnice s k."
   steps={[
-    "Narýsuj kružnici <strong>k(S; 2,1 cm)</strong> a vyznač bod <strong>B</strong> ve vzdálenosti 5 cm od S.",
-    "Najdi střed M úsečky SB a sestroj <strong>Thaletovu kružnici</strong> t(M; |SB|/2).",
-    "Průsečíky Thaletovy kružnice s kružnicí k jsou <strong>body dotyku T₁ a T₂</strong>.",
-    "Přímky <strong>BT₁</strong> a <strong>BT₂</strong> jsou hledané tečny.",
-    "<strong>Výpočet vzdálenosti:</strong> V trojúhelníku ST₁B je pravý úhel u T₁ (tečna ⊥ poloměr).",
-    "Pythagorova věta: $|SB|^2 = |ST_1|^2 + |BT_1|^2$",
-    "$5^2 = 2{,}1^2 + |BT_1|^2$",
-    "$25 = 4{,}41 + |BT_1|^2$",
-    "$|BT_1|^2 = 20{,}59$",
-    "$|BT_1| = \\sqrt{20{,}59} \\approx 4{,}54 \\text{ cm}$",
-    "<strong>Odpověď:</strong> Z bodu B vedou ke kružnici k dvě tečny. Vzdálenost bodu B od dotykových bodů je přibližně <strong>4,54 cm</strong>."
+    "Narýsuj kružnici <strong>k(S; 4 cm)</strong> a vyznač bod <strong>C</strong> uvnitř (|SC| = 3 cm).",
+    "<strong>Podmínka 1 (dotyk s k):</strong> Vnější dotyk: |SS'| = 4 + 2 = 6. Vnitřní dotyk: |SS'| = 4 − 2 = 2.",
+    "Střed S' leží na kružnici <strong>k₁(S; 6)</strong> nebo <strong>k₂(S; 2)</strong>.",
+    "<strong>Podmínka 2 (prochází C):</strong> |S'C| = 2 → střed leží na kružnici <strong>m(C; 2)</strong>.",
+    "Pro vnější dotyk: |SC| = 3, k₁ má r = 6, m má r = 2 → |6 − 2| = 4 > 3 → kružnice se <strong>neprotínají</strong>.",
+    "Pro vnitřní dotyk: |SC| = 3, k₂ má r = 2, m má r = 2 → |2 − 2| = 0 < 3 < 4 → <strong>dva průsečíky</strong>.",
+    "<strong>Odpověď:</strong> Existují <strong>2 kružnice</strong> o poloměru 2 cm (obě s vnitřním dotykem), které se dotýkají k a procházejí bodem C."
   ]}
 />
 
 ---
 
-<SelfCheck client:load id="mb2-kruznice-priklady" label="Umím sestrojit tečny ke kružnici a řešit konstrukční úlohy." />
+## Příklad 5: Kružnice dotýkající se dvou různoběžek
+
+> 📝 **Zadání:** Jsou dány dvě různoběžky *a* a *b*, které se protínají pod úhlem 60°. Nalezněte všechny kružnice o poloměru 2 cm, které se dotýkají obou přímek.
+
+<StepByStepSolution
+  client:load
+  hint="Středy kružnic dotýkajících se obou přímek leží na <strong>osách úhlů</strong>. Dvě různoběžky tvoří <strong>4 úhly</strong> – a osy jsou dvě, navzájem kolmé."
+  steps={[
+    "Narýsuj dvě různoběžky <strong>a</strong> a <strong>b</strong> protínající se pod úhlem 60° (a tedy i 120°).",
+    "Sestroj <strong>obě osy úhlů</strong> – osa o₁ půlí úhly 60° a osa o₂ půlí úhly 120°. Osy jsou na sebe kolmé.",
+    "Střed kružnice dotýkající se obou přímek leží na ose úhlu a jeho vzdálenost od přímek = <strong>r = 2 cm</strong>.",
+    "Sestroj rovnoběžky s přímkou <em>a</em> ve vzdálenosti 2 cm (dvě – po obou stranách): <strong>a₁</strong> a <strong>a₂</strong>.",
+    "Průsečíky rovnoběžek a₁, a₂ s osami o₁, o₂ dávají středy hledaných kružnic.",
+    "V každém ze <strong>4 úhlů</strong> (dva páry vrcholových úhlů) leží právě jeden střed.",
+    "<strong>Odpověď:</strong> Existují <strong>4 kružnice</strong> o poloměru 2 cm, které se dotýkají obou různoběžek – jedna v každém úhlu."
+  ]}
+/>
 
 ---
 
-## 📌 Shrnutí použitých postupů
+## Příklad 6: Kružnice dotýkající se tečny a kružnice
 
-| Příklad | Klíčový postup |
-|:--------|:---------------|
-| Kružnice dotýkající se různoběžek | Osy úhlů + rovnoběžky ve vzdálenosti r |
-| Tečny z bodu ke kružnici | Thaletova kružnice nad průměrem SA |
-| Kružnice přes bod dotýkající se přímky | Průnik rovnoběžky a kružnice (dvě podmínky) |
-| Tečny + výpočet vzdálenosti | Thaletova kružnice + Pythagorova věta |
+> 📝 **Zadání:** Je zadána kružnice *k*(*S*; 4 cm) a přímka *t*, která je její tečnou. Nalezněte všechny kružnice o poloměru 2 cm, které se dotýkají přímky *t* a kružnice *k*.
+
+<StepByStepSolution
+  client:load
+  hint="Přímka <em>t</em> se dotýká kružnice k → vzdálenost S od t je přesně 4 cm. Hledaná kružnice se dotýká t (vzdálenost středu od t = 2 cm) a zároveň se dotýká k (vnějším nebo vnitřním dotykem)."
+  steps={[
+    "Narýsuj kružnici <strong>k(S; 4 cm)</strong> a její tečnu <strong>t</strong> (|St| = 4 cm).",
+    "<strong>Podmínka 1 (dotyk s t):</strong> Střed S' leží ve vzdálenosti 2 cm od t → na jedné ze dvou rovnoběžek <strong>t₁</strong> (blíže k S, 2 cm od t) a <strong>t₂</strong> (dále od S, 2 cm od t).",
+    "<strong>Podmínka 2 (dotyk s k):</strong> Vnější dotyk: |SS'| = 4 + 2 = 6 → kružnice <strong>k₁(S; 6)</strong>. Vnitřní dotyk: |SS'| = 4 − 2 = 2 → kružnice <strong>k₂(S; 2)</strong>.",
+    "Hledáme průsečíky: <strong>t₁ ∩ k₁</strong>, <strong>t₁ ∩ k₂</strong>, <strong>t₂ ∩ k₁</strong>, <strong>t₂ ∩ k₂</strong>.",
+    "Rovnoběžka t₁ je 2 cm od t (na straně S) → vzdálenost od S je 4 − 2 = <strong>2 cm</strong>. Protíná k₁(S; 6) ve 2 bodech a k₂(S; 2) – je tečnou (1 bod).",
+    "Rovnoběžka t₂ je 2 cm od t (opačná strana) → vzdálenost od S je 4 + 2 = <strong>6 cm</strong>. Je tečnou k₁(S; 6) – 1 bod. Neprotíná k₂(S; 2).",
+    "<strong>Odpověď:</strong> Existují <strong>4 kružnice</strong> o poloměru 2 cm, které se dotýkají tečny t a kružnice k."
+  ]}
+/>
+
+---
+
+## Příklad 7: Kružnice s vnitřním dotykem
+
+> 📝 **Zadání:** Je zadána kružnice *k*(*S*; 5 cm) a přímka *p*, která má od bodu S vzdálenost 4 cm. Nalezněte všechny kružnice o poloměru 2 cm, které se dotýkají přímky *p* a s kružnicí *k* mají vnitřní dotyk.
+
+<StepByStepSolution
+  client:load
+  hint="Vnitřní dotyk znamená, že hledaná kružnice leží <strong>uvnitř</strong> kružnice k. Vzdálenost středů při vnitřním dotyku: |SS'| = R − r = 5 − 2 = <strong>3 cm</strong>."
+  steps={[
+    "Narýsuj kružnici <strong>k(S; 5 cm)</strong> a přímku <strong>p</strong> ve vzdálenosti 4 cm od S. Přímka p protíná kružnici k (protože 4 < 5).",
+    "<strong>Podmínka 1 (vnitřní dotyk s k):</strong> |SS'| = 5 − 2 = 3 cm → střed S' leží na kružnici <strong>k₁(S; 3)</strong>.",
+    "<strong>Podmínka 2 (dotyk s p):</strong> Vzdálenost S' od p je 2 cm → S' leží na rovnoběžce s p ve vzdálenosti 2 cm.",
+    "Sestroj dvě rovnoběžky s p ve vzdálenosti 2 cm: <strong>p₁</strong> (blíže k S, ve vzdálenosti 4 − 2 = 2 cm od S) a <strong>p₂</strong> (dále od S, ve vzdálenosti 4 + 2 = 6 cm od S).",
+    "Průsečíky s k₁(S; 3): p₁ je 2 cm od S, k₁ má r = 3 → <strong>p₁ protíná k₁ ve dvou bodech</strong>.",
+    "p₂ je 6 cm od S, k₁ má r = 3 → 6 > 3 → p₂ kružnici k₁ <strong>neprotíná</strong>.",
+    "<strong>Odpověď:</strong> Existují <strong>2 kružnice</strong> o poloměru 2 cm, které se dotýkají přímky p a mají s kružnicí k vnitřní dotyk."
+  ]}
+/>
+
+---
+
+<SelfCheck client:load id="mb2-kruznice-priklady" label="Umím řešit konstrukční úlohy s kružnicemi a dotyky." />
+
+---
+
+## 📌 Shrnutí
+
+| Příklad | Klíčový postup | Počet řešení |
+|:--------|:---------------|:-------------|
+| Dvě rovnoběžky + bod | Osa pásu + kružnice z bodu | 2 |
+| Kružnice + vnější bod | Kružnice součtů/rozdílů + kružnice z bodu | 2 |
+| Dvě soustředné kružnice + přímka | Mezikruží + rovnoběžka | 2 |
+| Kružnice + vnitřní bod | Kružnice součtů/rozdílů + kružnice z bodu | 2 |
+| Dvě různoběžky | Osy úhlů + rovnoběžky | 4 |
+| Tečna + kružnice | Rovnoběžky s tečnou + kružnice dotyku | 4 |
+| Vnitřní dotyk + přímka | Kružnice rozdílu + rovnoběžky | 2 |
