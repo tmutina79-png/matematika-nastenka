@@ -180,12 +180,6 @@
         drawDashedLine(Ax, Ay, ex1, ey1, col.blue, 1.5, pRadA, [4, 3]);
         drawText('8 km', (Ax+ex1)/2 + 14, (Ay+ey1)/2 - 10, 14, col.blue, 'center', pRadA);
       }
-      if (pRadB > 0) {
-        const a2 = -Math.PI * 0.85;
-        const ex2 = Bx + rB * Math.cos(a2), ey2 = By + rB * Math.sin(a2);
-        drawDashedLine(Bx, By, ex2, ey2, col.green, 1.5, pRadB, [4, 3]);
-        drawText('6 km', (Bx+ex2)/2 - 14, (By+ey2)/2 - 10, 14, col.green, 'center', pRadB);
-      }
 
       // 7) Circle labels
       drawText('k₁(A, 8)', Ax - rA + 25, Ay - rA + 25, 15, col.blue, 'left', pLabel);
