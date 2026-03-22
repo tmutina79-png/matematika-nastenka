@@ -298,6 +298,18 @@
         </div>
       </div>
 
+      <!-- Evaluation: 80% threshold -->
+      {#if pct >= 80}
+        <div class="mb-6 px-5 py-4 rounded-xl bg-green-50 border border-green-200 text-center">
+          <p class="text-base font-bold text-green-700">🎉 Výborně! Dosaženo {pct} % – látku máš dobře zvládnutou.</p>
+        </div>
+      {:else}
+        <div class="mb-6 px-5 py-4 rounded-xl bg-amber-50 border border-amber-300 text-center">
+          <p class="text-base font-bold text-amber-700">⚠️ Dosaženo pouze {pct} % (minimum je 80 %)</p>
+          <p class="text-sm text-amber-600 mt-1">Zdá se, že jsi danému tématu dostatečně neporozuměl/a. Prostuduj si látku znovu a udělej si kvíz ještě jednou.</p>
+        </div>
+      {/if}
+
       <!-- Per-question breakdown -->
       <div class="space-y-2 mb-6">
         {#each questions as q, i}

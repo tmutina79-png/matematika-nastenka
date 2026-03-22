@@ -84,6 +84,20 @@
       </ol>
 
       {#if allRevealed}
+        <div class="tg-eval">
+          <p class="tg-eval-title">Jak se ti dařilo?</p>
+          <p class="tg-eval-text">Spočítej si, kolik otázek jsi zodpověděl/a správně <strong>před</strong> zobrazením řešení.</p>
+          <div class="tg-eval-options">
+            <button class="tg-eval-btn tg-eval-pass" onclick={() => { score = 'pass'; }}>✅ 80 % a více správně</button>
+            <button class="tg-eval-btn tg-eval-fail" onclick={() => { score = 'fail'; }}>❌ Méně než 80 %</button>
+          </div>
+          {#if score === 'pass'}
+            <div class="tg-eval-msg tg-eval-msg-pass">🎉 Výborně! Látku máš dobře zvládnutou.</div>
+          {/if}
+          {#if score === 'fail'}
+            <div class="tg-eval-msg tg-eval-msg-fail">⚠️ Zdá se, že jsi danému tématu dostatečně neporozuměl/a. Prostuduj si látku znovu a vygeneruj si nový test.</div>
+          {/if}
+        </div>
         <div class="tg-done">
           <span>✅ Test dokončen!</span>
           <button class="tg-btn-gen" onclick={generate}>🔄 Nový test</button>
@@ -129,4 +143,17 @@
   .tg-q-answer-text{font-size:13px;color:#064e3b;font-weight:500;margin:4px 0 0}
 
   .tg-done{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding:12px 16px;background:#ecfdf5;border-radius:12px;font-size:14px;font-weight:700;color:#065f46}
+
+  .tg-eval{margin-top:16px;padding:16px;background:#fefce8;border:1px solid #fde68a;border-radius:14px;text-align:center}
+  .tg-eval-title{font-size:15px;font-weight:700;color:#92400e;margin:0 0 4px}
+  .tg-eval-text{font-size:12px;color:#78716c;margin:0 0 12px}
+  .tg-eval-options{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .tg-eval-btn{padding:8px 18px;border:2px solid;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  .tg-eval-pass{border-color:#86efac;background:#f0fdf4;color:#166534}
+  .tg-eval-pass:hover{background:#dcfce7}
+  .tg-eval-fail{border-color:#fcd34d;background:#fffbeb;color:#92400e}
+  .tg-eval-fail:hover{background:#fef3c7}
+  .tg-eval-msg{margin-top:12px;padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;animation:fadeIn .3s ease}
+  .tg-eval-msg-pass{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
+  .tg-eval-msg-fail{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}
 </style>

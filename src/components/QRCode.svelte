@@ -1,25 +1,35 @@
 <script>
-  // @ts-ignore
-  const baseUrl = typeof __BASE_URL__ !== 'undefined' ? __BASE_URL__ : '';
-  
+  import QRCode from 'qrcode';
+  import { onMount } from 'svelte';
+
   let { url = '', title = 'QR kód' } = $props();
   let open = $state(false);
+  let qrSmall = $state('');
+  let qrLarge = $state('');
 
   function onKey(e) {
     if (!open) return;
     if (e.key === 'Escape') open = false;
   }
 
-  // Generování QR kódu pomocí Google Charts API (jako záloha) nebo inline SVG
-  // Pro jednoduchost použijeme API
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
-  const qrUrlLarge = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(url)}`;
+  onMount(async () => {
+    try {
+      qrSmall = await QRCode.toDataURL(url, { width: 200, margin: 1 });
+      qrLarge = await QRCode.toDataURL(url, { width: 400, margin: 1 });
+    } catch (err) {
+      console.error('QR kód se nepodařilo vygenerovat:', err);
+    }
+  });
 </script>
 
 <svelte:window onkeydown={onKey} />
 
 <button class="qr-btn" onclick={() => open = true} aria-label="Zobrazit QR kód" title={title}>
-  <img src={qrUrl} alt="QR kód" class="qr-small" />
+  {#if qrSmall}
+    <img src={qrSmall} alt="QR kód" class="qr-small" />
+  {:else}
+    <div class="qr-small qr-placeholder"></div>
+  {/if}
   <div class="qr-hint">
     <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
       <path d="M3 3h7v7H3V3zm2 2v3h3V5H5zm9-2h7v7h-7V3zm2 2v3h3V5h-3zM3 14h7v7H3v-7zm2 2v3h3v-3H5zm11 0h3v3h-3v-3zm0-5h3v3h-3v-3zm-3 3h3v3h-3v-3zm3 5h3v3h-3v-3z"/>
@@ -29,11 +39,17 @@
 </button>
 
 {#if open}
-  <div class="modal-backdrop" role="dialog" aria-modal="true" onclick={() => open = false}>
-    <div class="modal-content" onclick={(e) => e.stopPropagation()}>
+  <!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events a11y_interactive_supports_focus -->
+  <div class="modal-backdrop" role="dialog" aria-modal="true" tabindex="-1" onclick={() => open = false} onkeydown={(e) => { if (e.key === 'Escape') open = false; }}>
+    <!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
+    <div class="modal-content" role="document" onclick={(e) => e.stopPropagation()}>
       <button class="modal-close" onclick={() => open = false} aria-label="Zavřít">✕</button>
       <h3 class="modal-title">📱 Naskenuj QR kód</h3>
-      <img src={qrUrlLarge} alt="QR kód" class="qr-large" />
+      {#if qrLarge}
+        <img src={qrLarge} alt="QR kód" class="qr-large" />
+      {:else}
+        <div class="qr-large qr-placeholder"></div>
+      {/if}
       <p class="modal-url">{url}</p>
       <p class="modal-hint">Namiř fotoaparát mobilu na QR kód</p>
     </div>
@@ -67,6 +83,18 @@
     width: 32px;
     height: 32px;
     border-radius: 4px;
+  }
+  .qr-placeholder {
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qr-large.qr-placeholder {
+    width: 280px;
+    height: 280px;
+    border-radius: 16px;
+    margin: 0 auto;
   }
   .qr-hint {
     position: absolute;
