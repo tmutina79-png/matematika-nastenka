@@ -389,6 +389,8 @@ const lessons = [
       // Auto-open ancestor details for the current page ONLY if no saved state
       const hasSavedState = !!sessionStorage.getItem(STORAGE_KEY);
       if (!hasSavedState) {
+        // Close everything first
+        document.querySelectorAll('#sidebar details[id]').forEach(d => { d.open = false; });
         const currentPath = window.location.pathname;
         // Find the sidebar link that matches current page and open all parent <details>
         document.querySelectorAll('#sidebar a.sidebar-link').forEach(link => {

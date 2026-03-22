@@ -62,15 +62,28 @@ const base = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
   </section>
 
   <script is:inline>
-    // Po kliknutí na kartu VM otevři odpovídající details v sidebaru + Matematika
+    // Na homepage: otevři jen Matematika, všechny VM zavřené
+    (function() {
+      const state = {};
+      document.querySelectorAll('#sidebar details[id]').forEach(d => {
+        state[d.id] = false;
+      });
+      state['details-matematika'] = true;
+      sessionStorage.setItem('sidebar-details-state', JSON.stringify(state));
+      // Ihned aplikuj na sidebar
+      document.querySelectorAll('#sidebar details[id]').forEach(d => {
+        d.open = !!state[d.id];
+      });
+    })();
+
+    // Po kliknutí na kartu VM: otevři JEN Matematiku + kliknutý VM, ostatní zavřít
     document.querySelectorAll('.vm-card').forEach(card => {
       card.addEventListener('click', () => {
         const sidebarId = card.getAttribute('data-sidebar');
         if (!sidebarId) return;
-        // Otevři Matematika parent + konkrétní VM
         const state = {};
         document.querySelectorAll('#sidebar details[id]').forEach(d => {
-          state[d.id] = d.open;
+          state[d.id] = false;
         });
         state['details-matematika'] = true;
         state[sidebarId] = true;
