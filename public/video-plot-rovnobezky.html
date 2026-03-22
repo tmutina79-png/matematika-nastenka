@@ -252,6 +252,18 @@
       ctx.restore();
     }
 
+    function drawProgressBar(p) {
+      const barY = H - 20, barH = 5, pad = 100;
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(pad, barY, W - 2*pad, barH);
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillRect(pad, barY, (W - 2*pad) * p, barH);
+      ctx.beginPath();
+      ctx.fillStyle = '#60a5fa';
+      ctx.arc(pad + (W - 2*pad) * p, barY + barH/2, 6, 0, Math.PI*2);
+      ctx.fill();
+    }
+
     function render(progress) {
       drawBackground();
 
@@ -357,6 +369,9 @@
         drawText('jsou dvě rovnoběžky p₁ ∥ p a p₂ ∥ p.', W/2, H/2 + 35, 24, colors.text, 'center', sa);
         drawText('d(X, p) = d  ⟹  X ∈ p₁ ∪ p₂', W/2, H/2 + 80, 26, colors.line, 'center', sa);
       }
+
+      // Progress bar (always visible)
+      drawProgressBar(progress);
     }
 
     function animate(timestamp) {

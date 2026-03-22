@@ -225,6 +225,19 @@ function frame(ts){
   drawMass(mx,my,massAlpha,pulse);
   drawFormula(t);
 
+  // Progress bar
+  (function(){
+    const p=t/DURATION, barY=H-16, barH=5, pad=60;
+    X.fillStyle='#334155';
+    X.fillRect(pad,barY,W-2*pad,barH);
+    X.fillStyle='#3b82f6';
+    X.fillRect(pad,barY,(W-2*pad)*p,barH);
+    X.beginPath();
+    X.fillStyle='#60a5fa';
+    X.arc(pad+(W-2*pad)*p,barY+barH/2,5,0,Math.PI*2);
+    X.fill();
+  })();
+
   // phase label
   document.getElementById('phase').textContent=getPhase(t);
   document.getElementById('timer').textContent=`${(t/1000).toFixed(1)}s / 10.0s`;
