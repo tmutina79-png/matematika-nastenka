@@ -24,210 +24,269 @@
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
 
-    const DURATION = 20000;
+    const DURATION = 25000;
     let startTime = null;
+    let isPlaying = true;
+    let currentProgress = 0;
 
-    const c = {
+    const col = {
       bg1: '#0f172a', bg2: '#1e293b',
       blue: '#60a5fa', green: '#34d399', red: '#f87171',
       yellow: '#fbbf24', purple: '#818cf8',
       text: '#e2e8f0', dim: '#94a3b8'
     };
 
-    function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
-    function lerp(a, b, t) { return a + (b - a) * Math.min(1, Math.max(0, t)); }
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function clamp01(t) { return Math.max(0, Math.min(1, t)); }
+    function phase(progress, start, dur) { return clamp01((progress - start) / dur); }
 
-    // Geometry: scale 1 km = 40 px
-    const S = 40;
-    const Ax = W/2 - 6*S, Ay = H/2 + 20;
-    const Bx = W/2 + 6*S, By = H/2 + 20;
-    const rA = 8*S, rB = 6*S;
+    // Geometry: 1 km = 38 px
+    const SC = 38;
+    const Ax = W/2 - 6*SC, Ay = H/2 + 30;
+    const Bx = W/2 + 6*SC, By = H/2 + 30;
+    const rA = 8*SC, rB = 6*SC;
 
-    // Compute intersection points analytically
-    const d = 12*S;
-    const x_int = (d*d + rA*rA - rB*rB) / (2*d);
-    const y_int = Math.sqrt(rA*rA - x_int*x_int);
-    const X1x = Ax + x_int, X1y = Ay - y_int;
-    const X2x = Ax + x_int, X2y = Ay + y_int;
+    // Intersection points (analytical)
+    const dist = 12*SC;
+    const xOff = (dist*dist + rA*rA - rB*rB) / (2*dist);
+    const yOff = Math.sqrt(Math.max(0, rA*rA - xOff*xOff));
+    const X1x = Ax + xOff, X1y = Ay - yOff;
+    const X2x = Ax + xOff, X2y = Ay + yOff;
+
+    // ─── Drawing helpers ───
 
     function drawBg() {
       const g = ctx.createLinearGradient(0, 0, W, H);
-      g.addColorStop(0, c.bg1); g.addColorStop(1, c.bg2);
+      g.addColorStop(0, col.bg1); g.addColorStop(1, col.bg2);
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     }
 
-    function drawTitle(alpha) {
+    function drawText(text, x, y, size, color, align, alpha) {
+      if (alpha <= 0) return;
       ctx.globalAlpha = alpha;
-      ctx.fillStyle = c.text; ctx.font = 'bold 36px system-ui';
-      ctx.textAlign = 'center';
-      ctx.fillText('Dva vysílače – průsečíky kružnic', W/2, 55);
-      ctx.font = '18px system-ui'; ctx.fillStyle = c.dim;
-      ctx.fillText('|AB| = 12 km, dosah A = 8 km, dosah B = 6 km', W/2, 85);
+      ctx.font = (size > 22 ? 'bold ' : '') + size + 'px system-ui';
+      ctx.fillStyle = color;
+      ctx.textAlign = align || 'center';
+      ctx.fillText(text, x, y);
       ctx.globalAlpha = 1;
     }
 
-    function drawPoint(x, y, r, color, label, labelDx, labelDy) {
+    function drawDot(x, y, r, color, alpha) {
+      if (alpha <= 0) return;
+      ctx.globalAlpha = alpha;
       ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
       ctx.fillStyle = color; ctx.fill();
-      if (label) {
-        ctx.font = 'bold 20px system-ui'; ctx.fillStyle = color;
-        ctx.textAlign = 'center';
-        ctx.fillText(label, x + (labelDx||0), y + (labelDy||-20));
-      }
-    }
-
-    function drawSegmentAB(alpha) {
-      ctx.globalAlpha = alpha;
-      ctx.beginPath(); ctx.moveTo(Ax, Ay); ctx.lineTo(Bx, By);
-      ctx.strokeStyle = c.dim; ctx.lineWidth = 2;
-      ctx.setLineDash([8, 4]); ctx.stroke(); ctx.setLineDash([]);
-      ctx.font = '16px system-ui'; ctx.fillStyle = c.dim; ctx.textAlign = 'center';
-      ctx.fillText('12 km', (Ax+Bx)/2, Ay - 12);
       ctx.globalAlpha = 1;
     }
 
-    function drawCircle(cx, cy, r, color, alpha, progress) {
-      if (progress <= 0) return;
+    function drawDashedLine(x1, y1, x2, y2, color, width, alpha, dash) {
+      if (alpha <= 0) return;
+      ctx.globalAlpha = alpha;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color; ctx.lineWidth = width;
+      ctx.setLineDash(dash || [6, 3]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+    }
+
+    function drawCircleArc(cx, cy, r, color, alpha, progress) {
+      if (progress <= 0 || alpha <= 0) return;
       ctx.globalAlpha = alpha;
       ctx.beginPath();
-      ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + Math.PI*2*Math.min(1, progress));
+      ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + Math.PI*2*clamp01(progress));
       ctx.strokeStyle = color; ctx.lineWidth = 3;
       ctx.setLineDash([6, 3]); ctx.stroke(); ctx.setLineDash([]);
       ctx.globalAlpha = 1;
     }
 
-    function drawRadius(cx, cy, r, angle, color, alpha, label) {
-      ctx.globalAlpha = alpha;
-      const ex = cx + r * Math.cos(angle), ey = cy + r * Math.sin(angle);
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey);
-      ctx.strokeStyle = color; ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 3]); ctx.stroke(); ctx.setLineDash([]);
-      if (label) {
-        const mx = (cx+ex)/2, my = (cy+ey)/2;
-        ctx.font = '15px system-ui'; ctx.fillStyle = color; ctx.textAlign = 'center';
-        ctx.fillText(label, mx + 15, my - 8);
-      }
+    function drawCircleFill(cx, cy, r, color, alpha) {
+      if (alpha <= 0) return;
+      ctx.globalAlpha = alpha * 0.08;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.fillStyle = color; ctx.fill();
       ctx.globalAlpha = 1;
     }
 
-    function drawIntersections(alpha) {
+    function drawGlow(x, y, radius, r, g, b, alpha) {
       if (alpha <= 0) return;
       ctx.globalAlpha = alpha;
-      // Glow
-      [X1x, X1y, X2x, X2y].forEach((_, i) => {
-        if (i % 2 === 0) {
-          const px = [X1x, X1y, X2x, X2y][i];
-          const py = [X1x, X1y, X2x, X2y][i+1];
-          const glow = ctx.createRadialGradient(px, py, 0, px, py, 30);
-          glow.addColorStop(0, 'rgba(248,113,113,0.5)');
-          glow.addColorStop(1, 'rgba(248,113,113,0)');
-          ctx.fillStyle = glow;
-          ctx.fillRect(px-30, py-30, 60, 60);
-        }
-      });
-      drawPoint(X1x, X1y, 8, c.red, 'X₁', 25, -10);
-      drawPoint(X2x, X2y, 8, c.red, 'X₂', 25, 25);
+      const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grad.addColorStop(0, 'rgba('+r+','+g+','+b+',0.6)');
+      grad.addColorStop(1, 'rgba('+r+','+g+','+b+',0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI*2); ctx.fill();
       ctx.globalAlpha = 1;
     }
 
-    function drawLabels(alpha) {
-      ctx.globalAlpha = alpha;
-      ctx.font = '16px system-ui'; ctx.textAlign = 'left';
-      ctx.fillStyle = c.blue;
-      ctx.fillText('k₁(A, 8 km)', Ax - rA - 10, Ay - rA + 30);
-      ctx.fillStyle = c.green;
-      ctx.fillText('k₂(B, 6 km)', Bx + rB - 60, By - rB + 30);
-      ctx.globalAlpha = 1;
+    function drawProgressBar(p) {
+      const barY = H - 20, barH = 5, pad = 100;
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(pad, barY, W - 2*pad, barH);
+      ctx.fillStyle = col.purple;
+      ctx.fillRect(pad, barY, (W - 2*pad) * p, barH);
+      ctx.beginPath();
+      ctx.arc(pad + (W - 2*pad) * p, barY + barH/2, 6, 0, Math.PI*2);
+      ctx.fillStyle = col.purple; ctx.fill();
     }
 
-    function drawExplanation(alpha) {
-      ctx.globalAlpha = alpha;
-      ctx.font = '18px system-ui'; ctx.fillStyle = c.yellow; ctx.textAlign = 'center';
-      ctx.fillText('Průsečíky X₁ a X₂ = body kde se signály setkávají', W/2, H - 50);
-      ctx.font = '15px system-ui'; ctx.fillStyle = c.dim;
-      ctx.fillText('Stejný princip využívá GPS lokalizace', W/2, H - 25);
-      ctx.globalAlpha = 1;
-    }
+    // ─── Main render ───
 
-    function drawFillAreas(alphaA, alphaB) {
-      // Fill circle A
-      if (alphaA > 0) {
-        ctx.globalAlpha = alphaA * 0.08;
-        ctx.beginPath(); ctx.arc(Ax, Ay, rA, 0, Math.PI*2);
-        ctx.fillStyle = c.blue; ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-      // Fill circle B
-      if (alphaB > 0) {
-        ctx.globalAlpha = alphaB * 0.08;
-        ctx.beginPath(); ctx.arc(Bx, By, rB, 0, Math.PI*2);
-        ctx.fillStyle = c.green; ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-    }
-
-    function frame(ts) {
-      if (!startTime) startTime = ts;
-      const t = ((ts - startTime) % DURATION) / DURATION;
-
+    function render(p) {
       drawBg();
 
-      // Timeline:
-      // 0.00–0.10: Title + points A, B + segment AB fade in
-      // 0.10–0.30: Circle k₁ draws
-      // 0.25–0.45: Circle k₂ draws
-      // 0.40–0.50: Fills appear
-      // 0.45–0.55: Radii appear
-      // 0.55–0.65: Labels appear
-      // 0.60–0.75: Intersection points appear with glow
-      // 0.75–0.90: Explanation text
-      // 0.90–1.00: Hold / fade
+      // Phase timings (0→1 over animation)
+      const pTitle    = easeOut(phase(p, 0.00, 0.06));
+      const pPoints   = easeOut(phase(p, 0.04, 0.06));
+      const pSegment  = easeOut(phase(p, 0.07, 0.05));
+      const pCirc1    = phase(p, 0.13, 0.16);
+      const pCirc1a   = easeOut(clamp01(pCirc1 * 5));
+      const pCirc2    = phase(p, 0.24, 0.16);
+      const pCirc2a   = easeOut(clamp01(pCirc2 * 5));
+      const pFill     = easeOut(phase(p, 0.38, 0.06));
+      const pRadA     = easeOut(phase(p, 0.42, 0.05));
+      const pRadB     = easeOut(phase(p, 0.45, 0.05));
+      const pLabel    = easeOut(phase(p, 0.50, 0.05));
+      const pInter    = easeOut(phase(p, 0.56, 0.06));
+      const pLinesB   = easeOut(phase(p, 0.63, 0.06));
+      const pLinesA   = easeOut(phase(p, 0.68, 0.06));
+      const pDistLabl = easeOut(phase(p, 0.74, 0.05));
+      const pExpl     = easeOut(phase(p, 0.82, 0.06));
 
-      const titleA = ease(lerp(0, 1, (t - 0) / 0.08));
-      const segA = ease(lerp(0, 1, (t - 0.05) / 0.05));
-      const c1prog = lerp(0, 1, (t - 0.10) / 0.20);
-      const c2prog = lerp(0, 1, (t - 0.25) / 0.20);
-      const fillA = ease(lerp(0, 1, (t - 0.40) / 0.08));
-      const fillB = ease(lerp(0, 1, (t - 0.42) / 0.08));
-      const radA = ease(lerp(0, 1, (t - 0.45) / 0.06));
-      const labA = ease(lerp(0, 1, (t - 0.55) / 0.06));
-      const intA = ease(lerp(0, 1, (t - 0.62) / 0.08));
-      const expA = ease(lerp(0, 1, (t - 0.75) / 0.08));
+      // 1) Title
+      drawText('Dva vysílače – průsečíky kružnic', W/2, 50, 34, col.text, 'center', pTitle);
+      drawText('|AB| = 12 km,  dosah A = 8 km,  dosah B = 6 km', W/2, 80, 17, col.dim, 'center', pTitle);
 
-      // Fade out near end
-      const fadeOut = t > 0.92 ? ease(1 - (t - 0.92) / 0.08) : 1;
+      // 2) Points A, B
+      drawDot(Ax, Ay, 7, col.blue, pPoints);
+      drawText('A', Ax, Ay + 28, 20, col.blue, 'center', pPoints);
+      drawDot(Bx, By, 7, col.green, pPoints);
+      drawText('B', Bx, By + 28, 20, col.green, 'center', pPoints);
 
-      ctx.save();
-      ctx.globalAlpha = fadeOut;
+      // 3) Segment AB
+      drawDashedLine(Ax, Ay, Bx, By, col.dim, 2, pSegment, [8, 4]);
+      drawText('12 km', (Ax+Bx)/2, Ay - 14, 15, col.dim, 'center', pSegment);
 
-      drawTitle(titleA);
-      drawSegmentAB(segA);
+      // 4) Circle fills (behind arcs)
+      drawCircleFill(Ax, Ay, rA, col.blue, pFill);
+      drawCircleFill(Bx, By, rB, col.green, pFill);
 
-      drawFillAreas(fillA, fillB);
+      // 5) Circle arcs
+      drawCircleArc(Ax, Ay, rA, col.blue, pCirc1a, pCirc1);
+      drawCircleArc(Bx, By, rB, col.green, pCirc2a, pCirc2);
 
-      drawCircle(Ax, Ay, rA, c.blue, Math.min(1, c1prog > 0 ? 0.9 : 0), c1prog);
-      drawCircle(Bx, By, rB, c.green, Math.min(1, c2prog > 0 ? 0.9 : 0), c2prog);
-
-      drawRadius(Ax, Ay, rA, -Math.PI * 0.15, c.blue, radA, '8 km');
-      drawRadius(Bx, By, rB, -Math.PI * 0.85, c.green, radA, '6 km');
-
-      // Points A, B
-      if (segA > 0) {
-        ctx.globalAlpha = segA * fadeOut;
-        drawPoint(Ax, Ay, 7, c.blue, 'A', 0, 30);
-        drawPoint(Bx, By, 7, c.green, 'B', 0, 30);
-        ctx.globalAlpha = fadeOut;
+      // 6) Radii from centers
+      if (pRadA > 0) {
+        const a1 = -Math.PI * 0.15;
+        const ex1 = Ax + rA * Math.cos(a1), ey1 = Ay + rA * Math.sin(a1);
+        drawDashedLine(Ax, Ay, ex1, ey1, col.blue, 1.5, pRadA, [4, 3]);
+        drawText('8 km', (Ax+ex1)/2 + 14, (Ay+ey1)/2 - 10, 14, col.blue, 'center', pRadA);
+      }
+      if (pRadB > 0) {
+        const a2 = -Math.PI * 0.85;
+        const ex2 = Bx + rB * Math.cos(a2), ey2 = By + rB * Math.sin(a2);
+        drawDashedLine(Bx, By, ex2, ey2, col.green, 1.5, pRadB, [4, 3]);
+        drawText('6 km', (Bx+ex2)/2 - 14, (By+ey2)/2 - 10, 14, col.green, 'center', pRadB);
       }
 
-      drawLabels(labA);
-      drawIntersections(intA);
-      drawExplanation(expA);
+      // 7) Circle labels
+      drawText('k₁(A, 8)', Ax - rA + 25, Ay - rA + 25, 15, col.blue, 'left', pLabel);
+      drawText('k₂(B, 6)', Bx + rB - 80, By - rB + 25, 15, col.green, 'left', pLabel);
 
-      ctx.restore();
-      requestAnimationFrame(frame);
+      // 8) Intersection points with glow
+      if (pInter > 0) {
+        drawGlow(X1x, X1y, 30, 248, 113, 113, pInter * 0.7);
+        drawGlow(X2x, X2y, 30, 248, 113, 113, pInter * 0.7);
+        drawDot(X1x, X1y, 8, col.red, pInter);
+        drawText('X₁', X1x + 24, X1y - 10, 18, col.red, 'center', pInter);
+        drawDot(X2x, X2y, 8, col.red, pInter);
+        drawText('X₂', X2x + 24, X2y + 24, 18, col.red, 'center', pInter);
+      }
+
+      // 9) Lines from B to X₁ and X₂ (yellow)
+      if (pLinesB > 0) {
+        drawDashedLine(Bx, By, X1x, X1y, col.yellow, 2.5, pLinesB, [5, 4]);
+        drawDashedLine(Bx, By, X2x, X2y, col.yellow, 2.5, pLinesB, [5, 4]);
+      }
+
+      // 10) Lines from A to X₁ and X₂ (purple)
+      if (pLinesA > 0) {
+        drawDashedLine(Ax, Ay, X1x, X1y, col.purple, 2.5, pLinesA, [5, 4]);
+        drawDashedLine(Ax, Ay, X2x, X2y, col.purple, 2.5, pLinesA, [5, 4]);
+      }
+
+      // 11) Distance labels on connecting lines
+      if (pDistLabl > 0) {
+        // B→X labels
+        drawText('6 km', (Bx+X1x)/2 + 20, (By+X1y)/2 - 4, 13, col.yellow, 'center', pDistLabl);
+        drawText('6 km', (Bx+X2x)/2 + 20, (By+X2y)/2 + 16, 13, col.yellow, 'center', pDistLabl);
+        // A→X labels
+        drawText('8 km', (Ax+X1x)/2 - 20, (Ay+X1y)/2 - 4, 13, col.purple, 'center', pDistLabl);
+        drawText('8 km', (Ax+X2x)/2 - 20, (Ay+X2y)/2 + 16, 13, col.purple, 'center', pDistLabl);
+      }
+
+      // 12) Explanation text
+      drawText('Průsečíky X₁ a X₂ = body, kde se signály obou vysílačů setkávají', W/2, H - 60, 18, col.yellow, 'center', pExpl);
+      drawText('|BX₁| = |BX₂| = 6 km (dosah B)     |AX₁| = |AX₂| = 8 km (dosah A)', W/2, H - 38, 14, col.dim, 'center', pExpl);
+
+      // Progress bar (always visible)
+      drawProgressBar(p);
     }
 
-    requestAnimationFrame(frame);
+    // ─── Animation loop ───
+
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+
+      if (isPlaying) {
+        currentProgress = Math.min((timestamp - startTime) / DURATION, 1);
+      }
+
+      render(currentProgress);
+
+      if (currentProgress < 1 || !isPlaying) {
+        requestAnimationFrame(animate);
+      } else {
+        render(1);
+      }
+    }
+
+    // ─── External controls (postMessage from VideoModal) ───
+
+    window.addEventListener('message', (e) => {
+      switch (e.data) {
+        case 'toggle':
+          if (currentProgress >= 1) {
+            startTime = null;
+            currentProgress = 0;
+            isPlaying = true;
+            requestAnimationFrame(animate);
+          } else {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+              startTime = performance.now() - currentProgress * DURATION;
+              requestAnimationFrame(animate);
+            }
+          }
+          break;
+        case 'stop':
+          isPlaying = false;
+          currentProgress = 0;
+          startTime = null;
+          render(0);
+          break;
+        case 'rew':
+          currentProgress = Math.max(0, currentProgress - 0.01);
+          startTime = performance.now() - currentProgress * DURATION;
+          render(currentProgress);
+          break;
+        case 'fwd':
+          currentProgress = Math.min(1, currentProgress + 0.01);
+          startTime = performance.now() - currentProgress * DURATION;
+          render(currentProgress);
+          break;
+      }
+    });
+
+    requestAnimationFrame(animate);
   </script>
 </body>
 </html>
