@@ -49,6 +49,9 @@
   function generatePdf() {
     const selected = problems.filter(p => selectedProblems.includes(p.id));
     if (selected.length === 0) { alert('Vyber alespoň jeden příklad!'); return; }
+    const isGeometry = true;
+    const singleProblemClass = selected.length === 1 ? 'single-problem' : '';
+    const layoutClass = isGeometry ? 'geometry-layout' : 'standard-layout';
 
     const content = selected.map((p, i) => `
       <div class="problem">
@@ -56,7 +59,7 @@
         <p>${p.text}</p>
         <div class="workspace">
           <p class="ws-label">Místo pro řešení a konstrukci:</p>
-          <div class="ws-lines">${'<div class="line"></div>'.repeat(8)}</div>
+          <div class="ws-space"></div>
         </div>
       </div>
     `).join('');
@@ -65,20 +68,27 @@
     <style>
       @page{size:A4;margin:2cm}
       body{font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;line-height:1.6}
-      h1{text-align:center;color:#1e3a8a;font-size:22px;margin-bottom:5px}
-      .subtitle{text-align:center;color:#64748b;font-size:13px;margin-bottom:25px}
-      .problem{page-break-inside:avoid;margin-bottom:30px;border:1px solid #e2e8f0;border-radius:8px;padding:16px}
+      h1{text-align:center;color:#1e3a8a;font-size:22px;margin-bottom:12px}
+      .student-info{display:flex;justify-content:space-between;border-bottom:2px solid #dbeafe;padding-bottom:10px;margin-bottom:20px;font-size:13px;color:#1e293b}
+      .student-info span{border-bottom:1px solid #1e293b;min-width:180px;display:inline-block;margin-left:6px}
+      .problem{page-break-inside:avoid;margin-bottom:14px;border:1px solid #e2e8f0;border-radius:8px;padding:16px;display:flex;flex-direction:column}
+      .problem:last-child{margin-bottom:0}
       h3{color:#1e3a8a;font-size:15px;margin:0 0 8px 0;border-bottom:2px solid #dbeafe;padding-bottom:6px}
       p{margin:0 0 8px 0;font-size:14px}
-      .workspace{margin-top:10px}
+      .workspace{margin-top:10px;display:flex;flex-direction:column;flex:1}
       .ws-label{font-size:11px;color:#94a3b8;margin-bottom:4px}
-      .line{border-bottom:1px dotted #cbd5e1;height:28px}
-      .footer{text-align:center;font-size:10px;color:#94a3b8;margin-top:30px;border-top:1px solid #e2e8f0;padding-top:8px}
-    </style></head><body>
+      .ws-space{min-height:300px;border:1px solid #e2e8f0;border-radius:6px;flex:1}
+      .single-problem .ws-space{min-height:420px}
+      .geometry-layout .problem{min-height:9.6cm}
+      .geometry-layout .workspace{flex:1}
+      .geometry-layout .ws-space{min-height:6cm}
+      .geometry-layout.single-problem .problem{min-height:auto}
+      .geometry-layout.single-problem .ws-space{min-height:12cm}
+      .standard-layout .ws-space{min-height:5cm;max-height:5cm}
+    </style></head><body class="${layoutClass} ${singleProblemClass}">
     <h1>📐 Množina bodů – Osa úhlu – Pracovní list</h1>
-    <p class="subtitle">Studijní materiál: Ing. Tomáš Mutina, Mgr. Aleš Bajnar | ${new Date().toLocaleDateString('cs-CZ')}</p>
+    <div class="student-info"><div>Příjmení a jméno žáka: <span>&nbsp;</span></div><div>Datum: <span>&nbsp;</span></div></div>
     ${content}
-    <div class="footer">Studijní portál – Matematika | Vygenerováno ${new Date().toLocaleDateString('cs-CZ')}</div>
     </body></html>`;
 
     const w = window.open('', '_blank');
