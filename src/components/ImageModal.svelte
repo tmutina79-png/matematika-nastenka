@@ -91,11 +91,13 @@
   .modal-img {
     max-width: 90vw;
     max-height: 90vh;
+    min-width: min(600px, 85vw);
     width: auto;
     height: auto;
     border-radius: 12px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     background: #fff;
+    object-fit: scale-down;
   }
 
   .modal-close {
