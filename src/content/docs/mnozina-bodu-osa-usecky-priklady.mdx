@@ -1,0 +1,151 @@
+---
+title: Příklady – Osa úsečky
+---
+
+import SelfCheck from '../../components/SelfCheck.svelte';
+import StepByStepSolution from '../../components/StepByStepSolution.svelte';
+import PDFWorksheetOsaUsecky from '../../components/PDFWorksheetOsaUsecky.svelte';
+
+<div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+  <h1 class="m-0">📐 Příklady – Množina bodů daných vlastností – Osa úsečky</h1>
+  <PDFWorksheetOsaUsecky client:load title="Pracovní list – Osa úsečky" />
+</div>
+
+V této sekci najdeš konstrukční příklady zaměřené na osu úsečky a body stejně vzdálené od dvou daných bodů. Každý příklad má nápovědu a postup řešení krok za krokem.
+
+---
+
+## Příklad 1: Střed úsečky a osa
+
+> 📝 **Zadání:** Jsou dány body A a B, kde |AB| = 8 cm. Sestroj osu úsečky AB a vyznač její střed S. Ověř, že střed leží na ose.
+
+<StepByStepSolution
+  client:load
+  hint="Osa úsečky je <strong>kolmice</strong> procházející <strong>středem</strong> úsečky. Ke konstrukci využij kružnice se stejným poloměrem se středy v bodech A a B."
+  steps={[
+    "Narýsuj úsečku <strong>AB</strong> o délce 8 cm.",
+    "Sestroj kružnici <strong>k₁(A; r)</strong>, kde r > 4 cm (např. r = 5 cm).",
+    "Sestroj kružnici <strong>k₂(B; r)</strong> se <strong>stejným poloměrem</strong> r = 5 cm.",
+    "Kružnice k₁ a k₂ se protínají ve dvou bodech <strong>P</strong> a <strong>Q</strong>.",
+    "Přímka <strong>PQ</strong> je osou úsečky AB. Průsečík PQ s úsečkou AB je střed <strong>S</strong>.",
+    "Ověření: Změř |SA| a |SB| → obě vzdálenosti jsou <strong>4 cm</strong>, střed S leží na ose.",
+    "<strong>Odpověď:</strong> Osa úsečky AB je kolmice k AB procházející středem S, kde |SA| = |SB| = 4 cm."
+  ]}
+/>
+
+---
+
+## Příklad 2: Bod na ose úsečky v dané vzdálenosti
+
+> 📝 **Zadání:** Jsou dány body A a B, kde |AB| = 6 cm. Sestroj osu úsečky AB. Na ose vyznač bod X tak, aby |XA| = 5 cm. Ověř, že |XB| = 5 cm.
+
+<StepByStepSolution
+  client:load
+  hint="Každý bod na ose úsečky je <strong>stejně vzdálený</strong> od obou koncových bodů. Bod X musí ležet na ose úsečky i na kružnici se středem A a poloměrem 5 cm."
+  steps={[
+    "Narýsuj úsečku <strong>AB</strong> o délce 6 cm.",
+    "Sestroj <strong>osu úsečky o</strong> standardním postupem (dva oblouky se stejným poloměrem ze středů A, B).",
+    "Sestroj kružnici <strong>k(A; 5 cm)</strong>.",
+    "Průsečíky kružnice k s osou o jsou hledané body <strong>X₁</strong> a <strong>X₂</strong>.",
+    "Bod X leží na ose úsečky → |XA| = |XB|. Zadáno |XA| = 5 cm, proto |XB| = 5 cm. ✓",
+    "Ověření: Bod X₁ leží nad úsečkou, bod X₂ pod ní – obě řešení jsou správná.",
+    "<strong>Odpověď:</strong> Existují <strong>2 body</strong> X na ose úsečky ve vzdálenosti 5 cm od A (a tedy i od B)."
+  ]}
+/>
+
+---
+
+## Příklad 3: Rovnoramenný trojúhelník
+
+> 📝 **Zadání:** Je dána úsečka AB, kde |AB| = 7 cm. Najdi bod C tak, aby trojúhelník ABC byl rovnoramenný s rameny |CA| = |CB| = 5 cm.
+
+<StepByStepSolution
+  client:load
+  hint="Rovnoramenný trojúhelník s |CA| = |CB| má vrchol C na <strong>ose úsečky AB</strong> (množina bodů stejně vzdálených od A i B). Navíc |CA| = 5 cm – to dává další podmínku."
+  steps={[
+    "Narýsuj úsečku <strong>AB</strong> o délce 7 cm.",
+    "Sestroj <strong>osu úsečky o</strong> (kolmice v bodě S, kde S je střed AB).",
+    "<strong>Podmínka |CA| = |CB|:</strong> Bod C leží na ose úsečky AB.",
+    "<strong>Podmínka |CA| = 5 cm:</strong> Bod C leží na kružnici <strong>k(A; 5 cm)</strong>.",
+    "Sestroj kružnici <strong>k(A; 5)</strong>. Průsečíky k s osou o jsou body <strong>C₁</strong> a <strong>C₂</strong>.",
+    "Ověření trojúhelníkové nerovnosti: |AB| = 7 < 5 + 5 = 10 ✓ a |CA| − |CB| = 0 < 7 ✓ → trojúhelník existuje.",
+    "<strong>Odpověď:</strong> Existují <strong>2 body</strong> C (jeden nad a jeden pod přímkou AB), které tvoří rovnoramenný trojúhelník s rameny 5 cm."
+  ]}
+/>
+
+---
+
+## Příklad 4: Kružnice opsaná trojúhelníku
+
+> 📝 **Zadání:** Je dán trojúhelník ABC s délkami stran a = 6 cm, b = 5 cm, c = 7 cm. Sestrojením os stran najdi střed kružnice opsané a kružnici narýsuj.
+
+<StepByStepSolution
+  client:load
+  hint="Střed kružnice <strong>opsané</strong> trojúhelníku je bod, který je <strong>stejně vzdálený od všech tří vrcholů</strong>. Takový bod leží na ose každé strany trojúhelníku. Stačí sestrojit <strong>dvě osy</strong> – jejich průsečík je hledaný střed."
+  steps={[
+    "Sestroj trojúhelník ABC: <strong>c = |AB| = 7 cm</strong>, <strong>a = |BC| = 6 cm</strong>, <strong>b = |AC| = 5 cm</strong> (nejprve stranu AB, pak oblouky z A a B).",
+    "Sestroj <strong>osu strany AB</strong> (o₁) – kolmici v jejím středě. Každý bod na o₁ má |XA| = |XB|.",
+    "Sestroj <strong>osu strany BC</strong> (o₂) – kolmici v jejím středě. Každý bod na o₂ má |XB| = |XC|.",
+    "Průsečík <strong>O = o₁ ∩ o₂</strong> je středem kružnice opsané. Splňuje |OA| = |OB| = |OC|.",
+    "Poloměr kružnice opsané: <strong>r = |OA|</strong> – změř kružítkem.",
+    "Narýsuj kružnici <strong>k(O; r)</strong> – musí procházet všemi třemi vrcholy A, B, C.",
+    "<strong>Odpověď:</strong> Střed kružnice opsané O je průsečíkem os stran. Kružnice <strong>k(O; r)</strong> prochází body A, B, C."
+  ]}
+/>
+
+---
+
+## Příklad 5: Osa úsečky a přímka
+
+> 📝 **Zadání:** Jsou dány body A, B (|AB| = 8 cm) a přímka *p* rovnoběžná s AB ve vzdálenosti 3 cm. Najdi na přímce *p* bod X, který je stejně vzdálený od A i B.
+
+<StepByStepSolution
+  client:load
+  hint="Bod X musí splňovat <strong>dvě podmínky</strong> současně: ležet na přímce p (daná podmínka) a být stejně vzdálený od A i B (→ leží na ose úsečky AB). Hledáme průsečík."
+  steps={[
+    "Narýsuj úsečku <strong>AB</strong> o délce 8 cm a přímku <strong>p</strong> rovnoběžnou s AB ve vzdálenosti 3 cm.",
+    "Sestroj <strong>osu úsečky o</strong> (kolmice k AB v jejím středu S).",
+    "Osa o je kolmá k AB a přímka p je rovnoběžná s AB → osa o je <strong>kolmá i na p</strong>.",
+    "Průsečík <strong>X = o ∩ p</strong> je hledaný bod.",
+    "Bod X leží na ose úsečky → |XA| = |XB|. Bod X leží na přímce p. ✓",
+    "Osa je kolmá na p → existuje <strong>právě jeden průsečík</strong>.",
+    "<strong>Odpověď:</strong> Existuje <strong>právě 1 bod</strong> X na přímce p, který je stejně vzdálený od A i B. Leží v průsečíku osy úsečky s přímkou p."
+  ]}
+/>
+
+---
+
+## Příklad 6: Dvě osy úseček – bod stejně vzdálený od tří bodů
+
+> 📝 **Zadání:** Jsou dány tři body A, B, C neležící na jedné přímce (|AB| = 6 cm, |BC| = 5 cm, |AC| = 7 cm). Najdi bod X, který je stejně vzdálený od všech tří bodů. Jaká je vzdálenost |XA|?
+
+<StepByStepSolution
+  client:load
+  hint="Bod stejně vzdálený od A i B leží na <strong>ose úsečky AB</strong>. Bod stejně vzdálený od B i C leží na <strong>ose úsečky BC</strong>. Bod, který je stejně vzdálený od všech tří, leží na <strong>průsečíku obou os</strong>. Jde vlastně o střed kružnice opsané trojúhelníku ABC."
+  steps={[
+    "Sestroj trojúhelník <strong>ABC</strong>: |AB| = 6 cm, |BC| = 5 cm, |AC| = 7 cm.",
+    "<strong>Podmínka |XA| = |XB|:</strong> Bod X leží na ose úsečky AB → sestroj <strong>osu o₁</strong> úsečky AB.",
+    "<strong>Podmínka |XB| = |XC|:</strong> Bod X leží na ose úsečky BC → sestroj <strong>osu o₂</strong> úsečky BC.",
+    "Průsečík <strong>X = o₁ ∩ o₂</strong> splňuje |XA| = |XB| (z o₁) a |XB| = |XC| (z o₂) → |XA| = |XB| = |XC|.",
+    "Změř vzdálenost <strong>|XA|</strong> kružítkem – to je poloměr kružnice opsané trojúhelníku ABC.",
+    "Ověření: Sestroj kružnici <strong>k(X; |XA|)</strong> – musí procházet i body B a C.",
+    "<strong>Odpověď:</strong> Existuje <strong>právě 1 bod</strong> X (střed kružnice opsané), vzdálenost |XA| ≈ 3,57 cm (poloměr kružnice opsané)."
+  ]}
+/>
+
+---
+
+<SelfCheck client:load id="mb3-osa-usecky-priklady" label="Umím řešit konstrukční úlohy s osou úsečky." />
+
+---
+
+## 📌 Shrnutí
+
+| Příklad | Klíčový postup | Počet řešení |
+|:--------|:---------------|:-------------|
+| Střed úsečky a osa | Dva oblouky se stejným poloměrem | 1 osa |
+| Bod na ose v dané vzdálenosti | Osa úsečky + kružnice z jednoho bodu | 2 |
+| Rovnoramenný trojúhelník | Osa úsečky + kružnice | 2 |
+| Kružnice opsaná trojúhelníku | Průsečík dvou os stran | 1 střed |
+| Osa úsečky a přímka | Osa úsečky ∩ rovnoběžka | 1 |
+| Bod stejně vzdálený od 3 bodů | Průsečík dvou os úseček | 1 |

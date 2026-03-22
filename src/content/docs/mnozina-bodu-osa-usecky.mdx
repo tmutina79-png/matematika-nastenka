@@ -1,0 +1,230 @@
+---
+title: "Množina bodů – Osa úsečky"
+description: "Osa úsečky jako množina bodů stejně vzdálených od dvou bodů."
+order: 9
+---
+
+import SelfCheck from '../../components/SelfCheck.svelte';
+import Quiz from '../../components/Quiz.svelte';
+import VideoModal from '../../components/VideoModal.svelte';
+import ImageModal from '../../components/ImageModal.svelte';
+
+# Množina bodů – Osa úsečky 📐
+
+> **Klíčová otázka:** Kde v rovině leží všechny body, které jsou stejně daleko od bodu A i od bodu B?
+
+---
+
+<h2 id="1-o-co-jde">1. O co jde?</h2>
+
+V geometrii často hledáme **všechny body**, které splňují určitou podmínku. Těmto bodům říkáme **množina bodů dané vlastnosti**.
+
+Základní princip je jednoduchý:
+
+> 💡 **Množina bodů** = všechny body, které mají společnou vlastnost (např. stejnou vzdálenost od bodu, od přímky, od dvou bodů...)
+
+<div class="flex flex-col md:flex-row gap-4 items-start my-6">
+  <figure class="flex-1 min-w-0">
+    <ImageModal client:load src="/img/mnozina-bodu-princip.svg" alt="Princip množiny bodů" />
+    <figcaption class="text-center text-sm text-primary-400 mt-2">Různé množiny bodů – kružnice, osa úsečky, rovnoběžky.</figcaption>
+  </figure>
+  <div class="flex-1 min-w-0">
+    <VideoModal client:load src="/video-mnozina-bodu-princip.html" title="📐 Množiny bodů – animovaná vizualizace" thumbnailImg="/img/mnozina-bodu-video-thumb.svg" />
+  </div>
+</div>
+
+### Kde se s tím setkáš v praxi?
+
+- **Umístění studny** mezi dva domy – má být stejně daleko od obou
+- **Rozhodčí na hřišti** – stojí na půlicí čáře, aby viděl na obě branky stejně
+- **Hranice okresů** – vedou tam, kde je to stejně daleko do obou měst
+- **Stavba mostu** přes řeku – optimální pozice uprostřed mezi dvěma břehy
+
+<SelfCheck client:load id="mb3-princip" label="Chápu, co je množina bodů dané vlastnosti." />
+
+---
+
+<h2 id="2-osa-usecky">2. Osa úsečky</h2>
+
+<figure class="my-6">
+  <ImageModal client:load src="/img/mnozina-bodu-osa-usecky.svg" alt="Osa úsečky jako množina bodů" class="max-w-sm mx-auto" />
+  <figcaption class="text-center text-sm text-primary-400 mt-2">Osa úsečky – body stejně vzdálené od A i B.</figcaption>
+</figure>
+
+### Definice
+
+> **Osa úsečky AB** je množina všech bodů v rovině, které mají od bodů A a B **stejnou vzdálenost**.
+
+$$
+o_{AB} = \{X \in \text{rovina} : |XA| = |XB|\}
+$$
+
+### Klíčové pojmy
+
+| Pojem | Vysvětlení |
+|:------|:-----------|
+| **Osa úsečky** | Přímka, na které leží všechny body stejně vzdálené od A i B |
+| **Střed úsečky S** | Bod, který leží přesně uprostřed A a B; $\|AS\| = \|SB\|$ |
+| **Kolmost** | Osa úsečky je **kolmá** na úsečku AB |
+| **Symetrie** | Osa úsečky je osou souměrnosti úsečky AB |
+
+### Vlastnosti osy úsečky
+
+1. Je to **přímka** (nekonečná v obou směrech)
+2. Prochází **středem úsečky** AB
+3. Je **kolmá** na úsečku AB
+4. Dělí rovinu na dvě poloroviny – v jedné jsou body **blíže k A**, ve druhé **blíže k B**
+5. Každý bod, který leží na ose, má **|XA| = |XB|**
+
+> ⚠️ **Pozor:** Osa úsečky není „kousek přímky" – je to celá přímka, která se táhne do nekonečna oběma směry!
+
+### Jak sestrojit osu úsečky
+
+| Krok | Co uděláš |
+|:-----|:----------|
+| 1. | Zvol poloměr $r > \frac{\|AB\|}{2}$ (větší než polovina úsečky) |
+| 2. | Narýsuj kružnici $k_1(A, r)$ |
+| 3. | Narýsuj kružnici $k_2(B, r)$ se **stejným** poloměrem |
+| 4. | Označ průsečíky kružnic jako **P** a **Q** |
+| 5. | Spoj P a Q přímkou → to je **osa úsečky AB** |
+
+> 💡 **Proč to funguje?** Body P a Q leží na obou kružnicích, takže |PA| = |PB| = r a |QA| = |QB| = r. Oba body jsou tedy stejně vzdálené od A i B → leží na ose úsečky.
+
+<SelfCheck client:load id="mb3-osa-usecky" label="Vím, co je osa úsečky a umím ji zkonstruovat." />
+
+---
+
+<h2 id="rychly-test">🧠 Ověř si znalosti: Rozumíš pojmům?</h2>
+
+<Quiz
+  client:load
+  questions={[
+    {
+      question: "Co je osa úsečky AB?",
+      options: ["Přímka procházející body A a B", "Množina bodů stejně vzdálených od A i B", "Kružnice se středem ve středu AB", "Úsečka kolmá na AB"],
+      correct: 1,
+      explanation: "Osa úsečky AB je množina všech bodů, které mají od bodů A a B stejnou vzdálenost."
+    },
+    {
+      question: "Jaký geometrický útvar je osa úsečky?",
+      options: ["Úsečka", "Polopřímka", "Přímka", "Kružnice"],
+      correct: 2,
+      explanation: "Osa úsečky je přímka – táhne se do nekonečna oběma směry."
+    },
+    {
+      question: "Jaký úhel svírá osa úsečky s úsečkou AB?",
+      options: ["30°", "45°", "60°", "90°"],
+      correct: 3,
+      explanation: "Osa úsečky je kolmá na úsečku AB, svírá s ní tedy pravý úhel (90°)."
+    },
+    {
+      question: "Kde protíná osa úsečky úsečku AB?",
+      options: ["V bodě A", "V bodě B", "Ve středu úsečky", "Neprotíná ji"],
+      correct: 2,
+      explanation: "Osa úsečky prochází středem S úsečky AB."
+    },
+    {
+      question: "Bod X leží na ose úsečky AB. Co platí?",
+      options: ["|XA| > |XB|", "|XA| < |XB|", "|XA| = |XB|", "|XA| + |XB| = |AB|"],
+      correct: 2,
+      explanation: "Každý bod na ose úsečky je stejně vzdálený od obou koncových bodů: |XA| = |XB|."
+    }
+  ]}
+/>
+
+<SelfCheck client:load id="mb3-kviz" label="Odpověděl(a) jsem správně na většinu otázek." />
+
+---
+
+<h2 id="priklady">3. Příklady</h2>
+
+### Příklad 1: Umístění studny
+
+> 📝 **Zadání:** Dva sousedé (domy A a B) chtějí vykopat společnou studnu tak, aby byla od obou domů stejně daleko. Kde může studna ležet?
+
+**Rozbor:**
+- Hledáme body X, kde |XA| = |XB|
+- To je přesně definice osy úsečky
+
+**Řešení:**
+1. Domy jsou body **A** a **B** v rovině
+2. Studna má být stejně daleko od obou → hledáme body, kde |XA| = |XB|
+3. Množina takových bodů je **osa úsečky AB**
+
+**Odpověď:** Studna může stát v libovolném bodě na **ose úsečky AB** – přímce kolmé na spojnici domů, procházející jejím středem.
+
+<VideoModal client:load src="/video-priklad-osa-usecky.html" title="🎬 Video: Osa úsečky – vizualizace" thumbnailImg="/img/priklad-osa-usecky-thumb.svg" />
+
+---
+
+### Příklad 2: Rozhodčí na hřišti
+
+> 📝 **Zadání:** Rozhodčí chce stát tak, aby měl stejný výhled na obě branky (body A a B). Kde se má postavit?
+
+**Rozbor:**
+- Branky jsou body A (levá) a B (pravá)
+- Rozhodčí hledá pozici X, kde |XA| = |XB|
+
+**Řešení:**
+1. Hledáme body stejně vzdálené od A i B
+2. To je osa úsečky AB
+3. Na fotbalovém hřišti je osa úsečky mezi brankami vlastně **půlicí čára**
+
+**Odpověď:** Rozhodčí by měl stát kdekoliv na **půlicí čáře** hřiště (osa úsečky AB).
+
+> 💡 **Tip:** Osa úsečky dvou bodů je klíčový nástroj při hledání pozic „spravedlivých" vůči dvěma místům!
+
+<SelfCheck client:load id="mb3-priklady" label="Umím řešit příklady s osou úsečky." />
+
+---
+
+<h2 id="pozor">4. Na co si dát pozor</h2>
+
+| Chyba | Proč je špatně | Správně |
+|:------|:---------------|:--------|
+| Osa úsečky je úsečka | Osa úsečky je přímka, ne úsečka | Je to **přímka** – nekonečná v obou směrech |
+| Osa neprochází středem | Osa úsečky vždy prochází středem | Prochází **středem** úsečky AB |
+| Osa není kolmá | Osa úsečky je vždy kolmá na AB | Svírá s AB úhel **90°** |
+| Poloměr při konstrukci je moc malý | Kružnice se neprotnou | Poloměr musí být **větší** než polovina |AB| |
+
+---
+
+<h2 id="over-si-znalosti">✅ Ověř si znalosti</h2>
+
+<Quiz
+  client:load
+  questions={[
+    {
+      question: "Jsou dány body A a B, kde |AB| = 8 cm. Jaký je nejmenší poloměr kružnic, které použiješ k sestrojení osy úsečky?",
+      options: ["2 cm", "4 cm", "Větší než 4 cm", "8 cm"],
+      correct: 2,
+      explanation: "Poloměr musí být větší než polovina |AB| = 4 cm, aby se kružnice protly."
+    },
+    {
+      question: "Bod M leží ve středu úsečky AB. Kolik bodů osy úsečky znáš bez další konstrukce?",
+      options: ["Žádný", "Právě jeden – bod M", "Dva body", "Nekonečně mnoho"],
+      correct: 1,
+      explanation: "Střed M úsečky leží vždy na ose úsečky. Je to jeden bod, který znáš ihned."
+    },
+    {
+      question: "Tři osy stran trojúhelníku se protínají v jednom bodě. Jak se tento bod nazývá?",
+      options: ["Těžiště", "Střed kružnice opsané", "Střed kružnice vepsané", "Ortocentrum"],
+      correct: 1,
+      explanation: "Průsečík os stran trojúhelníku je střed kružnice opsané trojúhelníku."
+    },
+    {
+      question: "Bod X leží na ose úsečky AB a |XA| = 7 cm. Jaká je vzdálenost |XB|?",
+      options: ["3,5 cm", "7 cm", "14 cm", "Nelze určit"],
+      correct: 1,
+      explanation: "Bod na ose úsečky je stejně vzdálený od obou koncových bodů: |XA| = |XB| = 7 cm."
+    },
+    {
+      question: "Kolik os úseček musíš sestrojit, abys našel střed kružnice opsané trojúhelníku?",
+      options: ["Jednu", "Aspoň dvě", "Právě tři", "Čtyři"],
+      correct: 1,
+      explanation: "Stačí sestrojit dvě osy stran – jejich průsečík je střed kružnice opsané. Třetí osa projde stejným bodem."
+    }
+  ]}
+/>
+
+<SelfCheck client:load id="mb3-final" label="Zvládám příklady s osou úsečky." />
