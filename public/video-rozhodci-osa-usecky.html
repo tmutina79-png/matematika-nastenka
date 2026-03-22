@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rozhodčí na hřišti – osa úsečky</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    canvas { max-width: 100%; max-height: 100vh; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="1280" height="720"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    const DURATION = 30000;
+    let startTime = null;
+    let isPlaying = true;
+    let currentProgress = 0;
+    
+    const colors = {
+      bg1: '#0f172a', bg2: '#1e293b',
+      grass: '#166534', grassLight: '#15803d', grassDark: '#14532d',
+      white: '#ffffff', yellow: '#fbbf24', green: '#34d399',
+      red: '#f87171', text: '#e2e8f0', textDim: '#94a3b8',
+      blue: '#60a5fa', orange: '#fb923c', purple: '#a78bfa',
+      line: '#bbf7d0'
+    };
+    
+    // Field dimensions
+    const fieldX = 140, fieldY = 100, fieldW = 1000, fieldH = 520;
+    const midX = fieldX + fieldW / 2;
+    const midY = fieldY + fieldH / 2;
+    
+    // Goals (branky)
+    const goalAx = fieldX + 40, goalAy = midY;
+    const goalBx = fieldX + fieldW - 40, goalBy = midY;
+    
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function easeInOut(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    
+    function drawBackground() {
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, colors.bg1);
+      g.addColorStop(1, colors.bg2);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+    
+    function drawField(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      
+      // Grass
+      const gg = ctx.createLinearGradient(fieldX, fieldY, fieldX, fieldY + fieldH);
+      gg.addColorStop(0, colors.grass);
+      gg.addColorStop(0.5, colors.grassLight);
+      gg.addColorStop(1, colors.grass);
+      ctx.fillStyle = gg;
+      ctx.beginPath();
+      ctx.roundRect(fieldX, fieldY, fieldW, fieldH, 12);
+      ctx.fill();
+      
+      // Grass stripes
+      for (let i = 0; i < 10; i++) {
+        if (i % 2 === 0) {
+          ctx.fillStyle = 'rgba(0,0,0,0.04)';
+          ctx.fillRect(fieldX + i * fieldW / 10, fieldY, fieldW / 10, fieldH);
+        }
+      }
+      
+      // Field outline
+      ctx.strokeStyle = colors.line;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(fieldX + 10, fieldY + 10, fieldW - 20, fieldH - 20, 4);
+      ctx.stroke();
+      
+      // Center line
+      ctx.beginPath();
+      ctx.moveTo(midX, fieldY + 10);
+      ctx.lineTo(midX, fieldY + fieldH - 10);
+      ctx.stroke();
+      
+      // Center circle
+      ctx.beginPath();
+      ctx.arc(midX, midY, 60, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(midX, midY, 4, 0, Math.PI * 2);
+      ctx.fillStyle = colors.line;
+      ctx.fill();
+      
+      // Goal areas
+      // Left
+      ctx.strokeStyle = colors.line;
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(fieldX + 10, midY - 80, 60, 160);
+      ctx.strokeRect(fieldX + 10, midY - 40, 25, 80);
+      // Right
+      ctx.strokeRect(fieldX + fieldW - 70, midY - 80, 60, 160);
+      ctx.strokeRect(fieldX + fieldW - 35, midY - 40, 25, 80);
+      
+      // Goals (branky)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(fieldX + 5, midY - 30, 8, 60);
+      ctx.fillRect(fieldX + fieldW - 13, midY - 30, 8, 60);
+      
+      ctx.restore();
+    }
+    
+    function drawGoalLabel(x, y, label, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, 18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 18px system-ui';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, x, y);
+      ctx.restore();
+    }
+    
+    function drawReferee(x, y, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      // Body
+      ctx.fillStyle = '#1e1e1e';
+      ctx.beginPath();
+      ctx.ellipse(x, y + 8, 10, 14, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Head
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(x, y - 14, 10, 0, Math.PI * 2);
+      ctx.fill();
+      // Whistle
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(x + 8, y - 10, 8, 4);
+      ctx.restore();
+    }
+    
+    function drawDistanceLine(x1, y1, x2, y2, label, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.setLineDash([8, 5]);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // Label
+      const mx = (x1 + x2) / 2;
+      const my = (y1 + y2) / 2;
+      ctx.fillStyle = color;
+      ctx.font = 'bold 16px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, mx, my - 12);
+      ctx.restore();
+    }
+    
+    function drawText(text, x, y, size, color, align, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha || 1;
+      ctx.fillStyle = color;
+      ctx.font = 'bold ' + size + 'px system-ui';
+      ctx.textAlign = align || 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+    
+    function drawOsaUsecky(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.setLineDash([12, 6]);
+      ctx.strokeStyle = colors.green;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(midX, fieldY - 20);
+      ctx.lineTo(midX, fieldY + fieldH + 20);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+    
+    function drawInfoBox(text, x, y, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.font = 'bold 20px system-ui';
+      const w = ctx.measureText(text).width + 40;
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      ctx.beginPath();
+      ctx.roundRect(x - w/2, y - 18, w, 36, 10);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+    
+    function render(progress) {
+      drawBackground();
+      
+      // Phase 0–0.12: Title
+      if (progress < 0.12) {
+        const p = easeOut(progress / 0.08);
+        drawText('⚽ Rozhodčí na hřišti', W/2, H/2 - 20, 42, colors.text, 'center', p);
+        drawText('Kde se má rozhodčí postavit, aby viděl na obě branky stejně?', W/2, H/2 + 30, 20, colors.textDim, 'center', Math.max(0, (progress - 0.03) / 0.06));
+        return;
+      }
+      
+      // Phase 0.12–0.25: Field appears
+      const fieldAlpha = Math.min(1, (progress - 0.12) / 0.08);
+      drawField(fieldAlpha);
+      
+      // Phase 0.18+: Goal labels A and B
+      if (progress > 0.18) {
+        const ga = easeOut(Math.min(1, (progress - 0.18) / 0.06));
+        drawGoalLabel(goalAx, goalAy, 'A', colors.red, ga);
+        drawGoalLabel(goalBx, goalBy, 'B', colors.red, ga);
+        drawText('Branka A', goalAx, goalAy + 45, 16, colors.red, 'center', ga);
+        drawText('Branka B', goalBx, goalBy + 45, 16, colors.red, 'center', ga);
+      }
+      
+      // Phase 0.25–0.40: Referee appears at wrong position, distances shown unequal
+      if (progress > 0.25 && progress < 0.55) {
+        const ra = easeOut(Math.min(1, (progress - 0.25) / 0.05));
+        const refX = fieldX + 300, refY = midY - 80;
+        drawReferee(refX, refY, ra);
+        
+        if (progress > 0.30) {
+          const da = easeOut(Math.min(1, (progress - 0.30) / 0.06));
+          drawDistanceLine(refX, refY, goalAx, goalAy, '|XA| = 3,2 m', colors.blue, da);
+          drawDistanceLine(refX, refY, goalBx, goalBy, '|XB| = 7,8 m', colors.orange, da);
+        }
+        
+        if (progress > 0.37) {
+          const ea = easeOut(Math.min(1, (progress - 0.37) / 0.05));
+          drawInfoBox('❌ |XA| ≠ |XB| → Nespravedlivá pozice!', W/2, fieldY + fieldH + 55, ea);
+        }
+      }
+      
+      // Phase 0.45–0.55: Referee moves to center, tries a position on midline
+      if (progress > 0.45) {
+        const moveP = Math.min(1, (progress - 0.45) / 0.10);
+        const t = easeInOut(moveP);
+        
+        let refX, refY;
+        if (progress < 0.55) {
+          refX = lerp(fieldX + 300, midX, t);
+          refY = lerp(midY - 80, midY - 100, t);
+        } else {
+          refX = midX;
+          refY = midY - 100;
+        }
+        
+        if (progress >= 0.55) {
+          const ra2 = 1;
+          drawReferee(refX, refY, ra2);
+          
+          if (progress > 0.58) {
+            const da2 = easeOut(Math.min(1, (progress - 0.58) / 0.06));
+            const distA = Math.sqrt((refX - goalAx)**2 + (refY - goalAy)**2);
+            const distB = Math.sqrt((refX - goalBx)**2 + (refY - goalBy)**2);
+            drawDistanceLine(refX, refY, goalAx, goalAy, '|XA|', colors.blue, da2);
+            drawDistanceLine(refX, refY, goalBx, goalBy, '|XB|', colors.blue, da2);
+          }
+          
+          if (progress > 0.65) {
+            const ea2 = easeOut(Math.min(1, (progress - 0.65) / 0.05));
+            drawInfoBox('✓ |XA| = |XB| → Rozhodčí stojí na ose úsečky AB!', W/2, fieldY + fieldH + 55, ea2);
+          }
+        }
+      }
+      
+      // Phase 0.70+: Show osa úsečky = půlicí čára
+      if (progress > 0.70) {
+        const oa = easeOut(Math.min(1, (progress - 0.70) / 0.08));
+        drawOsaUsecky(oa);
+        
+        if (progress > 0.75) {
+          const la = easeOut(Math.min(1, (progress - 0.75) / 0.05));
+          drawText('Osa úsečky AB', midX + 15, fieldY - 30, 22, colors.green, 'left', la);
+          drawText('= půlicí čára hřiště', midX + 15, fieldY - 5, 18, colors.green, 'left', la * 0.8);
+        }
+      }
+      
+      // Phase 0.78+: Show multiple valid positions on the line
+      if (progress > 0.78) {
+        const positions = [
+          { y: midY - 180 },
+          { y: midY - 100 },
+          { y: midY },
+          { y: midY + 100 },
+          { y: midY + 170 }
+        ];
+        
+        positions.forEach((pos, i) => {
+          const delay = 0.78 + i * 0.025;
+          if (progress > delay) {
+            const pa = easeOut(Math.min(1, (progress - delay) / 0.04));
+            if (i === 1) {
+              drawReferee(midX, pos.y, pa);
+            } else {
+              // Small dots for other positions
+              ctx.save();
+              ctx.globalAlpha = pa * 0.7;
+              ctx.fillStyle = colors.yellow;
+              ctx.beginPath();
+              ctx.arc(midX, pos.y, 8, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.restore();
+            }
+          }
+        });
+        
+        if (progress > 0.90) {
+          const fa = easeOut(Math.min(1, (progress - 0.90) / 0.06));
+          
+          // Summary box
+          ctx.save();
+          ctx.globalAlpha = fa;
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.15)';
+          ctx.beginPath();
+          ctx.roundRect(W/2 - 280, H - 80, 560, 55, 14);
+          ctx.fill();
+          ctx.strokeStyle = colors.green;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.roundRect(W/2 - 280, H - 80, 560, 55, 14);
+          ctx.stroke();
+          
+          drawText('Rozhodčí může stát kdekoliv na ose úsečky (půlicí čáře)', W/2, H - 58, 18, colors.green, 'center', fa);
+          drawText('→ vždy bude stejně daleko od obou branek', W/2, H - 36, 16, colors.textDim, 'center', fa);
+          ctx.restore();
+        }
+      }
+      
+      // Goal labels persist
+      if (progress > 0.18) {
+        const ga = Math.min(1, (progress - 0.18) / 0.06);
+        drawGoalLabel(goalAx, goalAy, 'A', colors.red, ga);
+        drawGoalLabel(goalBx, goalBy, 'B', colors.red, ga);
+      }
+      
+      // Progress bar
+      ctx.fillStyle = '#334155';
+      ctx.beginPath();
+      ctx.roundRect(100, H - 15, W - 200, 6, 3);
+      ctx.fill();
+      ctx.fillStyle = colors.purple;
+      ctx.beginPath();
+      ctx.roundRect(100, H - 15, (W - 200) * progress, 6, 3);
+      ctx.fill();
+    }
+    
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      if (isPlaying) currentProgress = Math.min((timestamp - startTime) / DURATION, 1);
+      render(currentProgress);
+      if (currentProgress < 1 || !isPlaying) requestAnimationFrame(animate);
+      else render(1);
+    }
+    
+    window.addEventListener('message', (e) => {
+      switch (e.data) {
+        case 'toggle':
+          if (currentProgress >= 1) { startTime = null; currentProgress = 0; isPlaying = true; }
+          else { isPlaying = !isPlaying; if (isPlaying) startTime = performance.now() - currentProgress * DURATION; }
+          break;
+        case 'stop': isPlaying = false; currentProgress = 0; startTime = null; render(0); break;
+        case 'rew': currentProgress = Math.max(0, currentProgress - 0.01); startTime = performance.now() - currentProgress * DURATION; render(currentProgress); break;
+        case 'fwd': currentProgress = Math.min(1, currentProgress + 0.01); startTime = performance.now() - currentProgress * DURATION; render(currentProgress); break;
+      }
+    });
+    
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
